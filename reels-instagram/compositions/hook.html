@@ -1,0 +1,19 @@
+<template id="hook-template">
+  <div data-hf-id="hf-4xnj" data-composition-id="hook" data-width="1080" data-height="1920" data-duration="5">
+    <div data-hf-id="hf-wua0" class="scene">
+      <p data-hf-id="hf-6dej" class="kicker">Nouveau Reel</p>
+      <h1 data-hf-id="hf-hjny" class="headline">Ton accroche ici</h1>
+    </div>
+
+    <script>
+      (function () {
+        const R = '[data-composition-id="hook"]';
+        const tl = gsap.timeline({ paused: true });
+        tl.from(R + " .kicker", { opacity: 0, y: 40, duration: 0.6, ease: "power3.out" }, 0.2);
+        tl.from(R + " .headline", { opacity: 0, y: 80, duration: 0.8, ease: "power3.out" }, 0.4);
+        window.__timelines = window.__timelines || {};
+        window.__timelines["hook"] = tl;
+      })();
+    </script>
+  </div>
+</template>
