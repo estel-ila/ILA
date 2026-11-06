@@ -323,7 +323,7 @@ let pullT=null; const schedulePull=()=>{clearTimeout(pullT);pullT=setTimeout(()=
     if(!window.supabase) throw new Error("lib");
     SB=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false}});
     await Promise.race([pull(), new Promise((_,r)=>setTimeout(()=>r(new Error("timeout")),10000))]);
-    setMode("live");
+    setMode("live"); render();
     SB.channel("ld27").on("postgres_changes",{event:"*",schema:"public",table:"draft2k27_validation_items"},schedulePull)
       .on("postgres_changes",{event:"*",schema:"public",table:"draft2k27_validation_history"},schedulePull).subscribe();
     document.addEventListener("visibilitychange",()=>{ if(!document.hidden) schedulePull(); });
