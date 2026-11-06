@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta property="og:title" content="LA DRAFT 2K27 · Validation com">
+<meta property="og:description" content="Spot de lancement et carrousel Instagram à valider — ILA × Banlieusard Nouveau">
+<meta property="og:image" content="img/s01.jpg">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<title>LA DRAFT 2K27 · Validation com</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;0,800;1,800&family=Barlow:wght@400;500;600&family=Permanent+Marker&display=swap">
+<style>
+/* Layout : poster grunge LD27 — bandeau sticky, hero affiche, bento verre fumé, cartes slide image + texte, journal. Single dark look by choice (identité Draft). */
+:root{
+  --ink:#0c0a0a; --ink-2:#161213; --ink-3:#1f191a;
+  --paper:#f2efea; --paper-dim:#cfc8c4; --muted:#9a9091;
+  --red:#e3141b; --red-hot:#ff2a2f; --red-deep:#7d0a0e;
+  --glass:rgba(255,255,255,.055); --glass-2:rgba(255,255,255,.09); --line:rgba(255,255,255,.12);
+  --ok:#3fd17a; --warn:#ffb020; --info:#7fb4ff;
+  --f-display:"Anton","Impact","Haettenschweiler","Arial Narrow Bold",sans-serif;
+  --f-cond:"Barlow Condensed","Arial Narrow",sans-serif;
+  --f-body:"Barlow","Helvetica Neue",Arial,sans-serif;
+  --f-hand:"Permanent Marker","Comic Sans MS",cursive;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--paper);font:400 16px/1.55 var(--f-body);overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--ink)}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.09;mix-blend-mode:screen;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wm{position:fixed;right:-4vw;bottom:-6vw;z-index:0;pointer-events:none;font:italic 400 34vw/0.8 var(--f-display);letter-spacing:-.02em;color:transparent;-webkit-text-stroke:1px rgba(227,20,27,.13);transform:skewX(-8deg);user-select:none}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--paper)}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--red-hot);outline-offset:2px}
+
+/* Logo typographié */
+.ld{font:italic 400 1em/1 var(--f-display);letter-spacing:-.01em;display:inline-flex;transform:skewX(-6deg)}
+.ld b{font-weight:400;color:var(--ink);-webkit-text-stroke:.06em var(--paper);paint-order:stroke fill}
+.ld i{font-style:normal;color:var(--red);-webkit-text-stroke:.03em var(--paper);paint-order:stroke fill}
+
+/* Barre */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(12,10,10,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding-block:10px}
+.bar .ld{font-size:30px}
+.bar .tag{font:700 13px/1.15 var(--f-cond);letter-spacing:.08em;text-transform:uppercase;color:var(--paper-dim)}
+.bar .tag span{color:var(--red-hot)}
+.who{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.who label{font:700 12px var(--f-cond);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.who input,.who select{background:var(--glass);border:1px solid var(--line);border-radius:8px;padding:7px 10px;min-width:0}
+.who input{width:140px}
+.who select option{background:var(--ink-2)}
+.who.need input{border-color:var(--red-hot);box-shadow:0 0 0 3px rgba(227,20,27,.25)}
+.sync{font:700 12px var(--f-cond);letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:99px;border:1px solid var(--line);display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
+.sync::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.sync.live::before{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.sync.local::before{background:var(--warn)}
+
+/* Hero */
+.hero{padding-block:44px 28px;display:grid;grid-template-columns:1.25fr .75fr;gap:28px;align-items:end}
+.eyebrow{font:800 14px var(--f-cond);letter-spacing:.14em;text-transform:uppercase;display:inline-flex;gap:8px;align-items:center;background:var(--red);color:#fff;padding:5px 12px;transform:rotate(-1.5deg)}
+h1{font:400 clamp(64px,13vw,168px)/.86 var(--f-display);margin:18px 0 0;text-transform:uppercase;letter-spacing:-.01em;text-wrap:balance}
+h1 .r{color:var(--red);display:block}
+h1 .r em{font-style:normal;color:var(--paper)}
+.hero p.lede{font:600 clamp(19px,2.2vw,24px)/1.25 var(--f-cond);text-transform:uppercase;letter-spacing:.02em;max-width:34ch;margin:18px 0 0}
+.hero p.lede span{color:var(--red-hot)}
+.hand{font:400 22px/1.1 var(--f-hand);color:var(--paper);transform:rotate(-4deg);display:inline-block}
+.hand.red{color:var(--red-hot)}
+.poster{position:relative;border:6px solid var(--paper);box-shadow:10px 10px 0 var(--red);transform:rotate(2.2deg);max-width:340px;justify-self:end}
+.poster img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
+.poster .hand{position:absolute;left:-36px;bottom:-30px;background:var(--ink);padding:6px 12px}
+
+/* Bento */
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:18px;padding:20px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);min-width:0;position:relative;overflow:hidden}
+.card.light{background:var(--paper);color:var(--ink);border-color:transparent}
+.card.red{background:var(--red);border-color:transparent;color:#fff}
+.card.black{background:#050404;border-color:var(--line)}
+.k{font:700 13px var(--f-cond);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.card.light .k{color:#6a6062}.card.red .k{color:rgba(255,255,255,.8)}
+.big{font:400 clamp(44px,6vw,72px)/.95 var(--f-display);margin-top:8px}
+.big small{font-size:.42em;margin-left:4px}
+.card p{margin:8px 0 0;font-size:15px;color:var(--paper-dim)}
+.card.light p{color:#3d3536}.card.red p{color:#fff}
+.arrow{position:absolute;top:16px;right:18px;font:700 22px var(--f-cond);opacity:.75}
+.c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}.c12{grid-column:span 12}
+.meter{height:10px;border-radius:99px;background:rgba(0,0,0,.25);margin-top:14px;overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:#fff;border-radius:99px;transition:width .5s}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;font:600 13px var(--f-cond);letter-spacing:.06em;text-transform:uppercase}
+
+section{padding-block:34px}
+.sh{display:flex;align-items:end;gap:18px;flex-wrap:wrap;margin-bottom:18px}
+h2{font:400 clamp(40px,6vw,64px)/.92 var(--f-display);text-transform:uppercase;margin:0;text-wrap:balance}
+h2 span{color:var(--red)}
+.sh .sub{font:600 16px/1.3 var(--f-cond);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);max-width:46ch}
+.slash{height:6px;width:120px;background:var(--red);transform:skewX(-30deg);margin-bottom:12px}
+
+/* arc */
+.arc{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:14px}
+.arc div{border-top:3px solid var(--red);padding-top:8px;min-width:0}
+.arc b{display:block;font:400 22px/1 var(--f-display)}
+.arc span{display:block;font:600 13px/1.2 var(--f-cond);text-transform:uppercase;letter-spacing:.04em;color:var(--paper-dim);margin-top:4px}
+.card.light .arc span{color:#4a4143}
+.steps{counter-reset:s;display:grid;gap:10px;margin-top:12px;padding:0;list-style:none}
+.steps li{counter-increment:s;display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:start;font:600 17px/1.25 var(--f-cond);text-transform:uppercase}
+.steps li::before{content:counter(s);width:32px;height:32px;border-radius:50%;border:2px solid currentColor;display:grid;place-items:center;font:400 17px var(--f-display);color:var(--red-hot)}
+.card.light .steps li::before{color:var(--red)}
+.steps small{display:block;font:400 14px/1.4 var(--f-body);text-transform:none;color:var(--paper-dim);margin-top:2px}
+.card.light .steps small{color:#4a4143}
+
+/* Items */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{border:1px solid var(--line);background:var(--glass);border-radius:99px;padding:6px 14px;font:700 13px var(--f-cond);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.list{display:grid;gap:18px}
+.item{display:grid;grid-template-columns:minmax(0,500px) minmax(0,1fr);gap:0;background:var(--ink-2);border:1px solid var(--line);border-radius:20px;overflow:hidden;scroll-margin-top:80px}
+.item.video{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+.media{background:#000;position:relative;min-width:0;align-self:start}
+.item:not(.video) .media{position:sticky;top:76px}
+.media img{display:block;width:100%;height:auto;max-width:100%;cursor:zoom-in}
+.zoom{position:absolute;right:12px;bottom:12px;font:800 12px var(--f-cond);letter-spacing:.1em;text-transform:uppercase;background:rgba(0,0,0,.75);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:99px;padding:6px 12px;cursor:zoom-in}
+.lb{position:fixed;inset:0;z-index:90;background:rgba(5,4,4,.94);display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;padding:calc(16px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+.lb img{max-width:100%;max-height:calc(100vh - 90px);width:auto;height:auto;margin:auto;display:block;box-shadow:0 0 0 1px rgba(255,255,255,.15)}
+.lb .lbb{background:var(--glass-2);border:1px solid var(--line);color:#fff;border-radius:50%;width:48px;height:48px;font:400 22px var(--f-display);cursor:pointer}
+.lb .lbx{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px));border-radius:99px;width:auto;height:auto;padding:8px 14px;font:800 13px var(--f-cond);letter-spacing:.1em;text-transform:uppercase}
+.lb .cap{position:absolute;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);font:700 13px var(--f-cond);letter-spacing:.1em;text-transform:uppercase;color:var(--paper-dim);white-space:nowrap}
+.media video{display:block;width:100%;height:100%;object-fit:contain;background:#000;aspect-ratio:4/3}
+.media .num{position:absolute;left:12px;top:12px;font:400 26px/1 var(--f-display);background:var(--red);color:#fff;padding:6px 10px;transform:rotate(-3deg)}
+.body{padding:22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.ihead{display:flex;gap:12px;align-items:start;justify-content:space-between;flex-wrap:wrap}
+.ihead h3{margin:0;font:400 30px/1 var(--f-display);text-transform:uppercase;letter-spacing:.005em}
+.ihead .k{display:block;margin-bottom:4px}
+.pill{font:800 12px var(--f-cond);letter-spacing:.1em;text-transform:uppercase;padding:5px 11px;border-radius:99px;display:inline-flex;gap:6px;align-items:center;white-space:nowrap;border:1px solid}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.st-todo{color:var(--paper-dim);border-color:var(--line)}
+.st-ok{color:var(--ok);border-color:rgba(63,209,122,.45);background:rgba(63,209,122,.08)}
+.st-changes{color:var(--red-hot);border-color:rgba(255,42,47,.5);background:rgba(255,42,47,.08)}
+.st-edited{color:var(--warn);border-color:rgba(255,176,32,.45);background:rgba(255,176,32,.08)}
+.st-empty{color:var(--info);border-color:rgba(127,180,255,.45);background:rgba(127,180,255,.08)}
+.onvis{display:flex;flex-wrap:wrap;gap:6px}
+.onvis span{font:700 12px/1.2 var(--f-cond);text-transform:uppercase;letter-spacing:.04em;background:var(--glass-2);border-radius:6px;padding:4px 8px;color:var(--paper-dim)}
+.desc{background:var(--paper);color:var(--ink);border-radius:14px;padding:16px 18px;white-space:pre-wrap;font-size:15.5px;line-height:1.55;position:relative}
+.desc.empty{background:transparent;color:var(--paper-dim);border:2px dashed var(--line);text-align:center;padding:26px 18px;font:600 17px var(--f-cond);text-transform:uppercase;letter-spacing:.04em}
+.desc .ig{display:block;font:700 11px var(--f-cond);letter-spacing:.14em;text-transform:uppercase;color:#7a6f71;margin-bottom:6px}
+.meta{font:600 13px/1.3 var(--f-cond);letter-spacing:.04em;color:var(--muted);text-transform:uppercase;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.meta b{color:var(--paper)}
+.linkbtn{background:none;border:0;padding:0;color:var(--paper);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font:inherit}
+.orig{border-left:3px solid var(--muted);padding:6px 0 6px 12px;white-space:pre-wrap;color:var(--paper-dim);font-size:14.5px}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--glass);border-radius:10px;padding:9px 14px;font:800 14px var(--f-cond);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.btn:hover{background:var(--glass-2)}
+.btn.ok{background:var(--ok);color:#06210f;border-color:var(--ok)}
+.btn.red{background:var(--red);border-color:var(--red);color:#fff}
+.btn.paper{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.panel{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--ink-3);display:grid;gap:10px}
+.panel textarea,.panel input{width:100%;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 12px;resize:vertical}
+.panel textarea.main{min-height:240px;line-height:1.5}
+.panel .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.cnt{font:600 13px var(--f-cond);letter-spacing:.04em;color:var(--muted);margin-left:auto}
+.cnt.over{color:var(--red-hot)}
+.hist{display:grid;gap:8px;max-height:360px;overflow:auto;padding-right:4px}
+.ev{display:grid;grid-template-columns:auto 1fr;gap:10px;font-size:14px}
+.ev .dot{width:10px;height:10px;border-radius:50%;margin-top:6px;background:var(--muted)}
+.ev.k-ok .dot{background:var(--ok)}.ev.k-changes .dot,.ev.k-comment .dot{background:var(--red-hot)}.ev.k-edit .dot,.ev.k-restore .dot{background:var(--warn)}
+.ev .t{font:700 13px var(--f-cond);letter-spacing:.04em;text-transform:uppercase;color:var(--paper-dim)}
+.ev .t b{color:var(--paper)}
+.ev .x{white-space:pre-wrap;color:var(--paper-dim);margin-top:2px;max-height:7.5em;overflow:hidden}
+.ev .note{color:var(--paper);margin-top:2px}
+.ev .tgt{font:700 12px var(--f-cond);background:var(--glass-2);border-radius:5px;padding:1px 6px;margin-right:4px;color:var(--paper)}
+.empty-note{color:var(--muted);font-size:14px}
+.banner{border:1px solid rgba(255,176,32,.45);background:rgba(255,176,32,.08);border-radius:14px;padding:14px 16px;font-size:15px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.banner b{font:800 14px var(--f-cond);letter-spacing:.08em;text-transform:uppercase;color:var(--warn)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;transition:.25s;background:var(--paper);color:var(--ink);padding:10px 18px;border-radius:99px;font:800 14px var(--f-cond);letter-spacing:.06em;text-transform:uppercase;z-index:80;pointer-events:none;box-shadow:6px 6px 0 var(--red)}
+.toast.on{opacity:1;transform:translateX(-50%)}
+footer{padding-block:40px 60px;border-top:1px solid var(--line);margin-top:30px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between;font:700 13px var(--f-cond);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+footer .ld{font-size:44px}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .poster{justify-self:start;max-width:260px;margin-left:20px}
+  .c3,.c4,.c5{grid-column:span 6}.c6,.c7,.c8{grid-column:span 12}
+  .item,.item.video{grid-template-columns:1fr}
+  .item:not(.video) .media{position:relative;top:auto}
+  .arc{grid-template-columns:repeat(4,1fr)}
+  .who{margin-left:0;width:100%}
+}
+@media (max-width:520px){
+  .c3,.c4,.c5{grid-column:span 12}
+  .arc{grid-template-columns:repeat(2,1fr)}
+  .who input{width:auto;flex:1}
+  .who label{display:none}
+  .bar .tag{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head><body>
+
+<div class="wm" aria-hidden="true">LD27</div>
+
+<header class="bar">
+  <div class="wrap">
+    <span class="ld" aria-label="LD27"><b>LD</b><i>27</i></span>
+    <span class="tag">Validation com<br><span>ILA × Banlieusard Nouveau</span></span>
+    <div class="who" id="who">
+      <label for="me-name">Tu es</label>
+      <input id="me-name" placeholder="Ton prénom" autocomplete="given-name">
+      <select id="me-org" aria-label="Structure">
+        <option>Banlieusard Nouveau</option>
+        <option>ILA</option>
+      </select>
+      <span class="sync" id="sync">Connexion…</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <div>
+      <span class="eyebrow">Plan de com · document de validation</span>
+      <h1>La Draft<span class="r">2K<em>27</em></span></h1>
+      <p class="lede">Le spot de lancement et le carrousel d'appel à candidatures, <span>à valider ou modifier</span> texte par texte.</p>
+      <p style="margin-top:18px"><span class="hand red">Une initiative ILA en collaboration avec Banlieusard Nouveau</span></p>
+    </div>
+    <figure class="poster" style="margin:0">
+      <img src="img/s01.jpg" alt="Affiche principale du carrousel LA DRAFT 2K27">
+      <span class="hand">Slide 01 / 10</span>
+    </figure>
+  </div>
+
+  <div class="bento" aria-label="Chiffres clés">
+    <div class="card black c3"><span class="k">Spot de lancement</span><div class="big">61<small>s</small></div><p>Vidéo de la campagne, à publier avec sa description.</p><span class="arrow">↗</span></div>
+    <div class="card light c3"><span class="k">Carrousel Instagram</span><div class="big">10<small>slides</small></div><p>Un visuel et une description par slide.</p></div>
+    <div class="card c3"><span class="k">Clôture des candidatures</span><div class="big">30.11</div><p>Jusqu'au 30 novembre 2026, candidature en DM.</p></div>
+    <div class="card red c3"><span class="k">Avancement</span><div class="big" id="prog-big">0<small>/ 11</small></div><p>textes validés</p><div class="meter"><i id="prog-bar"></i></div></div>
+  </div>
+
+  <section id="dispositif">
+    <div class="slash"></div>
+    <div class="sh"><h2>Le <span>dispositif</span></h2><p class="sub">Deux formats, un même message : 10 jeunes cracks, 2 équipes, et toi ?</p></div>
+    <div class="bento">
+      <div class="card c7">
+        <span class="k">Format 1 · Spot de lancement</span>
+        <div class="big" style="font-size:clamp(34px,4.4vw,48px)">La vidéo ouvre la campagne</div>
+        <p>Le spot donne le ton et l'énergie de LA DRAFT. Sa description reste à écrire : elle se rédige directement plus bas, dans la section « Le spot ».</p>
+        <div class="legend" style="margin-top:14px"><span>1440 × 1080</span><span>·</span><span>61 secondes</span><span>·</span><span id="vid-status-txt">Description à ajouter</span></div>
+      </div>
+      <div class="card light c5">
+        <span class="k">Le message clé</span>
+        <div class="big" style="font-size:clamp(34px,4.2vw,46px);line-height:.95">10 jeunes cracks.<br>2 équipes.<br><span style="color:var(--red)">Et toi ?</span></div>
+      </div>
+      <div class="card c12">
+        <span class="k">Format 2 · Carrousel · l'ordre de lecture</span>
+        <div class="arc">
+          <div><b>01</b><span>L'affiche et l'accroche</span></div>
+          <div><b>02</b><span>Le média et le réseau</span></div>
+          <div><b>03</b><span>Le lieu · Nanterre</span></div>
+          <div><b>04–06</b><span>Les 2 équipes</span></div>
+          <div><b>07</b><span>Le portfolio</span></div>
+          <div><b>08–09</b><span>Coach et profils</span></div>
+          <div><b>10</b><span>La candidature</span></div>
+        </div>
+      </div>
+      <div class="card black c4">
+        <span class="k">La cible</span>
+        <div class="big" style="font-size:clamp(34px,4vw,44px)">16–30 ans</div>
+        <p>Île-de-France. Profils image (Réalisation / Tournage) et profils com (Communication digitale), 5 places par équipe.</p>
+      </div>
+      <div class="card red c4">
+        <span class="k">L'appel à l'action</span>
+        <div class="big" style="font-size:clamp(34px,4vw,44px)">Candidate en DM</div>
+        <p>Présente-toi, choisis ton équipe, partage tes créations.</p>
+      </div>
+      <div class="card light c4">
+        <span class="k">Ce qu'on vous demande</span>
+        <ol class="steps">
+          <li>Indique ton prénom<small>En haut de la page : il signe chaque action.</small></li>
+          <li>Relis chaque texte<small>Valide, modifie ou laisse un commentaire.</small></li>
+          <li>Tout est tracé<small>L'historique garde chaque version, on peut revenir en arrière.</small></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <div id="banner-slot"></div>
+
+  <section id="spot">
+    <div class="slash"></div>
+    <div class="sh"><h2>Le <span>spot</span></h2><p class="sub">La vidéo de lancement et sa description de publication.</p></div>
+    <div class="list" id="list-video"></div>
+  </section>
+
+  <section id="carrousel">
+    <div class="slash"></div>
+    <div class="sh">
+      <h2>Le <span>carrousel</span></h2>
+      <div class="filters" role="group" aria-label="Filtrer les slides">
+        <button class="chip" data-f="all" aria-pressed="true">Toutes</button>
+        <button class="chip" data-f="todo" aria-pressed="false">À valider</button>
+        <button class="chip" data-f="changes" aria-pressed="false">À retravailler</button>
+        <button class="chip" data-f="ok" aria-pressed="false">Validées</button>
+      </div>
+    </div>
+    <div class="list" id="list-slides"></div>
+  </section>
+
+  <section id="journal">
+    <div class="slash"></div>
+    <div class="sh"><h2>Le <span>journal</span></h2><p class="sub">Toutes les actions, de la plus récente à la plus ancienne.</p>
+      <div class="filters"><button class="btn paper" id="copy-recap">Copier le récap des retours</button></div>
+    </div>
+    <div class="card"><div class="hist" id="journal-list" style="max-height:560px"></div></div>
+  </section>
+
+  <footer>
+    <span class="ld"><b>LD</b><i>27</i></span>
+    <span>LA DRAFT 2K27 · ILA × Banlieusard Nouveau · 16–30 ans · Île-de-France</span>
+  </footer>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const ITEMS = [
+{key:"video",num:"▶",kind:"video",title:"Spot de lancement",sub:"Vidéo · 61 s",src:"spot.mp4",poster:"poster.jpg",onVisual:[],text:""},
+{key:"s01",num:"01",title:"L'affiche principale",onVisual:["LA DRAFT 2K27","ILA × Banlieusard Nouveau","10 jeunes cracks. 2 équipes. Et toi ?","Réalisation / Tournage","Communication digitale","Appel à candidatures","16–30 ans · Île-de-France","Jusqu'au 30 novembre 2026","Découvre ce qui t'attend →"],
+text:`10 talents. 2 équipes. Une première sélection à marquer de ton empreinte.
+
+LA DRAFT 2K27 débarque avec ILA et Banlieusard Nouveau. On cherche 10 jeunes cracks d'Île-de-France qui veulent faire de la création leur métier.
+
+5 titulaires en Réalisation / Tournage.
+5 titulaires en Communication digitale.
+
+Un espace de 1 000 m², des coachs, des projets concrets et de nouvelles rencontres : de quoi donner une autre dimension à ton ambition.
+
+Tu te vois dans l'équipe ? Fais défiler.
+
+16–30 ans · Candidatures en DM jusqu'au 30 novembre 2026.`},
+{key:"s02",num:"02",title:"Le média et le réseau",onVisual:["Crée pour le média du peuple.","Banlieusard Nouveau × ILA","LA DRAFT 2K27","Fais découvrir ton travail.","Élargis ton réseau."],
+text:`Ton regard. Tes idées. Des contenus pour le média du peuple.
+
+Avec Banlieusard Nouveau, tu participes à des projets qui te connectent à un média, à ses équipes et à leurs attentes.
+
+Tu rencontres, tu proposes, tu crées. Ton réseau s'élargit au fil des collaborations et du travail que tu partages.
+
+C'est l'occasion de faire découvrir ton univers et de donner envie de construire la suite avec toi.
+
+Tu imagines déjà ce que tu pourrais apporter ? Garde cette énergie.`},
+{key:"s03",num:"03",title:"Le lieu",onVisual:["1 000 m²","Pour voir plus grand.","Accède à un espace dédié à la création audiovisuelle et à la communication.","Nanterre"],
+text:`Imagine : tu arrives avec une idée. Ton équipe est là. Vous avez un lieu pour lui donner vie.
+
+À Nanterre, LA DRAFT te donne accès à un espace de 1 000 m² dédié à la création audiovisuelle et à la communication.
+
+Un point de rendez-vous pour imaginer vos concepts, préparer vos productions, tester et créer ensemble.
+
+Des idées qui circulent, des projets qui avancent, un collectif qui prend forme.
+
+Bienvenue sur ton prochain terrain de création.`},
+{key:"s04",num:"04",title:"Le choix de l'équipe",onVisual:["Dans quelle équipe vas-tu faire la différence ?","Réalisation / Tournage · 5 titulaires","Communication digitale · 5 titulaires","2 équipes complémentaires.","10 talents à révéler."],
+text:`Deux équipes. Des personnalités différentes. Une connexion à créer.
+
+Réalisation / Tournage : donner vie aux images.
+Communication digitale : donner de la force aux concepts et aux campagnes.
+
+5 titulaires de chaque côté, un Head Coach par équipe et des projets à construire ensemble.
+
+On veut des regards singuliers, des idées qui se répondent et des talents capables de se faire progresser mutuellement.
+
+À toi de choisir où tu veux faire la différence.`},
+{key:"s05",num:"05",title:"Réalisation / Tournage",onVisual:["Tu filmes ?","Tu cadres ?","Tu photographies ?","Tu montes ?","Ton regard mérite le terrain.","Réalisation / Tournage — 5 places"],
+text:`Le cadre que tu vois. L'émotion que tu captes. Le montage qui change tout.
+
+Tu as ta façon de raconter ? On veut la découvrir.
+
+Rejoins l'équipe Réalisation / Tournage pour participer à des tournages, des shootings et des productions qui feront grandir ton expérience.
+
+De la première intention au dernier ajustement, tu développes ton regard et tu apprends à aller au bout de tes choix.
+
+5 places pour des profils image qui veulent passer un cap. Montre-nous ton univers.`},
+{key:"s06",num:"06",title:"Communication digitale",onVisual:["Tu crées des visuels ?","Tu imagines des concepts ?","Tu penses réseaux sociaux ?","Donne de l'impact à tes idées.","Communication digitale — 5 places"],
+text:`Tu vois une campagne et tu te dis : « Moi, j'aurais fait ça autrement » ?
+
+Viens nous montrer comment.
+
+Concepts, graphisme, identités visuelles, contenus pour les réseaux : l'équipe Communication digitale cherche 5 talents avec des idées et une vraie envie de les concrétiser.
+
+Tu pourras proposer, expérimenter et défendre une direction créative face à de vrais briefs.
+
+Fais-nous découvrir ta patte. La prochaine idée que l'équipe développe pourrait partir de toi.`},
+{key:"s07",num:"07",title:"Ce que tu construis",onVisual:["Des projets réels.","Un portfolio qui grandit.","Tournages · Shootings · Campagnes","De l'expérience.","Du concret à montrer."],
+text:`« Ça, j'ai participé à le créer. »
+
+Un film, un shooting, une campagne. Pouvoir montrer le résultat, raconter les coulisses et expliquer ce que tu as apporté.
+
+C'est aussi ce que tu construis avec LA DRAFT : une expérience concrète et un portfolio qui prend de l'ampleur.
+
+Avec des briefs, des délais et des responsabilités, tu apprends à livrer un travail que tu peux défendre.
+
+De quoi arriver à tes prochaines rencontres avec des projets à montrer et des choses à raconter.`},
+{key:"s08",num:"08",title:"L'accompagnement",onVisual:["Ton talent.","Ton équipe.","Ton coach.","Un Head Coach par équipe pour t'aider à passer un cap."],
+text:`Parfois, un regard extérieur te fait voir ce que tu peux aller chercher de plus.
+
+Ton Head Coach est là pour ça : repérer tes forces, challenger tes idées et t'aider à franchir des étapes.
+
+Il y aura des déclics, des essais et des versions à reprendre. Viens avec ton ambition et l'humilité de continuer à apprendre.
+
+Tu avances avec un coach et une équipe qui, eux aussi, ont envie de te voir réussir.
+
+À toi de saisir cet accompagnement.`},
+{key:"s09",num:"09",title:"Les profils recherchés",onVisual:["Tu as du potentiel ?","Montre-nous le tien.","Créativité.","Rigueur.","Esprit d'équipe.","Envie de progresser.","16–30 ans · Île-de-France"],
+text:`Tu t'es reconnu dans les slides ? On veut maintenant découvrir qui tu es.
+
+Ce que tu crées, ce qui t'inspire, les idées que tu gardes dans tes notes et les projets que tu rêves de réaliser.
+
+On cherche des personnalités, du potentiel et l'envie de s'investir. Des jeunes capables de prendre des initiatives, d'écouter les autres et de tenir leurs engagements.
+
+Tu veux faire de la création une vraie direction dans ta vie ?
+
+16–30 ans · Île-de-France.
+Ta place commence peut-être par le prochain message.`},
+{key:"s10",num:"10",title:"La candidature",onVisual:["Le prochain choix, c'est peut-être toi.","Candidate en DM jusqu'au 30 novembre 2026.","1. Présente-toi.","2. Choisis ton équipe.","3. Partage tes créations.","16–30 ans · Île-de-France","5 places par équipe"],
+text:`Tu t'imagines déjà dans l'équipe ? À toi de te présenter.
+
+Envoie-nous en DM :
+
+• Ton prénom, ton âge et ta ville.
+• L'équipe que tu souhaites rejoindre.
+• Une sélection de tes créations ou ton portfolio.
+• Ce que tu veux construire et pourquoi tu veux rejoindre LA DRAFT.
+
+Choisis ce qui te représente, précise ton rôle dans les projets et parle-nous avec tes mots. On veut découvrir ton univers autant que ton ambition.
+
+10 places. 5 titulaires par équipe.
+16–30 ans · Île-de-France.
+Candidatures jusqu'au 30 novembre 2026.
+
+LA DRAFT 2K27 - ILA × BANLIEUSARD NOUVEAU.
+
+Le prochain choix, c'est peut-être toi.`}
+];
+ITEMS.forEach(it=>{ if(it.key!=="video") it.img="img/"+it.key+".jpg"; });
+const BYKEY = Object.fromEntries(ITEMS.map(i=>[i.key,i]));
+const STATUS = {todo:"À valider",ok:"Validé",changes:"Modifs demandées",edited:"Modifié · à revalider",empty:"Description à ajouter"};
+const KIND = {ok:"a validé",changes:"demande des modifs",edit:"a modifié le texte",comment:"a commenté",restore:"a restauré une version",todo:"a remis à valider"};
+const IG_MAX = 2200;
+
+const S = {items:{}, history:[], mode:"loading", db:null, uid:null, ui:{}, filter:"all"};
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ls = {get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const fmt = t=>{try{return new Date(t).toLocaleString("fr-FR",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}catch(e){return ""}};
+
+function cur(key){
+  const base = BYKEY[key]; const d = S.items[key];
+  const text = d && typeof d.text==="string" ? d.text : base.text;
+  let status = d && d.status ? d.status : "todo";
+  if(!text.trim() && status!=="changes") status="empty";
+  return {text, status, changed: !!(d && typeof d.text==="string" && d.text!==base.text), by:d&&d.author, at:d&&d.at};
+}
+
+/* Identité */
+const nameIn=$("#me-name"), orgIn=$("#me-org");
+const me = ls.get("ld27-me",{name:"",org:"Banlieusard Nouveau"});
+nameIn.value=me.name; orgIn.value=me.org;
+function saveMe(){me.name=nameIn.value.trim();me.org=orgIn.value;ls.set("ld27-me",me);$("#who").classList.toggle("need",false)}
+nameIn.addEventListener("input",saveMe); orgIn.addEventListener("change",saveMe);
+function author(){ if(!me.name){ $("#who").classList.add("need"); nameIn.focus(); toast("Indique ton prénom en haut de la page"); return null } return me.name+" · "+me.org }
+
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("on"),2400)}
+
+/* Stockage : partagé (db) sinon local */
+function setMode(m,why){
+  S.mode=m; const s=$("#sync");
+  s.className="sync "+(m==="live"?"live":m==="local"?"local":"");
+  s.textContent = m==="live"?"Synchronisé":m==="local"?"Sur cet appareil":"Connexion…";
+  const slot=$("#banner-slot");
+  if(m==="local"){
+    slot.innerHTML=`<div class="banner"><b>Mode appareil</b><span style="flex:1;min-width:220px">${esc(why||"La sauvegarde partagée n'est pas disponible dans cette vue.")} Tes retours restent enregistrés sur cet appareil : quand tu as fini, copie le récap et envoie-le à l'équipe ILA.</span><button class="btn paper" onclick="copyRecap()">Copier le récap</button></div>`;
+  } else slot.innerHTML="";
+}
+function loadLocal(){const d=ls.get("ld27-local",{items:{},history:[]});S.items=d.items||{};S.history=d.history||[];}
+function persistLocal(){ls.set("ld27-local",{items:S.items,history:S.history.slice(0,400)})}
+
+async function commit(key, patch, ev){
+  const by = author(); if(!by) return false;
+  const at = Date.now();
+  const prev = S.items[key]||{};
+  const next = {...prev, ...patch, author:by, at, uid:S.uid||null};
+  const entry = {item:key, author:by, at, uid:S.uid||null, ...ev};
+  if(S.mode==="live"){
+    try{
+      const row={key, text: typeof next.text==="string"?next.text:null, status: next.status||"todo", author:by, at, updated_at:new Date(at).toISOString()};
+      const r1=await SB.from("draft2k27_validation_items").upsert(row);
+      if(r1.error) throw r1.error;
+      const r2=await SB.from("draft2k27_validation_history").insert({item:key, kind:ev.kind, text:ev.text??null, note:ev.note||null, author:by, at});
+      if(r2.error) throw r2.error;
+      S.items[key]=row; S.history.unshift(entry); render();
+      return true;
+    }catch(e){
+      console.error(e); toast("Enregistrement impossible, vérifie ta connexion et réessaie");
+      return false;
+    }
+  }
+  S.items[key]=next; S.history.unshift(entry); persistLocal(); render(); return true;
+}
+
+/* Rendu */
+function itemHTML(it,bodyOnly){
+  const c=cur(it.key), ui=S.ui[it.key]||{}, isV=it.kind==="video";
+  const hist=S.history.filter(h=>h.item===it.key);
+  const media = isV
+    ? `<div class="media"><video controls playsinline preload="metadata" poster="${it.poster}" src="${it.src}"></video></div>`
+    : `<div class="media"><img loading="lazy" width="1122" height="1402" src="${it.img}" alt="Slide ${it.num} : ${esc(it.title)}" data-a="zoom" data-k="${it.key}"><button class="zoom" data-a="zoom" data-k="${it.key}">⤢ Plein écran</button></div>`;
+  const vis = it.onVisual.length ? `<div><span class="k">Sur le visuel</span><div class="onvis" style="margin-top:6px">${it.onVisual.map(v=>`<span>${esc(v)}</span>`).join("")}</div></div>` : "";
+  let desc;
+  if(ui.edit){
+    desc=`<div class="panel">
+      <label class="k" for="ed-${it.key}">${isV&&!c.text.trim()?"Description de la vidéo":"Modifier la description"}</label>
+      <textarea class="main" id="ed-${it.key}" data-cnt="${it.key}">${esc(ui.draft ?? c.text)}</textarea>
+      <input id="edn-${it.key}" placeholder="Pourquoi ce changement ? (facultatif)">
+      <div class="row"><button class="btn ok" data-a="save" data-k="${it.key}">Enregistrer la version</button><button class="btn" data-a="cancel" data-k="${it.key}">Annuler</button><span class="cnt" id="cnt-${it.key}"></span></div>
+    </div>`;
+  } else if(!c.text.trim()){
+    desc=`<div class="desc empty">${isV?"Aucune description pour l'instant":"Description vide"}<div style="margin-top:12px"><button class="btn red" data-a="edit" data-k="${it.key}">＋ Ajouter la description</button></div></div>`;
+  } else {
+    desc=`<div class="desc"><span class="ig">Description Instagram</span>${esc(c.text)}</div>`;
+  }
+  const meta = c.by ? `<div class="meta">Dernière action : <b>${esc(c.by)}</b> · ${fmt(c.at)}${c.changed&&!isV?` · <button class="linkbtn" data-a="orig" data-k="${it.key}">${ui.orig?"Masquer":"Voir"} le texte d'origine</button>`:""}</div>` : "";
+  const orig = ui.orig && c.changed ? `<div class="orig">${esc(it.text)}</div>`:"";
+  const acts = ui.edit ? "" : `<div class="acts">
+      <button class="btn ok" data-a="ok" data-k="${it.key}" ${!c.text.trim()||c.status==="ok"?"disabled":""}>✓ Valider</button>
+      <button class="btn" data-a="edit" data-k="${it.key}">Modifier</button>
+      <button class="btn" data-a="comment" data-k="${it.key}">Demander une modif</button>
+      <button class="btn" data-a="hist" data-k="${it.key}">Historique (${hist.length})</button>
+      ${c.status==="ok"?`<button class="btn" data-a="reopen" data-k="${it.key}">Rouvrir</button>`:""}
+    </div>`;
+  const com = ui.comment ? `<div class="panel">
+      <label class="k" for="cm-${it.key}">Ce qu'il faut changer</label>
+      <textarea id="cm-${it.key}" rows="3" placeholder="Ex. : remplacer « cracks » par « talents » dans la première phrase"></textarea>
+      <div class="row"><button class="btn red" data-a="sendc" data-k="${it.key}">Envoyer la demande</button><button class="btn" data-a="closec" data-k="${it.key}">Annuler</button></div>
+    </div>`:"";
+  const hl = ui.hist ? `<div class="panel"><span class="k">Historique de ${isV?"la vidéo":"la slide "+it.num}</span><div class="hist">${hist.length?hist.map(h=>evHTML(h,true)).join(""):`<p class="empty-note">Aucune action pour l'instant. Le texte affiché est la version d'origine.</p>`}</div></div>`:"";
+  const body=`
+      <div class="ihead"><div><span class="k">${isV?it.sub:"Slide "+it.num+" / 10"}</span><h3>${esc(it.title)}</h3></div><span class="pill st-${c.status}">${STATUS[c.status]}</span></div>
+      ${vis}${desc}${meta}${orig}${acts}${com}${hl}`;
+  if(bodyOnly) return body;
+  return `<article class="item ${isV?"video":""}" id="it-${it.key}" data-status="${c.status}">${media}<div class="body">${body}</div></article>`;
+}
+function evHTML(h,inItem){
+  const it=BYKEY[h.item]; const tgt = inItem?"":`<span class="tgt">${it?(it.kind==="video"?"Spot":"Slide "+it.num):esc(h.item)}</span>`;
+  const txt = (h.kind==="edit"||h.kind==="restore") && h.text!=null ? `<div class="x">${esc(h.text)}</div>`:"";
+  const note = h.note ? `<div class="note">« ${esc(h.note)} »</div>`:"";
+  const rest = inItem && (h.kind==="edit"||h.kind==="restore") && h.text!=null ? `<div style="margin-top:6px"><button class="linkbtn" data-a="restore" data-k="${h.item}" data-t="${encodeURIComponent(h.text)}">Restaurer cette version</button></div>`:"";
+  return `<div class="ev k-${h.kind}"><span class="dot"></span><div><div class="t">${tgt}<b>${esc(h.author||"?")}</b> ${KIND[h.kind]||h.kind} · ${fmt(h.at)}</div>${note}${txt}${rest}</div></div>`;
+}
+function render(){
+  // préserver les brouillons en cours
+  ITEMS.forEach(it=>{const ta=document.getElementById("ed-"+it.key); if(ta&&S.ui[it.key]) S.ui[it.key].draft=ta.value; const cm=document.getElementById("cm-"+it.key); if(cm&&S.ui[it.key]) S.ui[it.key].cdraft=cm.value;});
+  const vb=document.querySelector("#it-video .body");
+  if(vb) vb.innerHTML=itemHTML(ITEMS[0],true); else $("#list-video").innerHTML=itemHTML(ITEMS[0]);
+  $("#list-slides").innerHTML=ITEMS.slice(1).filter(it=>{const s=cur(it.key).status;return S.filter==="all"||(S.filter==="todo"&&(s==="todo"||s==="edited"))||(S.filter==="changes"&&s==="changes")||(S.filter==="ok"&&s==="ok")}).map(it=>itemHTML(it)).join("") || `<p class="empty-note">Aucune slide dans ce filtre.</p>`;
+  ITEMS.forEach(it=>{const ta=document.getElementById("ed-"+it.key); if(ta){upd(it.key)} const cm=document.getElementById("cm-"+it.key); if(cm&&S.ui[it.key]?.cdraft) cm.value=S.ui[it.key].cdraft;});
+  const n=ITEMS.filter(it=>cur(it.key).status==="ok").length;
+  $("#prog-big").innerHTML=`${n}<small>/ ${ITEMS.length}</small>`; $("#prog-bar").style.width=(n/ITEMS.length*100)+"%";
+  $("#vid-status-txt").textContent=STATUS[cur("video").status];
+  $("#journal-list").innerHTML = S.history.length ? S.history.map(h=>evHTML(h,false)).join("") : `<p class="empty-note">${S.mode==="loading"?"Chargement de l'historique…":"Rien pour l'instant. Chaque validation, modification ou commentaire apparaîtra ici, signé et daté."}</p>`;
+}
+function upd(key){const ta=document.getElementById("ed-"+key),c=document.getElementById("cnt-"+key);if(!ta||!c)return;const n=ta.value.length;c.textContent=n+" / "+IG_MAX+" caractères";c.classList.toggle("over",n>IG_MAX)}
+document.addEventListener("input",e=>{if(e.target.dataset&&e.target.dataset.cnt)upd(e.target.dataset.cnt)});
+
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("[data-a]"); if(!b) return;
+  const a=b.dataset.a,k=b.dataset.k; const ui=S.ui[k]=S.ui[k]||{};
+  if(a==="zoom"){ openLb(k); return }
+  if(a==="edit"){ if(!author()) return; ui.edit=true; ui.comment=false; ui.draft=undefined; render(); document.getElementById("ed-"+k)?.focus(); return }
+  if(a==="cancel"){ ui.edit=false; ui.draft=undefined; render(); return }
+  if(a==="orig"){ ui.orig=!ui.orig; render(); return }
+  if(a==="hist"){ ui.hist=!ui.hist; render(); return }
+  if(a==="comment"){ if(!author()) return; ui.comment=true; render(); document.getElementById("cm-"+k)?.focus(); return }
+  if(a==="closec"){ ui.comment=false; ui.cdraft=""; render(); return }
+  if(a==="save"){
+    const t=document.getElementById("ed-"+k).value.replace(/\s+$/,""), note=document.getElementById("edn-"+k).value.trim();
+    if(t===cur(k).text && !note){ ui.edit=false; render(); return }
+    b.disabled=true;
+    if(await commit(k,{text:t,status:t.trim()?"edited":"empty"},{kind:"edit",text:t,note})){ ui.edit=false; ui.draft=undefined; toast("Nouvelle version enregistrée"); }
+    render(); return }
+  if(a==="ok"){ b.disabled=true; if(await commit(k,{status:"ok"},{kind:"ok"})) toast("Validé ✓"); render(); return }
+  if(a==="reopen"){ if(await commit(k,{status:"todo"},{kind:"todo"})) toast("Remis à valider"); render(); return }
+  if(a==="sendc"){
+    const t=document.getElementById("cm-"+k).value.trim(); if(!t){toast("Écris ce qu'il faut changer");return}
+    b.disabled=true;
+    if(await commit(k,{status:"changes"},{kind:"comment",note:t})){ ui.comment=false; ui.cdraft=""; toast("Demande envoyée"); }
+    render(); return }
+  if(a==="restore"){ const t=decodeURIComponent(b.dataset.t); if(await commit(k,{text:t,status:"edited"},{kind:"restore",text:t})) toast("Version restaurée"); render(); return }
+});
+document.querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>{S.filter=c.dataset.f;document.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x===c));render()}));
+
+function recapText(){
+  const L=["LA DRAFT 2K27 — retours sur la com (spot + carrousel)", (me.name?("Par "+me.name+" · "+me.org):"")+" — "+new Date().toLocaleDateString("fr-FR"),""];
+  ITEMS.forEach(it=>{
+    const c=cur(it.key); const lab=it.kind==="video"?"SPOT VIDÉO":"SLIDE "+it.num+" — "+it.title.toUpperCase();
+    L.push("■ "+lab+" : "+STATUS[c.status]);
+    S.history.filter(h=>h.item===it.key&&h.kind==="comment").reverse().forEach(h=>L.push("  → "+h.author+" : "+h.note));
+    if(c.changed||(it.kind==="video"&&c.text.trim())) L.push("  Texte proposé :","  "+c.text.split("\n").join("\n  "));
+    L.push("");
+  });
+  return L.join("\n");
+}
+async function copyRecap(){
+  const t=recapText();
+  try{ await navigator.clipboard.writeText(t); toast("Récap copié, colle-le dans WhatsApp ou un mail"); }
+  catch(e){ const ta=document.createElement("textarea"); ta.value=t; ta.style.cssText="position:fixed;inset:10% 5%;width:90%;height:80%;z-index:90;background:#fff;color:#000;padding:12px"; document.body.appendChild(ta); ta.select(); toast("Sélectionné : copie avec Ctrl/Cmd + C"); ta.addEventListener("blur",()=>ta.remove()); }
+}
+window.copyRecap=copyRecap;
+$("#copy-recap").addEventListener("click",copyRecap);
+
+/* Plein écran */
+const SLIDES=ITEMS.filter(i=>i.img); let lbI=-1;
+function openLb(k){ lbI=SLIDES.findIndex(i=>i.key===k); drawLb(); }
+function drawLb(){
+  let el=document.getElementById("lb");
+  if(lbI<0){ el&&el.remove(); return }
+  if(!el){ el=document.createElement("div"); el.id="lb"; el.className="lb"; el.setAttribute("role","dialog"); el.setAttribute("aria-label","Visuel en plein écran"); document.body.appendChild(el);
+    el.addEventListener("click",e=>{ const t=e.target.closest("[data-lb]"); if(t){ e.stopPropagation(); const v=t.dataset.lb; if(v==="x") lbI=-1; else lbI=(lbI+(+v)+SLIDES.length)%SLIDES.length; drawLb(); } else if(e.target===el){ lbI=-1; drawLb(); } }); }
+  const it=SLIDES[lbI];
+  el.innerHTML=`<button class="lbb" data-lb="-1" aria-label="Slide précédente">‹</button><img src="${it.img}" alt="Slide ${it.num} : ${esc(it.title)}"><button class="lbb" data-lb="1" aria-label="Slide suivante">›</button><button class="lbb lbx" data-lb="x">Fermer ✕</button><span class="cap">Slide ${it.num} / 10 · ${esc(it.title)} · ${STATUS[cur(it.key).status]}</span>`;
+  el.querySelector(".lbx").focus();
+}
+document.addEventListener("keydown",e=>{ if(lbI<0) return; if(e.key==="Escape"){lbI=-1;drawLb()} if(e.key==="ArrowRight"){lbI=(lbI+1)%SLIDES.length;drawLb()} if(e.key==="ArrowLeft"){lbI=(lbI-1+SLIDES.length)%SLIDES.length;drawLb()} });
+
+/* Démarrage */
+render();
+const SB_URL="https://tmlpxvahhsepxxqcnlrv.supabase.co", SB_KEY="sb_publishable_K5GgHOTYXFRD7rBe1_zemg_Ir8I1sMf";
+let SB=null;
+async function pull(){
+  const [a,b]=await Promise.all([
+    SB.from("draft2k27_validation_items").select("key,text,status,author,at"),
+    SB.from("draft2k27_validation_history").select("item,kind,text,note,author,at").order("at",{ascending:false}).limit(500)
+  ]);
+  if(a.error) throw a.error; if(b.error) throw b.error;
+  const m={}; a.data.forEach(r=>m[r.key]=r); S.items=m; S.history=b.data; render();
+}
+let pullT=null; const schedulePull=()=>{clearTimeout(pullT);pullT=setTimeout(()=>pull().catch(()=>{}),250)};
+(async()=>{
+  try{
+    if(!window.supabase) throw new Error("lib");
+    SB=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false}});
+    await Promise.race([pull(), new Promise((_,r)=>setTimeout(()=>r(new Error("timeout")),10000))]);
+    setMode("live");
+    SB.channel("ld27").on("postgres_changes",{event:"*",schema:"public",table:"draft2k27_validation_items"},schedulePull)
+      .on("postgres_changes",{event:"*",schema:"public",table:"draft2k27_validation_history"},schedulePull).subscribe();
+    document.addEventListener("visibilitychange",()=>{ if(!document.hidden) schedulePull(); });
+  }catch(e){
+    console.error(e); loadLocal(); setMode("local","La sauvegarde en ligne ne répond pas."); render();
+  }
+})();
+</script>
+
+</body></html>
