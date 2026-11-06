@@ -90,10 +90,10 @@ h2 span{color:var(--red)}
 .arc span{display:block;font:600 13px/1.2 var(--f-cond);text-transform:uppercase;letter-spacing:.04em;color:var(--paper-dim);margin-top:4px}
 .card.light .arc span{color:#4a4143}
 .steps{counter-reset:s;display:grid;gap:10px;margin-top:12px;padding:0;list-style:none}
-.steps li{counter-increment:s;display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:start;font:600 17px/1.25 var(--f-cond);text-transform:uppercase}
-.steps li::before{content:counter(s);width:32px;height:32px;border-radius:50%;border:2px solid currentColor;display:grid;place-items:center;font:400 17px var(--f-display);color:var(--red-hot)}
+.steps li{counter-increment:s;position:relative;display:block;min-height:32px;padding:4px 0 0 46px;font:600 17px/1.25 var(--f-cond);text-transform:uppercase;min-width:0}
+.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:32px;height:32px;border-radius:50%;border:2px solid currentColor;display:grid;place-items:center;font:400 17px var(--f-display);color:var(--red-hot)}
 .card.light .steps li::before{color:var(--red)}
-.steps small{display:block;font:400 14px/1.4 var(--f-body);text-transform:none;color:var(--paper-dim);margin-top:2px}
+.steps small{display:block;margin-top:4px;font:400 14px/1.4 var(--f-body);text-transform:none;color:var(--paper-dim);margin-top:2px}
 .card.light .steps small{color:#4a4143}
 
 /* Items */
@@ -164,9 +164,14 @@ h2 span{color:var(--red)}
 footer{padding-block:40px 60px;border-top:1px solid var(--line);margin-top:30px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between;font:700 13px var(--f-cond);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 footer .ld{font-size:44px}
 
+
+/* Texte courant : justifié, sans césure */
+.card p,.steps small,.desc:not(.empty),.orig,.banner span,.ev .x,.ev .note,.hero p.lede,.sh .sub{text-align:justify;text-align-last:left;hyphens:manual;-webkit-hyphens:manual;word-break:normal;overflow-wrap:break-word}
+.hero p.lede,.sh .sub{text-align:left}
 @media (max-width:900px){
   .hero{grid-template-columns:1fr}
-  .poster{justify-self:start;max-width:260px;margin-left:20px}
+  .poster{justify-self:start;max-width:260px;margin-left:8px}
+  .poster .hand{left:auto;right:-8px;bottom:-22px;font-size:18px}
   .c3,.c4,.c5{grid-column:span 6}.c6,.c7,.c8{grid-column:span 12}
   .item,.item.video{grid-template-columns:1fr}
   .item:not(.video) .media{position:relative;top:auto}
