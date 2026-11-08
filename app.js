@@ -1,5 +1,5 @@
 const ITEMS = [
-{key:"video",num:"▶",kind:"video",title:"Spot de lancement",sub:"Vidéo · 61 s",src:"https://cdn.jsdelivr.net/gh/estel-ila/ILA@8883bb21752ca93d63d8d46b75429d2a6ed4e83c/spot.mp4",poster:"https://cdn.jsdelivr.net/gh/estel-ila/ILA@8883bb21752ca93d63d8d46b75429d2a6ed4e83c/poster.jpg",onVisual:[],text:""},
+{key:"video",num:"▶",kind:"video",title:"Spot de lancement",sub:"Vidéo · 59 s",src:"https://cdn.jsdelivr.net/gh/estel-ila/ILA@d7e492bbf1f930073d2308d3d387341ace1886e8/spot-v2.mp4",poster:"https://cdn.jsdelivr.net/gh/estel-ila/ILA@d7e492bbf1f930073d2308d3d387341ace1886e8/poster-v2.jpg",onVisual:[],text:""},
 {key:"s01",num:"01",title:"L'affiche principale",onVisual:["LA DRAFT 2K27","ILA × Banlieusard Nouveau","10 jeunes cracks. 2 équipes. Et toi ?","Réalisation / Tournage","Communication digitale","Appel à candidatures","16–30 ans · Île-de-France","Jusqu'au 30 novembre 2026","Découvre ce qui t'attend →"],
 text:`10 talents. 2 équipes. Une première sélection à marquer de ton empreinte.
 
