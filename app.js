@@ -206,6 +206,7 @@ function itemHTML(it,bodyOnly){
   const orig = ui.orig && c.changed ? `<div class="orig">${esc(it.text)}</div>`:"";
   const acts = ui.edit ? "" : `<div class="acts">
       <button class="btn ok" data-a="ok" data-k="${it.key}" ${!c.text.trim()||c.status==="ok"?"disabled":""}>✓ Valider</button>
+      <button class="btn paper" data-a="copy" data-k="${it.key}" ${!c.text.trim()?"disabled":""} title="Copie la description avec ses sauts de ligne, prête à coller sur Instagram">⧉ Copier le texte</button>
       <button class="btn" data-a="edit" data-k="${it.key}">Modifier</button>
       <button class="btn" data-a="comment" data-k="${it.key}">Demander une modif</button>
       <button class="btn" data-a="hist" data-k="${it.key}">Historique (${hist.length})</button>
@@ -248,6 +249,7 @@ document.addEventListener("input",e=>{if(e.target.dataset&&e.target.dataset.cnt)
 document.addEventListener("click",async e=>{
   const b=e.target.closest("[data-a]"); if(!b) return;
   const a=b.dataset.a,k=b.dataset.k; const ui=S.ui[k]=S.ui[k]||{};
+  if(a==="copy"){ copyDesc(k,b); return }
   if(a==="zoom"){ openLb(k); return }
   if(a==="edit"){ if(!author()) return; ui.edit=true; ui.comment=false; ui.draft=undefined; render(); document.getElementById("ed-"+k)?.focus(); return }
   if(a==="cancel"){ ui.edit=false; ui.draft=undefined; render(); return }
@@ -272,6 +274,19 @@ document.addEventListener("click",async e=>{
 });
 document.querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>{S.filter=c.dataset.f;document.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x===c));render()}));
 
+async function copyDesc(k,btn){
+  const t=cur(k).text.replace(/\r\n?/g,"\n");
+  if(!t.trim()) return;
+  const done=()=>{ toast("Description copiée, sauts de ligne compris"); if(btn){ const h=btn.innerHTML; btn.innerHTML="✓ Copié"; setTimeout(()=>{ if(btn.isConnected) btn.innerHTML=h },1600); } };
+  try{ await navigator.clipboard.writeText(t); done(); return; }catch(e){}
+  const ta=document.createElement("textarea"); ta.value=t; ta.setAttribute("readonly",""); ta.style.cssText="position:fixed;top:0;left:0;width:1px;height:1px;opacity:0";
+  document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,t.length);
+  let ok=false; try{ ok=document.execCommand("copy"); }catch(e){}
+  ta.remove();
+  if(ok){ done(); return; }
+  const box=document.createElement("textarea"); box.value=t; box.style.cssText="position:fixed;inset:10% 5%;width:90%;height:80%;z-index:95;background:#fff;color:#000;padding:14px;border-radius:12px;font:15px/1.5 sans-serif";
+  document.body.appendChild(box); box.focus(); box.select(); toast("Texte sélectionné : copie avec Ctrl/Cmd + C"); box.addEventListener("blur",()=>box.remove());
+}
 function recapText(){
   const L=["LA DRAFT 2K27 — retours sur la com (spot + carrousel)", (me.name?("Par "+me.name+" · "+me.org):"")+" — "+new Date().toLocaleDateString("fr-FR"),""];
   ITEMS.forEach(it=>{
