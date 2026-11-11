@@ -1,3 +1,17 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#170C0B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Suivi Com">
+<meta name="format-detection" content="telephone=no">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-text-size-adjust:100%;text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
 <title>Suivi Com Partenaires</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
@@ -637,6 +651,7 @@ h1,h2,.kpi .n,.g-center b,.phead h2,.cal-head h2,.lday h3 small{letter-spacing:-
   .lday{padding:12px 0}
 }
 @media (max-width:640px){.ficheTop .thumb{max-width:150px}.ficheTop>.grid{grid-template-columns:150px 1fr;align-items:end}.ficheTop>.grid>.thumb{grid-row:span 3}.pf-foot .hide-m{display:none}.pf-foot .btn.sm .lbl{display:none}.pf-foot .btn.sm{width:44px;padding:0}.pf-foot{flex-wrap:nowrap}.pf-foot>span[style]{display:none}}
+@media (max-width:860px){.gtrio{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(150px,1fr);overflow-x:auto;scrollbar-width:none;gap:10px;padding-bottom:4px}.gtrio .gtile{flex-direction:column;text-align:center;padding:12px 8px}.gtrio .gtile>div:last-child{align-items:center}.gtrio .gauge{transform:scale(.82);margin:-10px 0}.gmain .gauge{transform:scale(.85);margin:-12px auto}.gmain{gap:6px}.gl{min-width:0!important}.st4 .gauge{transform:scale(.85);margin:-8px 0}.weekstrip .wcard{flex-basis:132px}.cal-head .btn.sm{padding:0 10px}}
 @media (max-width:420px){.st4{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}.stcard{padding:10px;border-radius:20px}.tcard .tf{grid-template-columns:minmax(0,1fr)}}
 
 /* ---------- V4 : système de matières (verre, neumorphisme, ombre interne, lueurs, ombre portée, biseau, satin, texture) ----------
@@ -1315,7 +1330,7 @@ function genThumb(c){
  else if(v===2)shapes=`<rect x="200" y="0" width="200" height="500" fill="${a}"/><circle cx="200" cy="230" r="110" fill="${b}"/>`;
  else shapes=`<path d="M0 380 L400 60 L400 500 L0 500Z" fill="${a}"/><circle cx="110" cy="140" r="60" fill="none" stroke="${b}" stroke-width="18"/>`;
  const fmt=esc(String(c.format||'Post').toUpperCase());
- const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><rect width="400" height="500" fill="${bg}"/>${shapes}<rect x="0" y="392" width="400" height="108" fill="${bg}" opacity=".92"/><text x="26" y="440" font-family="Helvetica,Arial,sans-serif" font-size="30" font-weight="700" fill="${tx}" letter-spacing="1">${fmt}</text><text x="26" y="474" font-family="Helvetica,Arial,sans-serif" font-size="20" fill="${tx}" opacity=".7">${esc(p?p.name:'')}</text><text x="374" y="474" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="16" font-weight="700" fill="${tx}" opacity=".7">DÉMO</text></svg>`;
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><rect width="400" height="500" fill="${bg}"/>${shapes}<rect x="0" y="392" width="400" height="108" fill="${bg}" opacity=".92"/><text x="26" y="440" font-family="Helvetica,Arial,sans-serif" font-size="30" font-weight="700" fill="${tx}" letter-spacing="1">${fmt}</text><text x="26" y="474" font-family="Helvetica,Arial,sans-serif" font-size="20" fill="${tx}" opacity=".7">${esc(p?p.name:'')}</text><text x="374" y="474" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="16" font-weight="700" fill="${tx}" opacity=".7">${S.demo?'DÉMO':''}</text></svg>`;
  return thumbCache[key]='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
 }
 const thumbSrc=c=>c.thumb||genThumb(c);
@@ -1557,14 +1572,15 @@ function pageDashboard(){
 function pageContents(){
  const f=ui.cf;
  let cs=visibleContents().filter(c=>(!f.partner||c.partnerId===f.partner)&&(!f.buckets.length||f.buckets.includes(gstat(c)))&&(!f.owner||c.owner===f.owner)&&(!f.q||(c.title+' '+c.description).toLowerCase().includes(f.q.toLowerCase())));
- cs=cs.slice().sort((a,b)=>((nextPub(a)||firstPub(a)||{date:'9'}).date).localeCompare((nextPub(b)||firstPub(b)||{date:'9'}).date));
+ const rk=c=>{const g=gstat(c);const np=nextPub(c);if(g==='publie'){const f=(c.platforms||[]).map(x=>x.date).filter(Boolean).sort().pop()||'0000';return '3'+(99999999-+f.replace(/-/g,''))}if(np&&np.date>=TODAY)return '0'+np.date;if(np&&np.date)return '1'+np.date;return '2'};
+ cs=cs.slice().sort((a,b)=>rk(a).localeCompare(rk(b)));
  return `
  <div class="fbar">
   <div class="fbar-row"><div class="search">${icon('search')}<input type="search" id="cf-q" placeholder="Rechercher un contenu" value="${esc(f.q)}" aria-label="Rechercher"></div>${fseg('cf','owner',[['','Tous'],...teamUsers().map(u=>[u.id,u.name])])}<span style="flex:1"></span>${can('contenus_creer')?`<button class="btn primary" data-act="new-content" data-partner="${f.partner}">${icon('plus')}Nouveau contenu</button>`:''}</div>
   <div class="fbar-row">${pchips('cf','partner')}</div>
   <div class="fbar-row"><span class="flabel">Statuts</span>${fchips('cf','buckets',Object.keys(GS).map(k=>[k,GS[k],`<i class="sdot s-${k}"></i>`]),true)}</div>
  </div>
- <div class="muted" style="margin:-6px 0 14px;font-size:13px">${cs.length} contenu(s) · triés par prochaine publication</div>
+ <div class="muted" style="margin:-6px 0 14px;font-size:13px">${cs.length} contenu(s) · à venir d'abord, puis à planifier, puis publiés</div>
  ${cs.length?`<div class="cgrid">${cs.map(contentCard).join('')}</div>`:'<div class="empty">Aucun contenu ne correspond à ces filtres.</div>'}`;
 }
 
@@ -2392,3 +2408,6 @@ render();
 if(ONLINE){bootOnline().catch(e=>{ui.boot='error';ui.bootErr=e.message;render()});if(ui.route==='administration')setTimeout(loadMembers,1500)}
 })();
 </script>
+
+</body>
+</html>
