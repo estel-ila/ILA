@@ -1,11 +1,12 @@
 {
   "name": "Suivi Com Partenaires — ILA",
   "short_name": "Suivi Com",
-  "description": "Pilotage de la communication des partenaires ILA : calendrier, production, échanges et récaps.",
+  "description": "Pilotage de la communication des partenaires ILA",
   "lang": "fr",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#170C0B",
   "theme_color": "#170C0B",
   "icons": [
