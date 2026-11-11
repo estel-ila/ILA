@@ -864,6 +864,66 @@ body::before{background:#170C0B}
 @keyframes spin{to{transform:rotate(360deg)}}
 input[type=password]{width:100%;border:0;border-radius:15px;padding:11px 14px;font-size:16px;background-color:#ECE8E3;box-shadow:var(--in-sh)}
 input[type=password]:focus{outline:0;background-color:#F5F2EE;box-shadow:var(--in-sh),var(--glow-b)}
+/* descriptions */
+.dbox{display:grid;gap:10px;padding:16px;border-radius:22px;background:var(--neu);box-shadow:var(--neu-sh-sm);margin-bottom:12px;min-width:0;border-left:4px solid transparent}
+.dbox.ds-a_valider{border-left-color:#E8A23A}.dbox.ds-validee{border-left-color:#2BA866}.dbox.ds-a_revoir{border-left-color:var(--red)}.dbox.ds-commune{opacity:.85}
+.dbox h3{font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px}
+.dbox textarea{min-height:120px}
+.chip.dchip.ds-brouillon,.chip.dchip.ds-commune{background:rgba(14,14,14,.07);color:var(--muted);box-shadow:none}
+.chip.dchip.ds-a_valider{background:#FFF1DC;color:#9A5B00}
+.chip.dchip.ds-validee{background:var(--ok-soft);color:var(--ok)}
+.chip.dchip.ds-a_revoir{background:var(--red-soft);color:var(--red-ink)}
+.dmeta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
+.dtext{margin:0;font-size:13.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.dtext.sm{font-size:12.5px;color:var(--ink-2)}
+.dhist summary{cursor:pointer;font-size:12.5px;font-weight:700;color:var(--ink-2);padding:4px 0}
+.dh{padding:8px 0;border-top:1px solid rgba(14,14,14,.07);font-size:12.5px}
+.dh1{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline}.dh1 small{margin-left:auto;color:var(--muted)}
+.dh2{margin-top:4px;display:grid;gap:3px;overflow-wrap:anywhere}
+.dh2 del{color:#8A8381;text-decoration:line-through}.dh2 ins{text-decoration:none;color:var(--ink);background:rgba(43,168,102,.1);border-radius:4px;padding:1px 4px}
+.dlink{display:flex;align-items:center;gap:10px;justify-content:space-between;border:0;width:100%;text-align:left;padding:11px 14px;border-radius:15px;background:#ECE8E3;box-shadow:var(--in-sh);color:var(--ink-2);font-size:13px;min-width:0}
+.dlink span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dlink b{flex:none;font-size:12px;color:var(--ink)}
+.sheet-role{margin-top:6px}
+/* mobile : finitions, lueurs contenues, défilement signalé */
+@media (max-width:860px){
+  :root{--glow-w:0 0 0 1.5px rgba(255,214,150,.95),inset 0 0 10px rgba(255,205,140,.5);--glow-r:0 0 0 1px rgba(255,140,130,.55);--neu-sh:-2px -2px 6px rgba(255,255,255,.6),3px 5px 12px rgba(80,50,40,.22);--neu-sh-sm:-1px -1px 4px rgba(255,255,255,.7),2px 3px 8px rgba(80,50,40,.2)}
+  .card,.ccard,.topbar,.month{box-shadow:var(--glass-edge),0 12px 24px -14px rgba(0,0,0,.55)}
+  .kpi:not(.dark):not(.redc),.litem{box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 10px 20px -12px rgba(0,0,0,.5)}
+  .card.redc{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 12px 24px -14px rgba(120,10,5,.7)}
+  .card.dark,.side,.demo-band,.bnav,.toast{box-shadow:var(--satin-edge),0 14px 28px -16px rgba(0,0,0,.7)}
+  .btn.primary{box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -2px 0 rgba(90,0,0,.25),0 6px 14px -8px rgba(160,10,5,.8)}
+  .fab{box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 0 1px rgba(255,150,140,.45),0 10px 20px -8px rgba(0,0,0,.6)}
+  .dd{box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -2px 0 rgba(0,0,0,.18)}
+  .chip.alert,.day.today .dn span,.stepper div.cur i::after,.pchip.on .plogo,.savechip i{box-shadow:none}
+  .thumb .dot{box-shadow:0 0 0 2px rgba(255,255,255,.9)}
+  .nav button.on::after{box-shadow:none}
+  .glow::before{width:170px;height:170px;right:-50px;top:-60px;opacity:.28}
+  .ccard:hover,.pcard:hover,.dcard:hover,.pcom:hover,.gp:hover,.litem:hover,.kpi:hover,.pchip:hover,.witem:hover,.btn:hover{transform:none}
+  .pchips,.anchors,.tabs,.mscroll,.ggrid,.gtrio,.weekstrip{-webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 28px),transparent)}
+  .pchips{padding:4px 28px 8px 2px}
+  .anchors{padding-right:28px}
+  .topbar .role{display:none}
+  .topbar h1{font-size:19px}
+  .cal-head h2{order:-1;flex:1 1 100%;min-width:0;font-size:22px}
+  .gmain{flex-direction:column;align-items:stretch;gap:4px}
+  .gmain .gauge{align-self:center;transform:none;margin:0}
+  .gmain .gl{width:100%;min-width:0}
+  .tabs{margin:0 12px}
+  .tabs button{padding:8px 12px;font-size:12.5px}
+  .modal .ph{gap:10px}
+  .ph h2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+}
+@media (max-width:560px){
+  .st4{grid-template-columns:minmax(0,1fr)}
+  .stcard{display:grid;grid-template-columns:96px minmax(0,1fr);column-gap:12px;row-gap:6px;align-items:center}
+  .stcard .sh{grid-column:1/-1}
+  .stcard .gwrap{grid-column:1;grid-row:2/span 4;transform:none}
+  .stcard .gauge{transform:scale(.9);margin:0}
+  .stcard>.stitem,.stcard>.muted{grid-column:2}
+  .qvals{grid-template-columns:minmax(0,1fr)}
+  .qvals .btn{height:44px}
+  .kpi .n{font-size:36px}
+}
 /* Report page (fixed A4 px) */
 .rp-page{width:794px;height:1123px;background:#fff;color:#0E0E0E;font-family:"Helvetica Now Display","HelveticaNowDisplay","Helvetica Neue",Helvetica,Arial,sans-serif;padding:48px 52px 40px;display:flex;flex-direction:column;overflow:hidden;position:relative}
 .rp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
@@ -961,6 +1021,7 @@ const PERMS=[
  ['production_avancer','Faire avancer la production','Statuts de production, blocages, éléments manquants.'],
  ['publication_planifier','Planifier les publications','Dates, horaires, comptes, collaborations, liens publiés.'],
  ['valider','Valider définitivement','Décision finale de validation (réservée à Estelle par défaut).'],
+ ['valider_descriptions','Valider les descriptions','Relire et valider le texte de chaque plateforme.'],
  ['echanges','Consigner les échanges','Ajouter et clôturer les échanges et prochaines actions.'],
  ['partenaires_gerer','Gérer partenaires et projets','Créer et modifier partenaires, contacts, projets, événements.'],
  ['comptes_rendus','Préparer les comptes rendus','Générer l\'aperçu et exporter en PDF.'],
@@ -1163,6 +1224,8 @@ function prodOf(c){const ts=TASKS.map(([k])=>c.tasks&&c.tasks[k]).filter(t=>t&&t
 const TASK_SEED={c3:{retouche:'en_cours'},c7:{retouche:'fait',description:'en_cours'},c10:{montage:'en_cours',miniature:'fait',description:'fait'},c12:{montage:'en_cours'},c17:{description:'fait'},c11:{description:'en_cours'}};
 const COLOR_SEED={ph:'#10A37F',rcs:'#2F6BFF',sk:'#7C4DFF',vc:'#00A8C6',an:'#F59E0B'};
 function migrate(D_){
+ (D_.users||[]).forEach(u=>{if(u.role==='equipe'&&u.perms&&u.perms.valider_descriptions===undefined)u.perms.valider_descriptions=(u.id==='yassine')});
+ D_.contents.forEach(c=>{if(!c.descReview)c.descReview={};if(!c.descHistory)c.descHistory=[]});
  D_.partners.forEach((p,i)=>{if(!p.color)p.color=COLOR_SEED[p.id]||PCOLORS[i%PCOLORS.length][0]});
  D_.contents.forEach(c=>{if(!c.tasks){c.tasks=defaultTasks(c,c.prod==='termine'?'done':'todo');const o=TASK_SEED[c.id];if(o&&D_.demo)Object.entries(o).forEach(([k,v])=>{if(c.tasks[k])c.tasks[k].state=v});c._fmt=c.format;c.prod=prodOf(c)}if(c._fmt===undefined)c._fmt=c.format});
  D_.reports=D_.reports||[];D_.reports.forEach(r=>{if(r.sentAt===undefined){r.sentAt='';r.sentChannel='';r.sentTo='';r.sentBy=''}});
@@ -1395,7 +1458,7 @@ function render(){
   ${bottom.map(([k,l,i])=>`<button data-go="${k}" class="${isOn(k)?'on':''}">${icon(i)}<span>${l.replace('Tableau de bord','Accueil').replace('Utilisateurs et droits','Droits')}</span></button>`).join('')}
   ${isPartner()?'':`<button data-act="sheet" class="${['contenus','comptes-rendus','administration'].includes(ui.route)?'on':''}">${icon('more')}<span>Plus</span></button>`}
  </nav>
- ${ui.sheet?`<div class="sheet" data-act="sheet-close"><div class="sheet-in" data-stop>${items.filter(x=>!bottom.includes(x)).map(([k,l,i])=>`<button data-go="${k}">${icon(i)}${l}</button>`).join('')}</div></div>`:''}
+ ${ui.sheet?`<div class="sheet" data-act="sheet-close"><div class="sheet-in" data-stop>${items.filter(x=>!bottom.includes(x)).map(([k,l,i])=>`<button data-go="${k}">${icon(i)}${l}</button>`).join('')}${!ONLINE||(ME&&ME.role==='admin')?`<label class="fld sheet-role"><span>Voir en tant que</span><select id="role-sel2">${roleOpts}</select></label>`:''}${ONLINE?'<button data-act="logout">'+icon('x')+'Se déconnecter</button>':''}</div></div>`:''}
  ${!isPartner()?`<button class="fab ${ui.fab?'on':''}" data-act="fab" aria-label="Actions rapides" aria-expanded="${!!ui.fab}">${icon('plus')}</button>`:''}
  ${ui.fab?`<div class="sheet" data-act="fab-close"><div class="sheet-in" data-stop><div class="eyebrow" style="padding:0 4px 4px">Actions rapides</div>${can('contenus_creer')?`<button data-act="new-content" data-partner="${ui.dash.partner||''}">${icon('img')}Nouveau contenu</button>`:''}${can('echanges')?`<button data-act="new-exchange" data-partner="${ui.dash.partner||''}">${icon('chat')}Consigner un échange</button>`:''}${can('partenaires_gerer')?`<button data-act="new-event">${icon('cal')}Nouvel événement</button>`:''}${can('comptes_rendus')?`<button data-go="comptes-rendus">${icon('doc')}Préparer ou noter un récap PDF</button>`:''}</div></div>`:''}
  <div id="modal-root">${ui.modal?renderModal():''}</div>
@@ -1443,6 +1506,20 @@ function partnerSelect(id,val,{all=true,label='Tous les partenaires',f='',dis=fa
  return `<select id="${id}" ${f?`data-f="${f}"`:''} ${dis?'disabled':''}>${all?`<option value="">${label}</option>`:''}${S.partners.map(p=>`<option value="${p.id}" ${val===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}</select>`;
 }
 
+const DSTAT={brouillon:'Brouillon',a_valider:'À valider',validee:'Validée',a_revoir:'À revoir',commune:'Reprend la commune'};
+const PLIM={Instagram:2200,TikTok:2200,LinkedIn:3000,Facebook:63206,YouTube:5000,X:280,Newsletter:10000};
+function descKeys(c){const ks=[{k:'common',label:'Description commune',pf:null,text:c.description||'',path:'description',limit:2200}];(c.platforms||[]).forEach((x,i)=>ks.push({k:x.id,label:x.platform,pf:x.platform,text:x.text||'',path:'platforms.'+i+'.text',limit:PLIM[x.platform]||2200}));return ks}
+function descReq(c){const ks=descKeys(c);const pl=ks.filter(k=>k.pf);const out=pl.filter(k=>k.text.trim());if(!pl.length||pl.some(k=>!k.text.trim())||c.description.trim())out.unshift(ks[0]);return out.filter(k=>k.text.trim()||k.k==='common')}
+function dStatus(c,K){if(K.pf&&!K.text.trim())return 'commune';const r=(c.descReview||{})[K.k];if(!K.text.trim())return 'brouillon';return r&&r.status?r.status:'a_valider'}
+function trunc(t,n=160){t=String(t||'');return t.length>n?t.slice(0,n)+'…':t}
+function descValidator(){const u=S.users.find(x=>x.role==='equipe'&&x.perms&&x.perms.valider_descriptions);return u?u.name:'Estelle'}
+const canValDesc=pid=>!isPartner()&&(isAdmin()||can('valider_descriptions',pid));
+function trackDescs(o,n){n.descReview=n.descReview||{};n.descHistory=n.descHistory||[];const at=nowStamp(),by=me().id;
+ descKeys(n).forEach(K=>{let before='';if(o){if(K.k==='common')before=o.description||'';else{const op=(o.platforms||[]).find(x=>x.id===K.k);before=op?op.text||'':''}}
+  if((before||'')!==(K.text||'')){n.descHistory.push({at,by,key:K.k,label:K.label,action:before?'Texte modifié':'Texte rédigé',before,after:K.text});n.descReview[K.k]={status:K.text.trim()?'a_valider':'brouillon',by:'',at:'',note:''}}});
+ if(n.descHistory.length>120)n.descHistory=n.descHistory.slice(-120)}
+function syncDescTask(c){const t=c.tasks&&c.tasks.description;if(!t||t.state==='na')return;const req=descReq(c).filter(K=>K.text.trim());if(!req.length)return;const st=req.map(K=>dStatus(c,K));if(st.every(x=>x==='validee'))t.state='fait';else if(t.state==='fait'||t.state==='a_faire')t.state='en_cours'}
+function setDescReview(c,k,status,note){c.descReview=c.descReview||{};c.descHistory=c.descHistory||[];const K=descKeys(c).find(x=>x.k===k);if(!K)return;c.descReview[k]={status,by:me().id,at:nowStamp(),note:note||''};c.descHistory.push({at:nowStamp(),by:me().id,key:k,label:K.label,action:status==='validee'?'Description validée':'Reprise demandée',note:note||''});syncDescTask(c)}
 function pick(path,opts,val,{dis=false,rerender=false,cls=''}={}){
  return `<div class="opts ${cls}" role="radiogroup" data-pickgroup ${rerender?'data-rerender':''}><input type="hidden" data-f="${path}" value="${esc(val)}" ${dis?'disabled':''}>${opts.map(([v,l,pre])=>{const on=String(v)===String(val);return `<button type="button" role="radio" aria-checked="${on}" class="opt ${on?'on':''}" data-pick="${esc(v)}" ${dis?'disabled':''}>${pre||''}<span>${esc(l)}</span></button>`}).join('')}</div>`;
 }
@@ -1550,6 +1627,8 @@ function pageDashboard(){
   </div>
 
   <div class="col5">
+   ${(()=>{const items=[];cs.filter(c=>gstat(c)!=='publie').forEach(c=>descReq(c).forEach(K=>{const st=dStatus(c,K);if(K.text.trim()&&(st==='a_valider'||st==='a_revoir'))items.push({c,K,st})}));const mine=canValDesc();
+    return `<section class="card white"><div class="card-h"><div><div class="eyebrow ${mine?'red':''}">Descriptions</div><h2>${mine?'À relire et valider':'En attente de validation'}</h2></div><span class="muted">${items.length}</span></div>${items.length?`<div class="list">${items.slice(0,8).map(({c,K,st})=>`<button class="li" data-act="open-desc" data-id="${c.id}">${thumbImg(c,'mini')}<div class="li-b"><div class="li-t">${esc(c.title)}</div><div class="li-s">${K.pf?K.pf:'Commune'} · ${esc(trunc(K.text,60))}</div></div><div class="li-r"><span class="chip dchip ds-${st}">${DSTAT[st]}</span></div></button>`).join('')}</div>${items.length>8?`<div class="muted" style="font-size:12px;margin-top:6px">+${items.length-8} autre(s)</div>`:''}`:`<div class="empty">Toutes les descriptions rédigées sont validées.</div>`}<p class="muted" style="font-size:12px;margin:10px 0 0">Validation par ${esc(descValidator())}.</p></section>`})()}
    ${recapcard}
    <section class="card white">
     <div class="card-h"><div><div class="eyebrow red">Validations en attente</div><h2>Retours partenaires attendus</h2></div><span class="muted">${pendingVal.length}</span></div>
@@ -1979,7 +2058,8 @@ function modalContent(){
  const canMod=!pv&&(isNew?can('contenus_creer'):can('contenus_modifier',c.partnerId));
  const canProd=!pv&&can('production_avancer',c.partnerId);
  const canPlan=!pv&&can('publication_planifier',c.partnerId);
- const tabs=pv?[['fiche','Fiche'],['plateformes','Plateformes'],['validation','Validation et commentaires']]:[['fiche','Fiche'],['plateformes','Plateformes'+(c.platforms.length?` (${c.platforms.length})`:'')],['validation','Validation et commentaires'],['historique','Historique']];
+ const nDesc=descReq(c).filter(K=>['a_valider','a_revoir'].includes(dStatus(c,K))).length;
+ const tabs=pv?[['fiche','Fiche'],['plateformes','Plateformes'],['validation','Validation']]:[['fiche','Fiche'],['descriptions','Descriptions'+(nDesc?` · ${nDesc}`:'')],['plateformes','Plateformes'+(c.platforms.length?` (${c.platforms.length})`:'')],['validation','Validation'],['historique','Historique']];
  const tab=m.tab||'fiche';
  const dis=f=>f?'':'disabled';
  let body='';
@@ -2013,7 +2093,7 @@ function modalContent(){
     </div></div>
     <div class="box" style="margin-top:14px"><h3>Contenu</h3><div class="form">
      <label class="fld full"><span>Brief</span><textarea data-f="brief" ${dis(canMod)} placeholder="Intention, ton, éléments à montrer">${esc(c.brief)}</textarea></label>
-     <label class="fld full"><span>Description du post</span><textarea data-f="description" ${dis(canMod)} placeholder="Texte commun. Un texte spécifique peut être saisi par plateforme.">${esc(c.description)}</textarea></label>
+     <div class="fld full"><span>Descriptions</span><button type="button" class="dlink" data-act="tab" data-tab="descriptions"><span>${esc(trunc(c.description||'Aucune description commune',110))}</span><b>${descReq(c).length} texte(s) · ${nDesc?nDesc+' à relire':'à jour'} ›</b></button></div>
      <div class="fld full"><span>Médias associés (liens)</span>
       ${c.media.map((x,i)=>`<div class="collab-row" style="grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) 32px"><input type="text" data-f="media.${i}.label" value="${esc(x.label)}" placeholder="Nom" ${dis(canMod)}><input type="url" data-f="media.${i}.url" value="${esc(x.url)}" placeholder="https://…" ${dis(canMod)}>${canMod?`<button class="btn sm icon ghost" data-act="media-del" data-i="${i}" aria-label="Retirer">${icon('x')}</button>`:'<span></span>'}</div>`).join('')}
       ${canMod?`<div><button class="btn sm ghost" data-act="media-add">${icon('plus')}Ajouter un lien (Drive, WeTransfer…)</button></div>`:''}
@@ -2033,7 +2113,7 @@ function modalContent(){
    <div class="form">
     <label class="fld"><span>Date de publication</span><input type="date" data-f="platforms.${i}.date" value="${esc(x.date)}"></label>
     <label class="fld"><span>Horaire</span><input type="time" data-f="platforms.${i}.time" value="${esc(x.time)}"></label>
-    <label class="fld full"><span>Texte spécifique ${esc(x.platform)}</span><textarea data-f="platforms.${i}.text" style="min-height:70px" placeholder="Vide = description commune">${esc(x.text)}</textarea></label>
+    <div class="fld full"><span>Texte ${esc(x.platform)}</span><button type="button" class="dlink" data-act="tab" data-tab="descriptions"><span>${esc(trunc(x.text||'Reprend la description commune',100))}</span><b>${DSTAT[dStatus(c,{k:x.id,pf:x.platform,text:x.text||''})]} ›</b></button></div>
     <label class="fld"><span>Comptes qui publient</span><input type="text" data-f="platforms.${i}.accounts" data-list value="${esc((x.accounts||[]).join(', '))}" placeholder="@compte, séparés par des virgules"></label>
     <label class="fld"><span>Comptes à identifier</span><input type="text" data-f="platforms.${i}.tags" data-list value="${esc((x.tags||[]).join(', '))}" placeholder="@compte1, @compte2"></label>
     <div class="fld full"><span>Collaborations (invitations à suivre manuellement)</span>
@@ -2065,6 +2145,19 @@ function modalContent(){
    ${!isNew&&canCom?`<div class="fld"><span>${m.modReq?'Modification demandée':'Nouveau commentaire'}</span><textarea id="cmt-text" style="min-height:70px" placeholder="${m.modReq?'Décrivez la modification attendue':'Votre commentaire'}"></textarea></div>
    <div class="row">${!pv&&canSeeInternal()&&!m.modReq?'<label class="cb"><input type="checkbox" id="cmt-int">Commentaire interne (équipe seulement)</label>':''}<span style="flex:1"></span><button class="btn sm ${m.modReq?'primary':'dark'}" data-act="cmt-add">${m.modReq?'Enregistrer la demande de modification':'Ajouter le commentaire'}</button></div>`:''}
   </div>`;
+ }
+ if(tab==='descriptions'){
+  const canVD=canValDesc(c.partnerId);const ro=pv||!canMod;
+  body=`<div class="notice" style="margin-bottom:14px">${icon('info')}<div>Une description commune et un texte par plateforme. Chaque texte modifié repasse <b>à valider</b> ; la validation est faite par <b>${esc(descValidator())}</b>. Tout est historisé.</div></div>
+  ${descKeys(c).map(K=>{const st=dStatus(c,K);const rv=(c.descReview||{})[K.k]||{};const hist=(c.descHistory||[]).filter(h=>h.key===K.k);const len=K.text.length;
+   return `<div class="dbox ds-${st}"><div class="spread"><h3>${K.pf?`<span class="pf">${PFA[K.pf]||'?'}</span>`:icon('text','width="16" height="16"')}${esc(K.label)}</h3><span class="chip dchip ds-${st}">${DSTAT[st]}</span></div>
+    ${ro?`<p class="dtext">${esc(K.text||(K.pf?'Reprend la description commune.':'—'))}</p>`:`<textarea data-f="${K.path}" placeholder="${K.pf?'Laisser vide pour reprendre la description commune':'Texte commun à toutes les plateformes'}">${esc(K.text)}</textarea>`}
+    <div class="dmeta"><span class="tnum" style="${len>K.limit?'color:var(--red);font-weight:800':''}">${len} / ${K.limit} car.</span>${rv.by?`<span>${rv.status==='validee'?'Validée':'Reprise demandée'} par <b>${esc(userName(rv.by))}</b> · ${fmtStamp(rv.at)}</span>`:''}</div>
+    ${st==='a_revoir'&&rv.note?`<div class="notice r">${icon('alert')}<div>${esc(rv.note)}</div></div>`:''}
+    ${!isNew&&K.text.trim()&&st!=='commune'?`<div class="row">${canVD?(m.revKey===K.k?`<textarea id="rev-note" style="min-height:60px" placeholder="Ce qu'il faut reprendre"></textarea><button class="btn sm primary" data-act="dval-rev" data-k="${K.k}">Envoyer la demande de reprise</button><button class="btn sm ghost" data-act="dval-cancel">Annuler</button>`:`${st!=='validee'?`<button class="btn sm primary" data-act="dval" data-k="${K.k}" data-v="validee">${icon('check')}Valider ce texte</button>`:''}<button class="btn sm" data-act="dval" data-k="${K.k}" data-v="a_revoir">À revoir</button>`):`<span class="chip soft">${icon('lock')}Validation par ${esc(descValidator())}</span>`}</div>`:''}
+    ${hist.length?`<details class="dhist"><summary>Historique · ${hist.length} modification(s)</summary>${hist.slice().reverse().slice(0,12).map(h=>`<div class="dh"><div class="dh1"><b>${esc(userName(h.by))}</b><span>${esc(h.action)}</span><small class="tnum">${fmtStamp(h.at)}</small></div>${h.after!==undefined?`<div class="dh2">${h.before?`<del>${esc(trunc(h.before))}</del>`:''}<ins>${esc(trunc(h.after||'(vide)'))}</ins></div>`:''}${h.note?`<div class="dh2">« ${esc(h.note)} »</div>`:''}</div>`).join('')}</details>`:''}
+   </div>`}).join('')}
+  ${!c.platforms.length?'<div class="empty">Ajoutez des plateformes pour écrire un texte par plateforme.</div>':''}`;
  }
  if(tab==='historique'){
   body=`<div class="box"><h3>Historique des changements</h3>${(c.history||[]).slice().reverse().map(h=>`<div class="hist"><span class="muted tnum">${fmtStamp(h.at)}</span><span><b>${esc(userName(h.by))}</b> · ${esc(h.text)}</span></div>`).join('')||'<div class="muted">—</div>'}</div>`;
@@ -2162,6 +2255,9 @@ function modalQuick(){
    <div class="qsec"><div class="eyebrow">Sous-tâches de production</div>
     ${TASKS.filter(([k])=>c.tasks[k].state!=='na').map(([k,l])=>`<div class="qrow"><div class="ql"><span class="tk ${c.tasks[k].state}">${icon(TICON[k])}</span>${l}<small>${avatar(c.tasks[k].owner)} ${c.tasks[k].due?fmtD(c.tasks[k].due):''}</small></div>${qs(`data-act="qtask" data-t="${k}"`,[['a_faire','À faire'],['en_cours','En cours'],['fait','Fait']],c.tasks[k].state,!cP)}</div>`).join('')||'<div class="muted">Aucune sous-tâche pour ce format.</div>'}
    </div>
+   <div class="qsec"><div class="spread"><div class="eyebrow">Descriptions</div><button class="linkbtn" data-act="open-desc" data-id="${c.id}">Modifier les textes</button></div>
+    ${descReq(c).filter(K=>K.text.trim()).map(K=>{const st=dStatus(c,K);return `<div class="qrow"><div class="ql">${K.pf?`<span class="pf">${PFA[K.pf]}</span>`:icon('text','width="16" height="16"')}${esc(K.label)}<small><span class="chip dchip ds-${st}">${DSTAT[st]}</span></small></div><p class="dtext sm">${esc(trunc(K.text,180))}</p>${canValDesc(c.partnerId)&&st!=='validee'?`<div class="qvals" style="grid-template-columns:1fr 1fr"><button class="btn primary" data-act="qdval" data-k="${K.k}" data-v="validee">${icon('check')}Valider</button><button class="btn" data-act="qdval" data-k="${K.k}" data-v="a_revoir">À revoir</button></div>`:''}</div>`}).join('')||'<div class="muted">Aucune description rédigée.</div>'}
+   </div>
    <div class="qsec"><div class="spread"><div class="eyebrow">Validation</div><span class="chip ${c.validation==='valide'?'s-valide':c.validation==='en_attente'?'s-attente':c.validation==='modifs'?'alert':'s-prevu'}">${VAL[c.validation]}</span></div>
     <div class="qvals"><button class="btn ${c.validation==='en_attente'?'dark':''}" data-act="qval" data-v="en_attente" ${cP?'':'disabled'}>En attente de validation</button><button class="btn ${c.validation==='valide'?'dark':'primary'}" data-act="qval" data-v="valide" ${cV?'':'disabled'} title="${cV?'':'Réservé à Estelle'}">${icon('check')}Validé</button><button class="btn ${c.validation==='modifs'?'dark':''}" data-act="qval" data-v="modifs" ${cP?'':'disabled'}>Modifs demandées</button></div>
     ${!cV?'<small class="muted" style="font-size:12px">La validation finale est réservée à Estelle.</small>':''}
@@ -2240,7 +2336,7 @@ function saveContent(silentMsg){
  d.platforms.forEach(p=>p.collabs=(p.collabs||[]).filter(k=>k.account.trim()));
  d.media=d.media.filter(x=>x.url||x.label);
  if(d.projectId&&project(d.projectId)?.partnerId!==d.partnerId)d.projectId='';
- normalizeTasks(d);const pb4=d.prod;d.prod=prodOf(d);
+ normalizeTasks(d);{const o0=d.id?content(d.id):null;trackDescs(o0,d);syncDescTask(d)}const pb4=d.prod;d.prod=prodOf(d);
  if(!d.id){d.id=uid('c');logDiff(null,d);S.contents.push(d)}
  else{const i=S.contents.findIndex(c=>c.id===d.id);logDiff(S.contents[i],d);S.contents[i]=d}
  ui.modal.draft=clone(d);
@@ -2315,6 +2411,11 @@ document.addEventListener('click',async e=>{
   case 'logout':try{await sb.auth.signOut()}catch(e){}try{localStorage.removeItem(STORE_KEY+'-cache')}catch(e){}location.hash='';location.reload();break;
   case 'reload':location.reload();break;
   case 'del-member':{if(ds.email===String(ME.email).toLowerCase()){toast('Vous ne pouvez pas retirer votre propre accès.',true);return}const {error}=await sb.from('scp_members').delete().eq('email',ds.email);if(error){toast(error.message,true);return}toast('Accès retiré');loadMembers();break}
+  case 'dval':{syncDraft();if(ds.v==='a_revoir'){ui.modal.revKey=ds.k;renderModalOnly();setTimeout(()=>document.getElementById('rev-note')?.focus(),30);break}{const d=ui.modal.draft;const o0=d.id?content(d.id):null;trackDescs(o0,d);setDescReview(d,ds.k,'validee');saveContent('Description validée')}break}
+  case 'dval-rev':{const note=(document.getElementById('rev-note')||{}).value||'';syncDraft();const d=ui.modal.draft;const o0=d.id?content(d.id):null;trackDescs(o0,d);setDescReview(d,ds.k,'a_revoir',note.trim());ui.modal.revKey=null;saveContent('Reprise demandée sur la description');break}
+  case 'dval-cancel':ui.modal.revKey=null;renderModalOnly();break;
+  case 'open-desc':{ui.modal=null;openContent(ds.id,true);if(ui.modal){ui.modal.tab='descriptions';renderModalOnly()}break}
+  case 'qdval':{const c=content(ui.modal.id);setDescReview(c,ds.k,ds.v);c.prod=prodOf(c);commit(ds.v==='validee'?'Description validée':'Reprise demandée');break}
   case 'pl-add':{syncDraft();const sel=document.getElementById('pl-new');const pf=sel&&sel.value;if(!pf||ui.modal.draft.platforms.some(x=>x.platform===pf)){toast('Cette plateforme est déjà ajoutée.',true);return}const d=ui.modal.draft;const acc=(partner(d.partnerId).accounts||{})[pf];const ref=d.platforms[0];d.platforms.push({id:uid('pl'),platform:pf,date:ref?ref.date:'',time:ref?ref.time:'',text:'',accounts:acc?[acc]:[],tags:[],collabs:[],status:'prevu',link:''});renderModalOnly();break}
   case 'pl-del':syncDraft();ui.modal.draft.platforms.splice(+ds.i,1);renderModalOnly();break;
   case 'col-add':syncDraft();ui.modal.draft.platforms[+ds.i].collabs.push({account:'',status:'a_demander'});renderModalOnly();break;
@@ -2371,7 +2472,7 @@ document.addEventListener('click',async e=>{
 document.addEventListener('click',e=>{const d=e.target.closest('[data-day]');if(d&&!e.target.closest('.ev')){ui.cal.day=ui.cal.day===d.dataset.day?null:d.dataset.day;render()}});
 document.addEventListener('change',async e=>{
  const t=e.target;
- if(t.id==='role-sel'){S.currentUser=t.value;ui.anim=true;ui.modal=null;ui.sheet=false;if(t.value.startsWith('partner:'))ui.route='partenaire-'+t.value.slice(8);save();location.hash=ui.route;render();toast('Vous voyez maintenant l\'application comme : '+me().name);return}
+ if(t.id==='role-sel'||t.id==='role-sel2'){S.currentUser=t.value;ui.anim=true;ui.modal=null;ui.sheet=false;if(t.value.startsWith('partner:'))ui.route='partenaire-'+t.value.slice(8);save();location.hash=ui.route;render();toast('Vous voyez maintenant l\'application comme : '+me().name);return}
  if(t.hasAttribute('data-rerender')){syncDraft();renderModalOnly();return}
  if(t.id==='thumb-in'&&t.files[0]){try{syncDraft();ui.modal.draft.thumb=await readThumb(t.files[0]);renderModalOnly();toast('Miniature importée · pensez à enregistrer')}catch(err){toast('Image illisible.',true)}return}
  if(t.id==='att-in'){syncDraft();[...t.files].forEach(f=>ui.modal.draft.attachments.push(f.name));renderModalOnly();return}
