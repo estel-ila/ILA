@@ -924,6 +924,11 @@ input[type=password]:focus{outline:0;background-color:#F5F2EE;box-shadow:var(--i
   .qvals .btn{height:44px}
   .kpi .n{font-size:36px}
 }
+.addprj{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:150px;cursor:pointer;color:var(--ink);border:0}
+.addprj svg{width:24px;height:24px}
+.prjcard{position:relative}
+.prjcard::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:0 4px 4px 0;background:var(--pc,transparent)}
+.plogo{white-space:nowrap;overflow:hidden}
 /* Report page (fixed A4 px) */
 .rp-page{width:794px;height:1123px;background:#fff;color:#0E0E0E;font-family:"Helvetica Now Display","HelveticaNowDisplay","Helvetica Neue",Helvetica,Arial,sans-serif;padding:48px 52px 40px;display:flex;flex-direction:column;overflow:hidden;position:relative}
 .rp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
@@ -1208,11 +1213,11 @@ function seed(){
 let S;
 const ui={
  route:'tableau-de-bord',
- cal:{view:innerWidth<720?'liste':'mois',month:TODAY.slice(0,7),week:weekStart(TODAY),partner:'',kinds:{pub:true,prod:true,val:true,evt:true},platforms:[],statuses:[],more:false,day:null},
- cf:{partner:'',buckets:[],owner:'',q:''},
+ cal:{view:innerWidth<720?'liste':'mois',month:TODAY.slice(0,7),week:weekStart(TODAY),partner:'',project:'',kinds:{pub:true,prod:true,val:true,evt:true},platforms:[],statuses:[],more:false,day:null},
+ cf:{partner:'',project:'',buckets:[],owner:'',q:''},
  xf:{partner:'',channels:[],open:false},
- rep:{mv:'reglages',lastExported:null,partner:'ph',month:TODAY.slice(0,7),opts:{chiffres:true,calendrier:true,descriptions:true,comptes:true,collabs:true,liens:true},exclude:{},viewing:null},
- dash:{partner:'',recap:addMonths(TODAY.slice(0,7),-1)}, fab:false, modal:null, mine:false, anim:true, modalAnim:false, sheet:false, saveState:'ok', savedAt:null, toast:null, busy:false
+ rep:{mv:'reglages',lastExported:null,project:'',partner:'ph',month:TODAY.slice(0,7),opts:{chiffres:true,calendrier:true,descriptions:true,comptes:true,collabs:true,liens:true},exclude:{},viewing:null},
+ pf:{disp:'',city:''}, dash:{partner:'',project:'',recap:addMonths(TODAY.slice(0,7),-1)}, fab:false, modal:null, mine:false, anim:true, modalAnim:false, sheet:false, saveState:'ok', savedAt:null, toast:null, busy:false
 };
 const hexA=(h,a)=>{const n=parseInt(String(h||'#888888').slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`};
 const lum=h=>{const n=parseInt(String(h||'#888888').slice(1),16);const c=[n>>16&255,n>>8&255,n&255].map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*c[0]+.7152*c[1]+.0722*c[2]};
@@ -1406,6 +1411,7 @@ function genThumb(c){
 }
 const thumbSrc=c=>c.thumb||genThumb(c);
 const thumbImg=(c,cls='')=>`<div class="thumb ${cls}"><img src="${thumbSrc(c)}" alt=""></div>`;
+const pSub=p=>[p&&p.dispositif,p&&p.city].filter(Boolean).join(' · ')||(p&&p.sector)||'';
 function logoStyle(p){const c=(p&&p.color)||'#0E0E0E';return `background:linear-gradient(155deg,rgba(255,255,255,.28),rgba(255,255,255,0) 55%),${c};color:${onCol(c)};box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 20px -10px ${hexA(c,.9)}`}
 const TICON={retouche:'img',montage:'film',miniature:'frame',description:'text'};
 function taskIcons(c){const t=c.tasks||{};return `<div class="tks">${TASKS.map(([k,l])=>{const x=t[k];if(!x||x.state==='na')return '';return `<span class="tk ${x.state}" title="${l} : ${TSTATE[x.state]}">${icon(TICON[k])}</span>`}).join('')}</div>`}
@@ -1477,7 +1483,8 @@ function renderPage(){
  if(r==='administration')return pageAdmin();
  return '';
 }
-function afterRender(){
+function fitLogos(root){(root||document).querySelectorAll('.plogo,.rp-logo').forEach(el=>{const n=(el.textContent||'').trim().length;const w=el.clientWidth||parseFloat(el.style.width)||52;const k=n<=2?.36:n===3?.31:n===4?.25:.21;el.style.fontSize=Math.max(7,Math.round(w*k))+'px';el.style.letterSpacing=n>3?'-.04em':''})}
+function afterRender(){fitLogos();
  fitPages();
  document.querySelectorAll('.mscroll').forEach(w=>{const on=w.querySelector('.on');if(on)w.scrollLeft=on.offsetLeft-w.clientWidth/2+on.clientWidth/2});
  if(ui.anim&&!matchMedia('(prefers-reduced-motion:reduce)').matches){document.querySelectorAll('#page [data-count]').forEach(el=>{const to=+el.dataset.count;const sm=el.querySelector('small');const tail=sm?sm.outerHTML:'';const t0=performance.now();const step=t=>{const k=Math.min(1,(t-t0)/1100);const e=1-Math.pow(1-k,3);el.innerHTML=Math.round(to*e)+tail;if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
@@ -1498,7 +1505,7 @@ function contentCard(c){
  const p=partner(c.partnerId);const np=nextPub(c)||firstPub(c);const al=alertsOf(c);
  return `<button class="ccard" style="--pc:${pcol(c.partnerId)}" data-open="${c.id}"><div class="thumb">${`<img src="${thumbSrc(c)}" alt="">`}${!isPartner()?`<span class="qbtn" data-quick="${c.id}" role="button" aria-label="Mise à jour rapide" title="Mise à jour rapide">${icon('bolt')}</span>`:''}${al.some(a=>a.lv!=='manquant')?'<span class="dot" title="Retard ou blocage"></span>':''}<span class="badge">${chipS(c)}</span></div>
  <div class="t">${esc(c.title)}</div>
- <div class="m"><span class="pdot" style="--pc:${pcol(c.partnerId)}"></span>${esc(p?p.name:'')} · ${esc(c.format)}</div>
+ <div class="m"><span class="pdot" style="--pc:${pcol(c.partnerId)}"></span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p?p.name:'')}${c.projectId&&project(c.projectId)?' › '+esc(project(c.projectId).name):''} · ${esc(c.format)}</span></div>
  ${taskIcons(c)}
  <div class="row" style="gap:6px">${pfBadges(c)}<span class="m tnum">${np?fmtD(np.date)+(np.time?' · '+np.time:''):'Sans date'}</span>${isPartner()?'':`<span style="margin-left:auto">${avatar(c.owner)}</span>`}</div></button>`;
 }
@@ -1520,6 +1527,8 @@ function trackDescs(o,n){n.descReview=n.descReview||{};n.descHistory=n.descHisto
  if(n.descHistory.length>120)n.descHistory=n.descHistory.slice(-120)}
 function syncDescTask(c){const t=c.tasks&&c.tasks.description;if(!t||t.state==='na')return;const req=descReq(c).filter(K=>K.text.trim());if(!req.length)return;const st=req.map(K=>dStatus(c,K));if(st.every(x=>x==='validee'))t.state='fait';else if(t.state==='fait'||t.state==='a_faire')t.state='en_cours'}
 function setDescReview(c,k,status,note){c.descReview=c.descReview||{};c.descHistory=c.descHistory||[];const K=descKeys(c).find(x=>x.k===k);if(!K)return;c.descReview[k]={status,by:me().id,at:nowStamp(),note:note||''};c.descHistory.push({at:nowStamp(),by:me().id,key:k,label:K.label,action:status==='validee'?'Description validée':'Reprise demandée',note:note||''});syncDescTask(c)}
+function projChips(o){const pid=ui[o].partner;if(!pid)return '';const prj=S.projects.filter(x=>x.partnerId===pid);if(!prj.length)return '';if(ui[o].project&&!prj.some(x=>x.id===ui[o].project)&&ui[o].project!=='_none')ui[o].project='';return `<div class="fbar-row"><span class="flabel">Projets</span>${fchips(o,'project',[['','Tous les projets'],...prj.map(x=>[x.id,x.name]),['_none','Sans projet']],false)}</div>`}
+const projOk=(c,pr)=>!pr||(pr==='_none'?!c.projectId:c.projectId===pr);
 function pick(path,opts,val,{dis=false,rerender=false,cls=''}={}){
  return `<div class="opts ${cls}" role="radiogroup" data-pickgroup ${rerender?'data-rerender':''}><input type="hidden" data-f="${path}" value="${esc(val)}" ${dis?'disabled':''}>${opts.map(([v,l,pre])=>{const on=String(v)===String(val);return `<button type="button" role="radio" aria-checked="${on}" class="opt ${on?'on':''}" data-pick="${esc(v)}" ${dis?'disabled':''}>${pre||''}<span>${esc(l)}</span></button>`}).join('')}</div>`;
 }
@@ -1549,7 +1558,7 @@ function progressBar(c){const i=STEPS.indexOf(gstat(c));return `<div class="cpro
 function pageDashboard(){
  const u=me();const sp=ui.dash.partner&&partner(ui.dash.partner)?ui.dash.partner:'';const SPp=sp?partner(sp):null;const DP=sp?[SPp]:S.partners;
  let cs=visibleContents();
- if(sp)cs=cs.filter(c=>c.partnerId===sp);
+ if(sp)cs=cs.filter(c=>c.partnerId===sp&&projOk(c,ui.dash.project));
  if(ui.mine)cs=cs.filter(c=>c.owner===u.id);
  const by=k=>cs.filter(c=>gstat(c)===k);
  const wk=weekStart(TODAY),we=addDays(wk,6),ym=TODAY.slice(0,7);
@@ -1601,6 +1610,7 @@ function pageDashboard(){
   </div>
  </div>
  <div class="dscope fbar-row">${pchips('dash','partner')}</div>
+ ${sp?`<div class="dscope">${projChips('dash')}</div>`:''}
  <div class="dash">
   ${kpi('prevu','',nextOf(by('prevu')))}
   ${kpi('production','',nextOf(by('production')))}
@@ -1658,13 +1668,14 @@ function pageDashboard(){
 /* ---------- Contenus ---------- */
 function pageContents(){
  const f=ui.cf;
- let cs=visibleContents().filter(c=>(!f.partner||c.partnerId===f.partner)&&(!f.buckets.length||f.buckets.includes(gstat(c)))&&(!f.owner||c.owner===f.owner)&&(!f.q||(c.title+' '+c.description).toLowerCase().includes(f.q.toLowerCase())));
+ let cs=visibleContents().filter(c=>(!f.partner||c.partnerId===f.partner)&&projOk(c,f.partner?f.project:'')&&(!f.buckets.length||f.buckets.includes(gstat(c)))&&(!f.owner||c.owner===f.owner)&&(!f.q||(c.title+' '+c.description).toLowerCase().includes(f.q.toLowerCase())));
  const rk=c=>{const g=gstat(c);const np=nextPub(c);if(g==='publie'){const f=(c.platforms||[]).map(x=>x.date).filter(Boolean).sort().pop()||'0000';return '3'+(99999999-+f.replace(/-/g,''))}if(np&&np.date>=TODAY)return '0'+np.date;if(np&&np.date)return '1'+np.date;return '2'};
  cs=cs.slice().sort((a,b)=>rk(a).localeCompare(rk(b)));
  return `
  <div class="fbar">
   <div class="fbar-row"><div class="search">${icon('search')}<input type="search" id="cf-q" placeholder="Rechercher un contenu" value="${esc(f.q)}" aria-label="Rechercher"></div>${fseg('cf','owner',[['','Tous'],...teamUsers().map(u=>[u.id,u.name])])}<span style="flex:1"></span>${can('contenus_creer')?`<button class="btn primary" data-act="new-content" data-partner="${f.partner}">${icon('plus')}Nouveau contenu</button>`:''}</div>
   <div class="fbar-row">${pchips('cf','partner')}</div>
+  ${projChips('cf')}
   <div class="fbar-row"><span class="flabel">Statuts</span>${fchips('cf','buckets',Object.keys(GS).map(k=>[k,GS[k],`<i class="sdot s-${k}"></i>`]),true)}</div>
  </div>
  <div class="muted" style="margin:-6px 0 14px;font-size:13px">${cs.length} contenu(s) · à venir d'abord, puis à planifier, puis publiés</div>
@@ -1678,13 +1689,15 @@ function partnerMonth(p,ym){
 }
 function pagePartners(){
  const ym=TODAY.slice(0,7);
- return `<div class="spread" style="margin-bottom:18px"><div class="muted">${S.partners.length} partenaires · objectifs de ${fmtMonth(ym)}</div>${can('partenaires_gerer')?`<button class="btn primary" data-act="new-partner">${icon('plus')}Nouveau partenaire</button>`:''}</div>
- <div class="pgrid">${S.partners.map(p=>{
+ const disps=[...new Set(S.partners.map(x=>x.dispositif).filter(Boolean))].sort();const cities=[...new Set(S.partners.map(x=>x.city).filter(Boolean))].sort();
+ const PL=S.partners.filter(x=>(!ui.pf.disp||x.dispositif===ui.pf.disp)&&(!ui.pf.city||x.city===ui.pf.city));
+ return `${disps.length||cities.length?`<div class="fbar">${disps.length?`<div class="fbar-row"><span class="flabel">Dispositif</span>${fchips('pf','disp',[['','Tous'],...disps.map(d=>[d,d])],false)}</div>`:''}${cities.length?`<div class="fbar-row"><span class="flabel">Ville</span>${fchips('pf','city',[['','Toutes'],...cities.map(d=>[d,d])],false)}</div>`:''}</div>`:''}<div class="spread" style="margin-bottom:18px"><div class="muted">${PL.length} partenaire(s) · objectifs de ${fmtMonth(ym)}</div>${can('partenaires_gerer')?`<button class="btn primary" data-act="new-partner">${icon('plus')}Nouveau partenaire</button>`:''}</div>
+ <div class="pgrid">${PL.map(p=>{
   const m=partnerMonth(p,ym);const cs=S.contents.filter(c=>c.partnerId===p.id);const np=cs.map(c=>({c,p:nextPub(c)})).filter(x=>x.p&&x.p.date>=TODAY).sort((a,b)=>(a.p.date+a.p.time).localeCompare(b.p.date+b.p.time))[0];
   const al=cs.filter(c=>alertsOf(c).some(a=>a.lv!=='manquant')).length;const open=visibleExchanges().filter(x=>x.partnerId===p.id&&x.nextAction&&!x.done).length;
   const pct=p.target?Math.min(100,Math.round(m.planned/p.target*100)):0;
   return `<button class="card pcard glow" style="--pc:${p.color}" data-go="partenaire-${p.id}">
-   <div class="row" style="flex-wrap:nowrap"><span class="plogo" style="${logoStyle(p)}">${esc(p.short)}</span><div style="min-width:0"><h2 style="font-size:17px">${esc(p.name)}</h2><div class="muted" style="font-size:12.5px">${esc(p.sector)}</div></div></div>
+   <div class="row" style="flex-wrap:nowrap"><span class="plogo" style="${logoStyle(p)}">${esc(p.short)}</span><div style="min-width:0"><h2 style="font-size:17px">${esc(p.name)}</h2><div class="muted" style="font-size:12.5px">${esc(pSub(p))}</div></div></div>
    <div class="row" style="flex-wrap:nowrap;gap:16px">${gauge(m.planned,p.target||0,{size:92,stroke:9,ticks:false,tone:p.color,fs:22})}<div style="min-width:0"><div style="font-weight:800;font-size:15px">${m.planned} / ${p.target||'—'} contenus</div><div class="muted" style="font-size:12.5px">Objectif de ${MOIS[+ym.slice(5)-1]}</div><div class="muted" style="font-size:12.5px">${m.done} publié(s)</div></div></div>
    <div class="row" style="gap:6px">${al?`<span class="chip alert">${al} alerte(s)</span>`:''}${open?`<span class="chip soft">${open} action(s) ouverte(s)</span>`:''}${p.access.enabled?`<span class="chip lock">${icon('lock')}Accès partenaire</span>`:''}</div>
    ${np?`<div class="row" style="flex-wrap:nowrap;gap:10px;margin-top:auto">${thumbImg(np.c,'mini')}<div style="min-width:0"><div class="eyebrow">Prochaine publication</div><div style="font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(np.c.title)}</div><div class="muted tnum" style="font-size:12px">${fmtD(np.p.date)} · ${esc(np.p.time)} · ${esc(np.p.platform)}</div></div></div>`:'<div class="muted" style="font-size:13px;margin-top:auto">Aucune publication à venir.</div>'}
@@ -1703,7 +1716,7 @@ function pagePartner(pid){
  <section class="card dark glow" style="--pc:${p.color}">
   <div class="phead">
    <span class="plogo" style="${logoStyle(p)};width:64px;height:64px;font-size:22px">${esc(p.short)}</span>
-   <div style="min-width:0"><div class="eyebrow">${esc(p.sector)}</div><h2>${esc(p.name)}</h2></div>
+   <div style="min-width:0"><div class="eyebrow">${esc(pSub(p))}</div><h2>${esc(p.name)}</h2>${(p.dispositif||p.city)&&p.sector?`<div class="muted" style="font-size:12.5px;margin-top:2px">${esc(p.sector)}</div>`:''}</div>
    <div class="row acts">
     ${!partnerView?`<button class="btn sm primary" data-act="dash-partner" data-partner="${pid}">${icon('home')}Tableau de bord</button><button class="btn sm" data-act="cal-partner" data-partner="${pid}">${icon('cal')}Calendrier</button>`:''}
     ${!partnerView&&can('comptes_rendus')?`<button class="btn sm" data-act="report-partner" data-partner="${pid}">${icon('doc')}Compte rendu</button>`:''}
@@ -1727,8 +1740,11 @@ function pagePartner(pid){
 
  <div class="section-title" id="sec-projets">Projets</div>
  <div class="two">
-  ${prj.map(x=>{const pc=S.contents.filter(c=>c.projectId===x.id&&(!partnerView||c.share));return `<div class="card"><div class="spread"><h2>${esc(x.name)}</h2><span class="muted tnum" style="font-size:12px">${fmtDY(x.start)} → ${fmtDY(x.end)}</span></div><p class="muted" style="margin:6px 0 12px;font-size:13px">${esc(x.desc)}</p><div class="row" style="gap:6px">${pc.slice(0,6).map(c=>`<button data-open="${c.id}" style="border:0;padding:0;background:none" title="${esc(c.title)}">${thumbImg(c,'mini')}</button>`).join('')}${pc.length>6?`<span class="muted">+${pc.length-6}</span>`:''}${!pc.length?'<span class="muted" style="font-size:13px">Aucun contenu</span>':''}</div></div>`}).join('')}
-  ${edit?`<form class="card white" data-form="project" data-partner="${pid}"><h2 style="margin-bottom:12px">Ajouter un projet</h2><div class="form"><label class="fld full"><span>Nom du projet</span><input type="text" name="name" required placeholder="Ex. Campagne de printemps"></label><label class="fld"><span>Début</span><input type="date" name="start"></label><label class="fld"><span>Fin</span><input type="date" name="end"></label><label class="fld full"><span>Description</span><input type="text" name="desc" placeholder="Objectif en une phrase"></label></div><div class="row" style="margin-top:12px"><button class="btn dark sm" type="submit">${icon('plus')}Ajouter le projet</button></div></form>`:''}
+  ${prj.map(x=>{const pc=S.contents.filter(c=>c.projectId===x.id&&(!partnerView||c.share));const pub=pc.filter(c=>gstat(c)==='publie').length;return `<div class="card prjcard" style="--pc:${p.color}"><div class="spread"><h2>${esc(x.name)}</h2>${x.status==='termine'?'<span class="chip soft">Terminé</span>':'<span class="chip sent">En cours</span>'}</div><div class="muted tnum" style="font-size:12px;margin-top:2px">${x.start?fmtDY(x.start):'—'} → ${x.end?fmtDY(x.end):'—'}</div>${x.desc?`<p class="muted" style="margin:6px 0 0;font-size:13px">${esc(x.desc)}</p>`:''}
+   <div class="row" style="flex-wrap:nowrap;gap:14px;margin:12px 0">${gauge(pub,pc.length,{size:76,stroke:7,ticks:false,tone:p.color,fs:17})}<div><b>${pc.length} contenu(s)</b><div class="muted" style="font-size:12.5px">${pub} publié(s) · ${pc.filter(c=>['attente'].includes(gstat(c))).length} à valider</div></div></div>
+   <div class="row" style="gap:6px">${pc.slice(0,6).map(c=>`<button data-open="${c.id}" style="border:0;padding:0;background:none" title="${esc(c.title)}">${thumbImg(c,'mini')}</button>`).join('')}${pc.length>6?`<span class="muted">+${pc.length-6}</span>`:''}</div>
+   <div class="row" style="margin-top:12px">${!partnerView?`<button class="btn sm ghost" data-act="prj-contents" data-partner="${pid}" data-id="${x.id}">Voir les contenus</button>`:''}${can('contenus_creer')&&!partnerView?`<button class="btn sm ghost" data-act="new-content" data-partner="${pid}" data-project="${x.id}">${icon('plus')}Contenu</button>`:''}${edit?`<button class="btn sm ghost" data-act="edit-project" data-id="${x.id}">Modifier</button>`:''}</div></div>`}).join('')}
+  ${edit?`<button class="card white addprj" data-act="new-project" data-partner="${pid}">${icon('plus')}<b>Nouveau projet</b><span class="muted">Un partenaire peut avoir plusieurs projets</span></button>`:''}
   ${!prj.length&&!edit?'<div class="empty">Aucun projet.</div>':''}
  </div>
 
@@ -1744,7 +1760,7 @@ function pagePartner(pid){
 
  <div class="section-title" id="sec-infos">Contacts et comptes</div>
  <div class="two">
-  <div class="card"><h2 style="margin-bottom:12px">Interlocuteurs</h2>${p.contacts.length?p.contacts.map(k=>`<div class="li" style="cursor:default"><span class="av p">${esc(initials(k.name))}</span><div class="li-b"><div class="li-t">${esc(k.name)}</div><div class="li-s">${esc(k.role)}</div></div><div class="li-r" style="font-size:12.5px;user-select:all">${esc(k.email)}${k.phone?`<span class="muted">${esc(k.phone)}</span>`:''}</div></div>`).join(''):'<div class="empty">Aucun contact.</div>'}</div>
+  <div class="card"><div class="spread" style="margin-bottom:12px"><h2>Interlocuteurs</h2>${edit?`<div class="row" style="gap:6px"><label class="btn sm ghost" for="ci-file">${icon('dl')}Importer</label><input type="file" id="ci-file" data-partner="${pid}" accept=".vcf,.csv,text/vcard,text/csv" hidden><button class="btn sm ghost" data-act="edit-partner" data-id="${pid}">${icon('plus')}Ajouter</button></div>`:''}</div>${p.contacts.length?p.contacts.map(k=>`<div class="li" style="cursor:default"><span class="av p">${esc(initials(k.name))}</span><div class="li-b"><div class="li-t">${esc(k.name)}</div><div class="li-s">${esc(k.role)}</div></div><div class="li-r" style="font-size:12.5px;user-select:all">${esc(k.email)}${k.phone?`<span class="muted">${esc(k.phone)}</span>`:''}</div></div>`).join(''):'<div class="empty">Aucun contact.</div>'}</div>
   <div class="card"><h2 style="margin-bottom:12px">Comptes du partenaire</h2>${Object.keys(p.accounts||{}).filter(k=>p.accounts[k]).length?`<dl class="kv">${Object.entries(p.accounts).filter(([,v])=>v).map(([k,v])=>`<dt><span class="pf">${PFA[k]||'?'}</span> ${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`:'<div class="empty">Aucun compte renseigné.</div>'}</div>
  </div>
 
@@ -1804,6 +1820,7 @@ function calItems(){
  const out=[];
  visibleContents().forEach(c=>{
   if(pidLock&&c.partnerId!==pidLock)return;
+  if(pidLock&&!projOk(c,f.project))return;
   if(f.statuses.length&&!f.statuses.includes(gstat(c)))return;
   if(f.kinds.pub)(c.platforms||[]).forEach(p=>{if(p.date&&(!f.platforms.length||f.platforms.includes(p.platform)))out.push({k:'pub',date:p.date,time:p.time||'',c,p})});
   if(!isPartner()&&!f.platforms.length){
@@ -1863,6 +1880,7 @@ function pageCalendar(){
  </div>
  <div class="fbar">
   <div class="fbar-row">${pv?`<span class="chip lock">${icon('lock')}${esc(partner(me().partnerId).name)}</span>`:pchips('cal','partner')}</div>
+  ${isPartner()?'':projChips('cal')}
   <div class="fbar-row"><div class="mchips">${kchip('pub','Publications','#0E0E0E')}${pv?'':kchip('prod','Production','#CFCAC8')}${kchip('val','Validations','#D9140E')}${kchip('evt','Événements','#D9140E')}</div><span style="flex:1"></span><button type="button" class="btn sm ${f.more||nf?'dark':'ghost'}" data-act="cal-more" aria-expanded="${f.more}">Plateformes et statuts${nf?' · '+nf:''}</button></div>
   ${f.more?`<div class="fbar-row"><span class="flabel">Plateformes</span>${fchips('cal','platforms',PLATFORMS.map(([p,a])=>[p,p,`<span class="pf">${a}</span>`]),true)}</div>
   <div class="fbar-row"><span class="flabel">Statuts</span>${fchips('cal','statuses',Object.keys(GS).map(k=>[k,GS[k],`<i class="sdot s-${k}"></i>`]),true)}</div>`:''}
@@ -1872,16 +1890,16 @@ function pageCalendar(){
 }
 
 /* ---------- Comptes rendus ---------- */
-function reportData(pid,ym,exclude){
+function reportData(pid,ym,exclude,proj){
  const p=partner(pid);
- const cs=S.contents.filter(c=>c.partnerId===pid&&c.share&&!(exclude||[]).includes(c.id)&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)))
+ const cs=S.contents.filter(c=>c.partnerId===pid&&projOk(c,proj)&&c.share&&!(exclude||[]).includes(c.id)&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)))
   .sort((a,b)=>((firstPub(a)||{}).date||'').localeCompare((firstPub(b)||{}).date||''));
  const evs=S.events.filter(e=>e.partnerId===pid&&e.date.startsWith(ym));
  return {p,cs,evs};
 }
-function reportCandidates(pid,ym){return S.contents.filter(c=>c.partnerId===pid&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)))}
+function reportCandidates(pid,ym){return S.contents.filter(c=>c.partnerId===pid&&projOk(c,ui.rep.project)&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)))}
 function buildReport(pid,ym,opts,exclude){
- const {p,cs,evs}=reportData(pid,ym,exclude);
+ const {p,cs,evs}=reportData(pid,ym,exclude,opts.project);
  const pages=[];
  const foot=(i,n)=>`<div class="rp-foot"><span>Compte rendu ${esc(p.name)} · ${fmtMonth(ym)}</span><span>Document préparé le ${fmtDY(TODAY)} · page ${i}/${n}</span></div>`;
  // Page 1
@@ -1891,7 +1909,7 @@ function buildReport(pid,ym,opts,exclude){
  const st={total:cs.length,pub:cs.filter(c=>gstat(c)==='publie').length,att:cs.filter(c=>gstat(c)==='attente').length,val:cs.filter(c=>gstat(c)==='valide').length};
  const calH=opts.chiffres?600:700;const cellH=Math.floor((calH-24)/rows);
  const p1=()=>`
-  <div style="height:7px;margin:-48px -52px 41px;background:${p.color||'#0E0E0E'}"></div><div class="rp-top"><div><div class="rp-kick">Compte rendu de communication</div><div class="rp-title">${esc(p.name)}</div><div class="rp-month">${fmtMonth(ym)}</div></div><div class="rp-logo" style="${logoStyle(p)}">${esc(p.short)}</div></div>
+  <div style="height:7px;margin:-48px -52px 41px;background:${p.color||'#0E0E0E'}"></div><div class="rp-top"><div><div class="rp-kick">Compte rendu de communication${pSub(p)?' · '+esc(pSub(p)):''}</div><div class="rp-title">${esc(p.name)}</div>${opts.project&&project(opts.project)?`<div style="font-size:15px;font-weight:700;margin-top:6px">Projet · ${esc(project(opts.project).name)}</div>`:''}<div class="rp-month">${fmtMonth(ym)}</div></div><div class="rp-logo" style="${logoStyle(p)};font-size:${[20,20,20,17,14,12][Math.min(5,(p.short||'').length)]}px">${esc(p.short)}</div></div>
   ${opts.chiffres?`<div class="rp-stats"><div class="rp-stat k"><b>${st.total}</b><span>Contenus du mois</span></div><div class="rp-stat"><b>${st.pub}</b><span>Publiés</span></div><div class="rp-stat"><b>${st.val}</b><span>Validés, à paraître</span></div><div class="rp-stat"><b>${st.att}</b><span>En attente de validation</span></div><div class="rp-stat"><b>${evs.length}</b><span>Événements</span></div></div>`:''}
   ${opts.calendrier?`<div class="rp-sec">Calendrier du mois</div><div class="rp-cal">${JOURS.map(j=>`<div class="rp-dow">${j}</div>`).join('')}${Array.from({length:cells},(_,i)=>{const d=addDays(start,i);const out=!d.startsWith(ym);const l=(pubsByDay[d]||[]);const e=evs.filter(x=>x.date===d);const maxN=Math.max(1,Math.floor((cellH-20)/23));const all=[...e.map(x=>`<div class="rp-ev e">${esc(x.title)}</div>`),...l.map(({c,x})=>`<div class="rp-ev"><img src="${thumbSrc(c)}" alt="">${esc(x.time||'')} ${PFA[x.platform]||''}</div>`)];return `<div class="rp-cell ${out?'out':''}" style="height:${cellH}px"><div class="rp-dn">${D(d).getDate()}</div>${out?'':all.slice(0,maxN).join('')+(all.length>maxN?`<div class="rp-more">+${all.length-maxN}</div>`:'')}</div>`}).join('')}</div>
   <div class="rp-legend"><span>■ Publication : miniature, horaire, plateforme</span><span style="color:#D9140E">■ Événement</span><span>IG Instagram · IN LinkedIn · TT TikTok · FB Facebook · YT YouTube · NL Newsletter</span></div>`:''}
@@ -1928,7 +1946,7 @@ function pageReports(){
  }
  const months=[];for(let i=-6;i<=3;i++)months.push(addMonths(TODAY.slice(0,7),i));
  const cand=reportCandidates(r.partner,r.month);
- const pages=buildReport(r.partner,r.month,r.opts,Object.keys(r.exclude).filter(k=>r.exclude[k]));
+ const pages=buildReport(r.partner,r.month,Object.assign({},r.opts,{project:r.project}),Object.keys(r.exclude).filter(k=>r.exclude[k]));
  const optRow=(k,l)=>`<button type="button" class="mchip ${r.opts[k]?'on':''}" data-act="ropt" data-k="${k}" aria-pressed="${r.opts[k]}">${l}${r.opts[k]?icon('check'):''}</button>`;
  const saved=S.reports.slice().sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
  const cur=latestReport(r.partner,r.month);const lastExp=ui.rep.lastExported?S.reports.find(x=>x.id===ui.rep.lastExported):null;
@@ -1937,7 +1955,7 @@ function pageReports(){
  <div class="rpanel">
   <div class="card white">
    <div class="eyebrow" style="margin-bottom:10px">1 · Partenaire et mois</div>
-   <div class="grid" style="gap:12px">${pchips('rep','partner',{all:false})}<div class="mscroll">${fseg('rep','month',months.map(m=>[m,MOISC[+m.slice(5)-1]+' '+m.slice(0,4)]))}</div></div>
+   <div class="grid" style="gap:12px">${pchips('rep','partner',{all:false})}${projChips('rep')}<div class="mscroll">${fseg('rep','month',months.map(m=>[m,MOISC[+m.slice(5)-1]+' '+m.slice(0,4)]))}</div></div>
   </div>
   <div class="card white">
    <div class="eyebrow" style="margin-bottom:10px">2 · Éléments à partager <span style="text-transform:none;letter-spacing:0;font-weight:600">· sélection multiple</span></div>
@@ -1977,7 +1995,7 @@ async function exportPDF(){
  if(!dl){toast('Le téléchargement n\'est pas disponible dans cette vue. Ouvrez l\'application dans claude.ai.',true);return}
  ui.busy=true;render();
  try{
-  const pages=buildReport(r.partner,r.month,r.opts,Object.keys(r.exclude).filter(k=>r.exclude[k]));
+  const pages=buildReport(r.partner,r.month,Object.assign({},r.opts,{project:r.project}),Object.keys(r.exclude).filter(k=>r.exclude[k]));
   const stage=document.getElementById('pdf-stage');stage.innerHTML=pages.join('');
   await Promise.all([...stage.querySelectorAll('img')].map(im=>im.complete?0:new Promise(res=>{im.onload=im.onerror=res})));
   const {jsPDF}=window.jspdf;const pdf=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
@@ -2045,6 +2063,8 @@ function renderModal(){
  if(m.type==='partner')return modalPartner();
  if(m.type==='event')return modalEvent();
  if(m.type==='sent')return modalSent();
+ if(m.type==='project')return modalProject();
+ if(m.type==='cimport')return modalCImport();
  if(m.type==='quick')return modalQuick();
  return '';
 }
@@ -2214,7 +2234,9 @@ function modalPartner(){
   <div class="ph"><span class="plogo" style="${logoStyle(p)};width:44px;height:44px;font-size:15px">${esc(p.short||'?')}</span><div style="flex:1"><div class="eyebrow">Partenaire</div><h2>${isNew?'Nouveau partenaire':esc(p.name)}</h2></div><button class="btn icon ghost" data-act="close" aria-label="Fermer">${icon('x')}</button></div>
   <div class="pb"><div class="form">
    <label class="fld"><span>Nom *</span><input type="text" data-f="name" value="${esc(p.name)}"></label>
-   <label class="fld"><span>Initiales (logo)</span><input type="text" data-f="short" value="${esc(p.short)}" maxlength="3"></label>
+   <label class="fld"><span>Initiales (logo)</span><input type="text" data-f="short" value="${esc(p.short)}" maxlength="5" placeholder="5 caractères max."></label>
+   <label class="fld"><span>Dispositif</span><input type="text" data-f="dispositif" list="dl-disp" value="${esc(p.dispositif||'')}" placeholder="Ex. CTF, O2R, Média Day…"><datalist id="dl-disp">${[...new Set(S.partners.map(x=>x.dispositif).filter(Boolean))].map(v=>`<option value="${esc(v)}">`).join('')}</datalist></label>
+   <label class="fld"><span>Ville</span><input type="text" data-f="city" list="dl-city" value="${esc(p.city||'')}" placeholder="Ex. Colombes"><datalist id="dl-city">${[...new Set(S.partners.map(x=>x.city).filter(Boolean))].map(v=>`<option value="${esc(v)}">`).join('')}</datalist></label>
    <label class="fld"><span>Secteur</span><input type="text" data-f="sector" value="${esc(p.sector)}"></label>
    <label class="fld"><span>Objectif de contenus par mois</span><input type="number" min="0" data-f="target" value="${esc(p.target)}"></label>
    <div class="fld full"><span>Couleur du partenaire</span>${pick('color',PCOLORS.map(([h,n])=>[h,n,`<i class="swatch" style="background:${h}"></i>`]),p.color||PCOLORS[0][0],{rerender:true,cls:'wrap'})}<small>Utilisée dans le calendrier, les cartes, les miniatures, les jauges et les comptes rendus.</small></div>
@@ -2224,6 +2246,7 @@ function modalPartner(){
    <div><button class="btn sm ghost" data-act="contact-add">${icon('plus')}Ajouter un interlocuteur</button></div>
   </div>
   <div class="box" style="margin-top:14px"><h3>Comptes du partenaire</h3><div class="form">${PLATFORMS.map(([x])=>`<label class="fld"><span>${x}</span><input type="text" data-f="accounts.${x}" value="${esc((p.accounts||{})[x]||'')}" placeholder="${x==='Newsletter'?'Nom de la liste':'@compte'}"></label>`).join('')}</div></div>
+  ${!isNew&&isAdmin()&&S.partners.length>1?`<div class="box" style="margin-top:14px"><h3>Réorganiser</h3><p class="muted" style="margin:0;font-size:12.5px">Si « ${esc(p.name)} » est en réalité un projet d'un autre partenaire, transformez-le : contenus, événements, échanges et récaps sont déplacés et regroupés dans un projet.</p><label class="fld"><span>Partenaire de rattachement</span><select id="merge-target">${S.partners.filter(x=>x.id!==p.id).map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></label><div>${ui.modal.confirmMerge?`<button class="btn sm primary" data-act="to-project">Confirmer la transformation</button> <button class="btn sm ghost" data-act="close">Annuler</button>`:`<button class="btn sm" data-act="to-project-ask">Transformer en projet de ce partenaire</button>`}</div></div>`:''}
   </div>
   <div class="pf-foot"><button class="btn primary" data-act="save-partner">${icon('check')}Enregistrer</button><button class="btn ghost" data-act="close">Annuler</button></div>
  </div></div>`;
@@ -2270,6 +2293,33 @@ function modalQuick(){
   <div class="pf-foot"><button class="btn dark" data-act="quick-full" style="flex:1">Fiche complète</button>${can('echanges',c.partnerId)?`<button class="btn" data-act="new-exchange" data-partner="${c.partnerId}" data-content="${c.id}">${icon('chat')}Échange</button>`:''}</div>
  </div></div>`;
 }
+function modalProject(){const d=ui.modal.draft,isNew=!d.id;const p=partner(d.partnerId);
+ return `<div class="modal ${ui.modalAnim?'enter':''}" data-act="modal-bg"><div class="panel narrow" role="dialog" aria-modal="true" aria-label="Projet" data-stop>
+  <div class="ph"><span class="plogo xs" style="${logoStyle(p)};width:44px;height:44px">${esc(p.short)}</span><div style="flex:1;min-width:0"><div class="eyebrow">${esc(p.name)}</div><h2>${isNew?'Nouveau projet':esc(d.name)}</h2></div><button class="btn icon ghost" data-act="close" aria-label="Fermer">${icon('x')}</button></div>
+  <div class="pb"><div class="form">
+   <label class="fld full"><span>Nom du projet *</span><input type="text" data-f="name" value="${esc(d.name)}" placeholder="Ex. Saison 2, Court-métrage…"></label>
+   <label class="fld"><span>Partenaire</span>${partnerSelect('prj-partner',d.partnerId,{all:false,f:'partnerId'})}</label>
+   <div class="fld"><span>Statut</span>${pick('status',[['en_cours','En cours'],['termine','Terminé']],d.status||'en_cours')}</div>
+   <label class="fld"><span>Début</span><input type="date" data-f="start" value="${esc(d.start||'')}"></label>
+   <label class="fld"><span>Fin</span><input type="date" data-f="end" value="${esc(d.end||'')}"></label>
+   <label class="fld full"><span>Description</span><textarea data-f="desc" style="min-height:70px">${esc(d.desc||'')}</textarea></label>
+  </div>${!isNew?`<p class="muted" style="font-size:12.5px;margin:12px 0 0">Changer de partenaire déplace aussi les ${S.contents.filter(c=>c.projectId===d.id).length} contenu(s) du projet.</p>`:''}</div>
+  <div class="pf-foot"><button class="btn primary" data-act="save-project">${icon('check')}Enregistrer</button><button class="btn ghost" data-act="close">Annuler</button><span style="flex:1"></span>${!isNew&&can('supprimer')?(ui.modal.confirmDel?'<button class="btn sm primary" data-act="del-project" style="width:auto;padding:0 12px">Confirmer</button>':'<button class="btn sm ghost" data-act="del-project-ask">Supprimer</button>'):''}</div>
+ </div></div>`}
+function modalCImport(){const d=ui.modal.draft;const p=partner(d.partnerId);const q=(d.q||'').toLowerCase();const list=d.list.map((k,i)=>({k,i})).filter(({k})=>!q||(k.name+' '+k.email+' '+k.org).toLowerCase().includes(q));
+ return `<div class="modal ${ui.modalAnim?'enter':''}" data-act="modal-bg"><div class="panel narrow" role="dialog" aria-modal="true" aria-label="Importer des contacts" data-stop>
+  <div class="ph"><span class="plogo xs" style="${logoStyle(p)};width:44px;height:44px">${esc(p.short)}</span><div style="flex:1;min-width:0"><div class="eyebrow">${esc(p.name)}</div><h2>Importer des contacts</h2></div><button class="btn icon ghost" data-act="close" aria-label="Fermer">${icon('x')}</button></div>
+  <div class="pb"><div class="search" style="max-width:none;margin-bottom:12px">${icon('search')}<input type="search" id="ci-q" value="${esc(d.q||'')}" placeholder="Filtrer par nom, email, organisation"></div>
+   <div class="muted" style="font-size:12.5px;margin-bottom:8px">${d.list.length} contact(s) dans le fichier · ${Object.values(d.sel).filter(Boolean).length} sélectionné(s)</div>
+   <div class="rcards">${list.slice(0,300).map(({k,i})=>`<label class="rcard" style="cursor:pointer"><input type="checkbox" data-ci="${i}" ${d.sel[i]?'checked':''}><div class="rb"><b style="text-transform:none">${esc(k.name||k.email)}</b><small>${esc([k.email,k.phone,k.org,k.role].filter(Boolean).join(' · '))}</small></div></label>`).join('')||'<div class="empty">Aucun contact ne correspond.</div>'}</div></div>
+  <div class="pf-foot"><button class="btn primary" data-act="ci-save">${icon('check')}Ajouter la sélection</button><button class="btn ghost" data-act="close">Annuler</button></div>
+ </div></div>`}
+function parseContacts(txt){const out=[];
+ if(/BEGIN:VCARD/i.test(txt)){txt.split(/END:VCARD/i).forEach(card=>{const g=re=>{const m=card.match(re);return m?m[1].replace(/\\,/g,',').trim():''};const fn=g(/\nFN[^:\n]*:([^\r\n]*)/i);const em=g(/\nEMAIL[^:\n]*:([^\r\n]*)/i);const tel=g(/\nTEL[^:\n]*:([^\r\n]*)/i);const org=g(/\nORG[^:\n]*:([^\r\n]*)/i).replace(/;+$/,'');const ti=g(/\nTITLE[^:\n]*:([^\r\n]*)/i);if(fn||em)out.push({name:fn,email:em,phone:tel,org,role:ti})});return out}
+ const rows=[];let cur=[],f='',q=false;for(let i=0;i<txt.length;i++){const ch=txt[i];if(q){if(ch==='"'){if(txt[i+1]==='"'){f+='"';i++}else q=false}else f+=ch}else if(ch==='"')q=true;else if(ch===','||ch===';'&&!txt.slice(0,200).includes(',')){cur.push(f);f=''}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&txt[i+1]==='\n')i++;cur.push(f);f='';if(cur.some(x=>x.trim()))rows.push(cur);cur=[]}else f+=ch}
+ if(f||cur.length){cur.push(f);rows.push(cur)}if(rows.length<2)return out;const h=rows[0].map(x=>x.trim().toLowerCase());const col=(...ns)=>h.findIndex(x=>ns.some(n=>x===n||x.startsWith(n)));
+ const iN=col('name','nom'),iF=col('first name','given name','prénom'),iL=col('last name','family name','nom de famille'),iE=col('e-mail 1 - value','email','e-mail','adresse e-mail'),iP=col('phone 1 - value','phone','téléphone','mobile'),iO=col('organization name','organization 1 - name','company','société','organisation'),iT=col('organization title','organization 1 - title','title','fonction');
+ rows.slice(1).forEach(r=>{const v=i=>i>=0?(r[i]||'').trim():'';const name=v(iN)||[v(iF),v(iL)].filter(Boolean).join(' ');const email=v(iE).split(':::')[0].trim();if(name||email)out.push({name,email,phone:v(iP).split(':::')[0].trim(),org:v(iO),role:v(iT)})});return out}
 function modalSent(){
  const d=ui.modal.draft;const r=S.reports.find(x=>x.id===d.reportId);const p=partner(r.partnerId);
  return `<div class="modal ${ui.modalAnim?'enter':''}" data-act="modal-bg"><div class="panel narrow" role="dialog" aria-modal="true" aria-label="Récap envoyé" data-stop style="height:auto;max-height:100%;margin-top:auto">
@@ -2285,7 +2335,7 @@ function modalSent(){
   <div class="pf-foot"><button class="btn primary" data-act="save-sent">${icon('check')}Noter l'envoi</button><button class="btn ghost" data-act="close">Annuler</button></div>
  </div></div>`;
 }
-function renderModalOnly(){const mr=document.getElementById('modal-root');if(!mr)return;const pb=mr.querySelector('.pb');const st=pb?pb.scrollTop:0;mr.innerHTML=ui.modal?renderModal():'';const npb=mr.querySelector('.pb');if(npb)npb.scrollTop=st;ui.modalAnim=false}
+function renderModalOnly(){setTimeout(()=>fitLogos(document.getElementById('modal-root')),0);const mr=document.getElementById('modal-root');if(!mr)return;const pb=mr.querySelector('.pb');const st=pb?pb.scrollTop:0;mr.innerHTML=ui.modal?renderModal():'';const npb=mr.querySelector('.pb');if(npb)npb.scrollTop=st;ui.modalAnim=false}
 function syncDraft(){
  if(!ui.modal)return;
  document.querySelectorAll('#modal-root [data-f]').forEach(el=>{
@@ -2380,13 +2430,13 @@ document.addEventListener('click',async e=>{
   case 'mine':ui.mine=!!ds.v;ui.anim=true;render();break;
   case 'kpi':ui.cf={partner:ui.dash.partner||'',buckets:[ds.k],owner:ui.mine?me().id:'',q:''};navigate('contenus');break;
   case 'go-data':if(ONLINE){toast(ui.saveState==='err'?'Hors ligne : '+(ui.syncErr||'')+' — nouvel essai automatique.':'Données partagées en temps réel dans la base de l\'équipe.',ui.saveState==='err');break}if(isAdmin()){navigate('administration');setTimeout(()=>document.getElementById('sec-data')?.scrollIntoView(),50)}else toast('Données enregistrées dans ce navigateur uniquement. Le partage nécessite la base de données.');break;
-  case 'new-content':{if(!can('contenus_creer'))return;if(ui.fab){ui.fab=false;render()}ui.modalAnim=true;if(!S.partners.length){toast('Créez d\'abord un partenaire.',true);return}ui.modal={type:'content',draft:newContentDraft(ds.partner||(ui.route.startsWith('partenaire-')?ui.route.slice(11):'')),tab:'fiche'};renderModalOnly();break}
+  case 'new-content':{if(!can('contenus_creer'))return;if(ui.fab){ui.fab=false;render()}ui.modalAnim=true;if(!S.partners.length){toast('Créez d\'abord un partenaire.',true);return}ui.modal={type:'content',draft:newContentDraft(ds.partner||(ui.route.startsWith('partenaire-')?ui.route.slice(11):'')),tab:'fiche'};if(ds.project)ui.modal.draft.projectId=ds.project;else if(ui.cf.project&&ui.cf.project!=='_none'&&ui.route==='contenus')ui.modal.draft.projectId=ui.cf.project;renderModalOnly();break}
   case 'tab':syncDraft();ui.modal.tab=ds.tab;ui.modal.modReq=false;renderModalOnly();break;
   case 'save-content':saveContent();break;
   case 'media-add':syncDraft();ui.modal.draft.media.push({label:'',url:''});renderModalOnly();break;
   case 'media-del':syncDraft();ui.modal.draft.media.splice(+ds.i,1);renderModalOnly();break;
   case 'thumb-reset':syncDraft();ui.modal.draft.thumb='';renderModalOnly();break;
-  case 'filt':{const o=ui[ds.o];let v=ds.v;if(ds.o==='xf'&&ds.k==='open')v=v==='true';if(ds.m){const arr=o[ds.k];const i=arr.indexOf(v);i<0?arr.push(v):arr.splice(i,1)}else{o[ds.k]=v}if(ds.o==='rep'&&ds.k==='partner')ui.rep.exclude={};if(ds.o==='dash'&&ds.k==='partner'){ui.anim=true;render();window.scrollTo({top:0,behavior:'smooth'});break}if(ds.o==='rep'||ds.k==='partner')ui.anim=ds.o!=='rep'?false:false;render();break}
+  case 'filt':{const o=ui[ds.o];let v=ds.v;if(ds.o==='xf'&&ds.k==='open')v=v==='true';if(ds.m){const arr=o[ds.k];const i=arr.indexOf(v);i<0?arr.push(v):arr.splice(i,1)}else{o[ds.k]=v}if(ds.o==='rep'&&ds.k==='partner'){ui.rep.exclude={};ui.rep.project=''}if(ds.k==='partner'&&ui[ds.o]&&'project' in ui[ds.o])ui[ds.o].project='';if(ds.o==='dash'&&ds.k==='partner'){ui.anim=true;render();window.scrollTo({top:0,behavior:'smooth'});break}if(ds.o==='rep'||ds.k==='partner')ui.anim=ds.o!=='rep'?false:false;render();break}
   case 'ropt':ui.rep.opts[ds.k]=!ui.rep.opts[ds.k];render();break;
   case 'cal-more':ui.cal.more=!ui.cal.more;render();break;
   case 'pl-toggle':{syncDraft();const d=ui.modal.draft;const pf=ds.p;const ix=d.platforms.findIndex(x=>x.platform===pf);if(ix>=0){d.platforms.splice(ix,1)}else{const acc=(partner(d.partnerId).accounts||{})[pf];const ref=d.platforms[0];d.platforms.push({id:uid('pl'),platform:pf,date:ref?ref.date:'',time:ref?ref.time:'',text:'',accounts:acc?[acc]:[],tags:[],collabs:[],status:'prevu',link:''})}renderModalOnly();break}
@@ -2416,6 +2466,19 @@ document.addEventListener('click',async e=>{
   case 'dval-cancel':ui.modal.revKey=null;renderModalOnly();break;
   case 'open-desc':{ui.modal=null;openContent(ds.id,true);if(ui.modal){ui.modal.tab='descriptions';renderModalOnly()}break}
   case 'qdval':{const c=content(ui.modal.id);setDescReview(c,ds.k,ds.v);c.prod=prodOf(c);commit(ds.v==='validee'?'Description validée':'Reprise demandée');break}
+  case 'new-project':ui.modalAnim=true;ui.modal={type:'project',draft:{id:'',partnerId:ds.partner,name:'',desc:'',start:TODAY,end:'',status:'en_cours'}};renderModalOnly();break;
+  case 'edit-project':{const x=project(ds.id);if(!x)return;ui.modalAnim=true;ui.modal={type:'project',draft:Object.assign({status:'en_cours'},clone(x))};renderModalOnly();break}
+  case 'save-project':{syncDraft();const d=ui.modal.draft;if(!d.name.trim()){toast('Donnez un nom au projet.',true);return}if(!d.id){d.id=uid('pr');S.projects.push(d)}else{const i=S.projects.findIndex(x=>x.id===d.id);const old=S.projects[i];if(old.partnerId!==d.partnerId)S.contents.forEach(c=>{if(c.projectId===d.id)c.partnerId=d.partnerId});S.projects[i]=d}ui.modal=null;commit('Projet enregistré');break}
+  case 'del-project-ask':ui.modal.confirmDel=true;renderModalOnly();break;
+  case 'del-project':{const id=ui.modal.draft.id;S.projects=S.projects.filter(x=>x.id!==id);S.contents.forEach(c=>{if(c.projectId===id)c.projectId=''});S.exchanges.forEach(x=>{if(x.projectId===id)x.projectId=''});ui.modal=null;commit('Projet supprimé · ses contenus restent chez le partenaire');break}
+  case 'prj-contents':ui.cf={partner:ds.partner,project:ds.id,buckets:[],owner:'',q:''};navigate('contenus');break;
+  case 'ci-save':{const d=ui.modal.draft;const p=partner(d.partnerId);const add=d.list.filter((k,i)=>d.sel[i]).filter(k=>!p.contacts.some(c=>(c.email&&c.email===k.email)||c.name===k.name)).map(k=>({name:k.name||k.email,role:k.role||k.org||'',email:k.email||'',phone:k.phone||''}));p.contacts.push(...add);ui.modal=null;commit(add.length+' contact(s) ajouté(s) à '+p.name);break}
+  case 'to-project-ask':syncDraft();ui.modal.confirmMerge=true;renderModalOnly();break;
+  case 'to-project':{const src=partner(ui.modal.draft.id);const tgt=partner((document.getElementById('merge-target')||{}).value);if(!src||!tgt||src.id===tgt.id){toast('Choisissez un autre partenaire.',true);return}
+   const np={id:uid('pr'),partnerId:tgt.id,name:src.name,desc:pSub(src),start:'',end:'',status:'en_cours'};S.projects.push(np);
+   S.projects.forEach(x=>{if(x.partnerId===src.id)x.partnerId=tgt.id});S.contents.forEach(c=>{if(c.partnerId===src.id){c.partnerId=tgt.id;if(!c.projectId)c.projectId=np.id}});
+   S.events.forEach(e=>{if(e.partnerId===src.id)e.partnerId=tgt.id});S.exchanges.forEach(x=>{if(x.partnerId===src.id)x.partnerId=tgt.id});S.reports.forEach(r=>{if(r.partnerId===src.id)r.partnerId=tgt.id});
+   src.contacts.forEach(k=>{if(!tgt.contacts.some(c=>c.name===k.name))tgt.contacts.push(k)});S.partners=S.partners.filter(x=>x.id!==src.id);ui.modal=null;save();navigate('partenaire-'+tgt.id);toast(`« ${src.name} » est maintenant un projet de ${tgt.name}`);break}
   case 'pl-add':{syncDraft();const sel=document.getElementById('pl-new');const pf=sel&&sel.value;if(!pf||ui.modal.draft.platforms.some(x=>x.platform===pf)){toast('Cette plateforme est déjà ajoutée.',true);return}const d=ui.modal.draft;const acc=(partner(d.partnerId).accounts||{})[pf];const ref=d.platforms[0];d.platforms.push({id:uid('pl'),platform:pf,date:ref?ref.date:'',time:ref?ref.time:'',text:'',accounts:acc?[acc]:[],tags:[],collabs:[],status:'prevu',link:''});renderModalOnly();break}
   case 'pl-del':syncDraft();ui.modal.draft.platforms.splice(+ds.i,1);renderModalOnly();break;
   case 'col-add':syncDraft();ui.modal.draft.platforms[+ds.i].collabs.push({account:'',status:'a_demander'});renderModalOnly();break;
@@ -2442,7 +2505,7 @@ document.addEventListener('click',async e=>{
   case 'edit-partner':ui.modalAnim=true;ui.modal={type:'partner',draft:clone(partner(ds.id))};renderModalOnly();break;
   case 'contact-add':syncDraft();ui.modal.draft.contacts.push({name:'',role:'',email:'',phone:''});renderModalOnly();break;
   case 'contact-del':syncDraft();ui.modal.draft.contacts.splice(+ds.i,1);renderModalOnly();break;
-  case 'save-partner':{syncDraft();const d=ui.modal.draft;if(!d.name.trim()){toast('Le nom du partenaire est obligatoire.',true);return}d.short=(d.short||initials(d.name)).toUpperCase();d.contacts=d.contacts.filter(k=>k.name.trim());if(!d.id){d.id=uid('p');S.partners.push(d);ui.modal=null;save();navigate('partenaire-'+d.id);toast('Partenaire créé')}else{const i=S.partners.findIndex(p=>p.id===d.id);S.partners[i]=d;ui.modal=null;commit('Partenaire enregistré')}break}
+  case 'save-partner':{syncDraft();const d=ui.modal.draft;if(!d.name.trim()){toast('Le nom du partenaire est obligatoire.',true);return}d.short=(d.short||initials(d.name)).toUpperCase().slice(0,5);d.contacts=d.contacts.filter(k=>k.name.trim());if(!d.id){d.id=uid('p');S.partners.push(d);ui.modal=null;save();navigate('partenaire-'+d.id);toast('Partenaire créé')}else{const i=S.partners.findIndex(p=>p.id===d.id);S.partners[i]=d;ui.modal=null;commit('Partenaire enregistré')}break}
   case 'save-notes':{const p=partner(ds.id);p.notes=document.getElementById('pnotes').value;commit('Note interne enregistrée');break}
   case 'as-partner':S.currentUser='partner:'+ds.id;save();navigate('partenaire-'+ds.id);toast('Vue partenaire : revenez à « Estelle » dans « Voir en tant que »');break;
   case 'cal-partner':ui.cal.partner=ds.partner;navigate('calendrier');break;
@@ -2456,7 +2519,7 @@ document.addEventListener('click',async e=>{
   case 'save-event':{syncDraft();const d=ui.modal.draft;if(!d.title.trim()||!d.date){toast('Titre et date obligatoires.',true);return}if(!d.id){d.id=uid('e');S.events.push(d)}else{const i=S.events.findIndex(x=>x.id===d.id);S.events[i]=d}ui.modal=null;commit('Événement enregistré');break}
   case 'del-event':S.events=S.events.filter(x=>x.id!==ui.modal.draft.id);ui.modal=null;commit('Événement supprimé');break;
   case 'export-pdf':exportPDF();break;
-  case 'save-report':{const r=ui.rep;S.reports.push({id:uid('r'),partnerId:r.partner,month:r.month,opts:clone(r.opts),exclude:Object.keys(r.exclude).filter(k=>r.exclude[k]),createdAt:nowStamp(),by:me().id,shared:false,sentAt:'',sentChannel:'',sentTo:'',sentBy:''});commit('Compte rendu enregistré (interne, non envoyé)');break}
+  case 'save-report':{const r=ui.rep;S.reports.push({id:uid('r'),partnerId:r.partner,month:r.month,opts:Object.assign(clone(r.opts),{project:r.project||''}),exclude:Object.keys(r.exclude).filter(k=>r.exclude[k]),createdAt:nowStamp(),by:me().id,shared:false,sentAt:'',sentChannel:'',sentTo:'',sentBy:''});commit('Compte rendu enregistré (interne, non envoyé)');break}
   case 'load-report':{const x=S.reports.find(y=>y.id===ds.id);if(!x)return;ui.rep.partner=x.partnerId;ui.rep.month=x.month;ui.rep.opts=clone(x.opts);ui.rep.exclude=Object.fromEntries((x.exclude||[]).map(k=>[k,true]));render();break}
   case 'share-report':{const x=S.reports.find(y=>y.id===ds.id);x.shared=!x.shared;const p=partner(x.partnerId);commit(x.shared?(p.access.enabled&&p.access.comptesRendus?'Visible dans l\'espace partenaire · aucun envoi':'Marqué partagé · l\'accès partenaire est fermé, il reste invisible'):'Compte rendu redevenu interne');break}
   case 'del-report':S.reports=S.reports.filter(x=>x.id!==ds.id);commit('Compte rendu retiré de l\'historique');break;
@@ -2488,6 +2551,10 @@ document.addEventListener('change',async e=>{
  if(t.dataset.accesstxt){if(!can('acces_partenaires'))return;const [pid,k]=t.dataset.accesstxt.split('.');partner(pid).access[k]=t.value;commit('Accès partenaire mis à jour');return}
 });
 document.addEventListener('change',e=>{const t=e.target;if(t.dataset.qlink!==undefined&&ui.modal&&ui.modal.type==='quick'){const c=content(ui.modal.id);const x=c.platforms[+t.dataset.qlink];x.link=t.value.trim();c.history.push({at:nowStamp(),by:me().id,text:`${x.platform} : lien publié mis à jour`});save();toast('Lien enregistré')}});
+document.addEventListener('change',async e=>{const t=e.target;
+ if(t.id==='ci-file'&&t.files[0]){try{const txt=await t.files[0].text();const list=parseContacts(txt);if(!list.length){toast('Aucun contact trouvé dans ce fichier (formats .vcf ou .csv de Google Contacts).',true);return}ui.modalAnim=true;ui.modal={type:'cimport',draft:{partnerId:t.dataset.partner,list,sel:{},q:''}};renderModalOnly()}catch(err){toast('Fichier illisible.',true)}t.value='';return}
+ if(t.dataset.ci!==undefined&&ui.modal&&ui.modal.type==='cimport'){ui.modal.draft.sel[t.dataset.ci]=t.checked;const c=document.querySelector('#modal-root .pb .muted');if(c)c.textContent=ui.modal.draft.list.length+' contact(s) dans le fichier · '+Object.values(ui.modal.draft.sel).filter(Boolean).length+' sélectionné(s)'}});
+document.addEventListener('input',e=>{const t=e.target;if(t.id==='ci-q'&&ui.modal&&ui.modal.type==='cimport'){ui.modal.draft.q=t.value;clearTimeout(t._d);t._d=setTimeout(()=>{const pos=t.selectionStart;renderModalOnly();const n=document.getElementById('ci-q');if(n){n.focus();n.setSelectionRange(pos,pos)}},200)}});
 document.addEventListener('input',e=>{const t=e.target;if(t.id==='cf-q'){ui.cf.q=t.value;clearTimeout(t._d);t._d=setTimeout(()=>{const pos=t.selectionStart;render();const n=document.getElementById('cf-q');if(n){n.focus();n.setSelectionRange(pos,pos)}},220)}});
 document.addEventListener('submit',async e=>{
  const f=e.target;e.preventDefault();
