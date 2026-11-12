@@ -1592,7 +1592,7 @@ function sortContents(cs,mode){const byT=(a,b)=>(a.title||'').localeCompare(b.ti
  return [{label:'À venir',items:up.sort(asc)},{label:'En retard (date passée, pas encore publié)',items:late.sort((a,b)=>relD(b).localeCompare(relD(a)))},{label:'À planifier (sans date)',items:none.sort(byT)},{label:'Publiés',items:pub}].filter(g=>g.items.length)}
 function sortSel(o,k,opts){const v=ui[o][k]||opts[0][0];return `<label class="sortsel">${icon('r')}<span>Trier</span><select data-sort="${o}.${k}" aria-label="Trier">${opts.map(([a,b])=>`<option value="${a}" ${a===v?'selected':''}>${b}</option>`).join('')}</select></label>`}
 function groupedGrid(groups,card){if(groups.length===1&&!groups[0].label)return `<div class="cgrid">${groups[0].items.map(card).join('')}</div>`;return groups.map(g=>`<div class="sgroup"><span>${esc(g.label)}</span><b class="tnum">${g.items.length}</b></div><div class="cgrid">${g.items.map(card).join('')}</div>`).join('')}
-document.addEventListener('change',e=>{const t=e.target;if(!t.dataset||!t.dataset.sort)return;const [o,k]=t.dataset.sort.split('.');ui[o][k]=t.value;try{localStorage.setItem('scp-sort-'+o,t.value)}catch(_){}render()});
+document.addEventListener('change',e=>{const t=e.target;if(!t.dataset||!t.dataset.sort)return;const [o,k]=t.dataset.sort.split('.');ui[o][k]=t.value;if(o==='rep'&&k==='rsort')ui.rep.opts.sort=t.value;try{localStorage.setItem('scp-sort-'+o,t.value)}catch(_){}render()});
 function savedSort(o,def){try{return localStorage.getItem('scp-sort-'+o)||def}catch(_){return def}}
 function copyText(t,btn){const done=()=>{toast('Texte copié — prêt à coller');if(btn){const h=btn.innerHTML;btn.classList.add('ok');btn.innerHTML=icon('check','width="15" height="15"')+'Copié';setTimeout(()=>{btn.classList.remove('ok');btn.innerHTML=h},1600)}};
  const fb=()=>{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,t.length);let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();ok?done():toast('Copie impossible ici : sélectionnez le texte à la main.',true)};
@@ -1994,33 +1994,41 @@ function pageCalendar(){
 }
 
 /* ---------- Comptes rendus ---------- */
-function reportData(pid,ym,exclude,proj){
+const RSORT=[['date','Date de publication'],['date_desc','Date (plus récente d\'abord)'],['plateforme','Plateforme'],['statut','Statut'],['titre','Titre (A → Z)']];
+function pfOk(x,pfs){return !pfs||!pfs.length||pfs.includes(x.platform)}
+function rPls(c,pfs,ym){return (c.platforms||[]).filter(x=>pfOk(x,pfs)&&(!ym||!x.date||x.date.startsWith(ym)))}
+function rDate(c,pfs,ym){return (rPls(c,pfs,ym).filter(x=>x.date).map(x=>x.date+(x.time||'')).sort()[0])||'9999'}
+function sortReport(cs,mode,pfs,ym){const t=(a,b)=>(a.title||'').localeCompare(b.title||'','fr');const d=(a,b)=>rDate(a,pfs,ym).localeCompare(rDate(b,pfs,ym))||t(a,b);const arr=cs.slice();
+ if(mode==='date_desc')return arr.sort((a,b)=>d(b,a));if(mode==='titre')return arr.sort(t);
+ if(mode==='statut'){const o=Object.keys(GS);return arr.sort((a,b)=>o.indexOf(gstat(a))-o.indexOf(gstat(b))||d(a,b))}
+ if(mode==='plateforme'){const o=PLATFORMS.map(x=>x[0]);const f=c=>Math.min(...rPls(c,pfs,ym).map(x=>o.indexOf(x.platform)).filter(i=>i>=0),99);return arr.sort((a,b)=>f(a)-f(b)||d(a,b))}
+ return arr.sort(d)}
+function reportData(pid,ym,exclude,proj,pfs,sort){
  const p=partner(pid);
- const cs=S.contents.filter(c=>c.partnerId===pid&&!c.aside&&projOk(c,proj)&&c.share&&!(exclude||[]).includes(c.id)&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)))
-  .sort((a,b)=>((firstPub(a)||{}).date||'').localeCompare((firstPub(b)||{}).date||''));
+ const cs=sortReport(S.contents.filter(c=>c.partnerId===pid&&!c.aside&&projOk(c,proj)&&c.share&&!(exclude||[]).includes(c.id)&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)&&pfOk(x,pfs))),sort,pfs,ym);
  const evs=S.events.filter(e=>e.partnerId===pid&&e.date.startsWith(ym));
  return {p,cs,evs};
 }
-function reportCandidates(pid,ym){return S.contents.filter(c=>c.partnerId===pid&&!c.aside&&projOk(c,ui.rep.project)&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)))}
+function reportCandidates(pid,ym){const pfs=ui.rep.opts.pfs||[];return sortReport(S.contents.filter(c=>c.partnerId===pid&&!c.aside&&projOk(c,ui.rep.project)&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)&&pfOk(x,pfs))),ui.rep.opts.sort,pfs,ym)}
 function buildReport(pid,ym,opts,exclude){
- const {p,cs,evs}=reportData(pid,ym,exclude,opts.project);
+ const pfs=opts.pfs||[];const {p,cs,evs}=reportData(pid,ym,exclude,opts.project,pfs,opts.sort);
  const pages=[];
  const foot=(i,n)=>`<div class="rp-foot"><span>Compte rendu ${esc(p.name)} · ${fmtMonth(ym)}</span><span>Document préparé le ${fmtDY(TODAY)} · page ${i}/${n}</span></div>`;
  // Page 1
  const ym1=ym+'-01';const start=addDays(ym1,-dow(ym1));const nd=new Date(D(ym1).getFullYear(),D(ym1).getMonth()+1,0).getDate();const cells=Math.ceil((dow(ym1)+nd)/7)*7;const rows=cells/7;
- const pubsByDay={};cs.forEach(c=>(c.platforms||[]).forEach(x=>{if(x.date&&x.date.startsWith(ym))(pubsByDay[x.date]=pubsByDay[x.date]||[]).push({c,x})}));
+ const pubsByDay={};cs.forEach(c=>(c.platforms||[]).forEach(x=>{if(x.date&&x.date.startsWith(ym)&&pfOk(x,pfs))(pubsByDay[x.date]=pubsByDay[x.date]||[]).push({c,x})}));
  Object.values(pubsByDay).forEach(l=>l.sort((a,b)=>(a.x.time||'').localeCompare(b.x.time||'')));
  const st={total:cs.length,pub:cs.filter(c=>gstat(c)==='publie').length,att:cs.filter(c=>gstat(c)==='attente').length,val:cs.filter(c=>gstat(c)==='valide').length};
  const calH=opts.chiffres?600:700;const cellH=Math.floor((calH-24)/rows);
  const p1=()=>`
-  <div style="height:7px;margin:-48px -52px 41px;background:${p.color||'#0E0E0E'}"></div><div class="rp-top"><div><div class="rp-kick">Compte rendu de communication${pSub(p)?' · '+esc(pSub(p)):''}</div><div class="rp-title">${esc(p.name)}</div>${opts.project&&project(opts.project)?`<div style="font-size:15px;font-weight:700;margin-top:6px">Projet · ${esc(project(opts.project).name)}</div>`:''}<div class="rp-month">${fmtMonth(ym)}</div></div><div class="rp-logo" style="${logoStyle(p)};font-size:${logoFs(p,58)}px">${logoTxt(p)}</div></div>
+  <div style="height:7px;margin:-48px -52px 41px;background:${p.color||'#0E0E0E'}"></div><div class="rp-top"><div><div class="rp-kick">Compte rendu de communication${pSub(p)?' · '+esc(pSub(p)):''}</div><div class="rp-title">${esc(p.name)}</div>${opts.project&&project(opts.project)?`<div style="font-size:15px;font-weight:700;margin-top:6px">Projet · ${esc(project(opts.project).name)}</div>`:''}<div class="rp-month">${fmtMonth(ym)}</div>${pfs.length?`<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${pfs.map(x=>`<span class="rp-chip" style="font-weight:800">${esc(x)}</span>`).join('')}</div>`:''}</div><div class="rp-logo" style="${logoStyle(p)};font-size:${logoFs(p,58)}px">${logoTxt(p)}</div></div>
   ${opts.chiffres?`<div class="rp-stats"><div class="rp-stat k"><b>${st.total}</b><span>Contenus du mois</span></div><div class="rp-stat"><b>${st.pub}</b><span>Publiés</span></div><div class="rp-stat"><b>${st.val}</b><span>Validés, à paraître</span></div><div class="rp-stat"><b>${st.att}</b><span>En attente de validation</span></div><div class="rp-stat"><b>${evs.length}</b><span>Événements</span></div></div>`:''}
   ${opts.calendrier?`<div class="rp-sec">Calendrier du mois</div><div class="rp-cal">${JOURS.map(j=>`<div class="rp-dow">${j}</div>`).join('')}${Array.from({length:cells},(_,i)=>{const d=addDays(start,i);const out=!d.startsWith(ym);const l=(pubsByDay[d]||[]);const e=evs.filter(x=>x.date===d);const maxN=Math.max(1,Math.floor((cellH-20)/23));const all=[...e.map(x=>`<div class="rp-ev e">${esc(x.title)}</div>`),...l.map(({c,x})=>`<div class="rp-ev"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}">${esc(x.time||'')} ${PFA[x.platform]||''}</div>`)];return `<div class="rp-cell ${out?'out':''}" style="height:${cellH}px"><div class="rp-dn">${D(d).getDate()}</div>${out?'':all.slice(0,maxN).join('')+(all.length>maxN?`<div class="rp-more">+${all.length-maxN}</div>`:'')}</div>`}).join('')}</div>
-  <div class="rp-legend"><span>■ Publication : miniature, horaire, plateforme</span><span style="color:#D9140E">■ Événement</span><span>IG Instagram · IN LinkedIn · TT TikTok · FB Facebook · YT YouTube · NL Newsletter</span></div>`:''}
+  <div class="rp-legend"><span>■ Publication : miniature, horaire, plateforme</span><span style="color:#D9140E">■ Événement</span><span>${(pfs.length?PLATFORMS.filter(x=>pfs.includes(x[0])):PLATFORMS.filter(x=>x[0]!=='X')).map(x=>x[1]+' '+x[0]).join(' · ')}</span></div>`:''}
   ${!opts.calendrier?`<div class="rp-sec">Contenus du mois</div>${cs.map(c=>`<div style="display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid #EFECEA"><img src="${thumbSrc(c)}" style="width:28px;height:35px;border-radius:5px;object-fit:cover;${imgPos(c)}"><b style="font-size:12px;flex:1">${esc(c.title)}</b><span class="rp-chip s-${gstat(c)}">${GS[gstat(c)]}</span></div>`).join('')}`:''}`;
  // Pages détaillées
  const detail=[];let cur=[],h=0;const budget=900;
- cs.forEach(c=>{const ph=Math.max(200,96+(opts.descriptions?66:0)+Math.ceil(c.platforms.length/2)*(48+(opts.comptes?28:0)+(opts.collabs?14:0)+(opts.liens?10:0)));if(h+ph>budget&&cur.length){detail.push(cur);cur=[];h=0}cur.push(c);h+=ph});
+ cs.forEach(c=>{const ph=Math.max(200,96+(opts.descriptions?66:0)+Math.ceil(rPls(c,pfs).length/2)*(48+(opts.comptes?28:0)+(opts.collabs?14:0)+(opts.liens?10:0)));if(h+ph>budget&&cur.length){detail.push(cur);cur=[];h=0}cur.push(c);h+=ph});
  if(cur.length)detail.push(cur);
  const total=1+detail.length;
  pages.push(`<div class="rp-page">${p1()}${foot(1,total)}</div>`);
@@ -2030,8 +2038,8 @@ function buildReport(pid,ym,opts,exclude){
    const cols=['Plateforme','Date et heure'];if(opts.comptes)cols.push('Publié par','Identifications');if(opts.collabs)cols.push('Collaborations');cols.push('Statut');if(opts.liens)cols.push('Lien');
    return `<div class="rp-post"><div class="rp-pthumb"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}"></div><div class="rp-pb"><div class="rp-pt">${esc(c.title)}</div>
    <div class="rp-chips"><span class="rp-chip s-${s}">${GS[s]}</span><span class="rp-chip">${esc(c.format)}</span>${pr?`<span class="rp-chip">${esc(pr.name)}</span>`:''}</div>
-   ${opts.descriptions?`<div class="rp-desc">${esc(c.description||'Description à venir.')}</div>`:''}
-   <div class="rp-pls">${c.platforms.map(x=>`<div class="rp-pl"><div class="rp-plh"><span class="rp-pfb">${PFA[x.platform]||''}</span><b>${esc(x.platform)}</b><span class="rp-plt">${x.date?fmtD(x.date):'—'}${x.time?' · '+esc(x.time):''}</span><span class="rp-cs ${x.status==='publie'?'c-acceptee':x.status==='programme'?'c-envoyee':''}">${PUB[x.status]}</span></div>${opts.comptes?`<div class="rp-l"><span>Publié par</span>${esc((x.accounts||[]).join(', ')||'—')}</div><div class="rp-l"><span>Identifications</span>${esc((x.tags||[]).join(', ')||'—')}</div>`:''}${opts.collabs&&(x.collabs||[]).length?`<div class="rp-l"><span>Collaborations</span><div>${x.collabs.map(k=>`${esc(k.account)}<span class="rp-cs c-${k.status}">${COLLAB[k.status]}</span>`).join('<br>')}</div></div>`:''}${opts.liens&&x.status==='publie'&&x.link?`<div class="rp-l"><span>Lien</span><a class="rp-link" href="${esc(x.link)}">Voir le post ↗</a></div>`:''}</div>`).join('')}</div>
+   ${opts.descriptions?(()=>{const own=pfs.length===1?(rPls(c,pfs)[0]||{}).text:'';return `<div class="rp-desc">${esc(own||c.description||'Description à venir.')}</div>`})():''}
+   <div class="rp-pls">${rPls(c,pfs).map(x=>`<div class="rp-pl"><div class="rp-plh"><span class="rp-pfb">${PFA[x.platform]||''}</span><b>${esc(x.platform)}</b><span class="rp-plt">${x.date?fmtD(x.date):'—'}${x.time?' · '+esc(x.time):''}</span><span class="rp-cs ${x.status==='publie'?'c-acceptee':x.status==='programme'?'c-envoyee':''}">${PUB[x.status]}</span></div>${opts.comptes?`<div class="rp-l"><span>Publié par</span>${esc((x.accounts||[]).join(', ')||'—')}</div><div class="rp-l"><span>Identifications</span>${esc((x.tags||[]).join(', ')||'—')}</div>`:''}${opts.collabs&&(x.collabs||[]).length?`<div class="rp-l"><span>Collaborations</span><div>${x.collabs.map(k=>`${esc(k.account)}<span class="rp-cs c-${k.status}">${COLLAB[k.status]}</span>`).join('<br>')}</div></div>`:''}${opts.liens&&x.status==='publie'&&x.link?`<div class="rp-l"><span>Lien</span><a class="rp-link" href="${esc(x.link)}">Voir le post ↗</a></div>`:''}</div>`).join('')}</div>
    </div></div>`}).join('')}
   ${foot(gi+2,total)}</div>`);
  });
@@ -2067,7 +2075,13 @@ function pageReports(){
    <div class="notice" style="margin-top:10px">${icon('lock')}<div>Notes internes, commentaires d'équipe et échanges confidentiels sont toujours exclus.</div></div>
   </div>
   <div class="card white">
-   <div class="eyebrow" style="margin-bottom:6px">3 · Contenus inclus (${cand.filter(c=>!r.exclude[c.id]&&c.share).length}/${cand.length})</div>
+   <div class="eyebrow" style="margin-bottom:10px">3 · Focus plateformes <span style="text-transform:none;letter-spacing:0;font-weight:600">· le calendrier et le détail n'affichent que ces plateformes</span></div>
+   ${(()=>{const pfs=r.opts.pfs||[];const used=new Set();S.contents.filter(c=>c.partnerId===r.partner&&!c.aside&&projOk(c,r.project)).forEach(c=>(c.platforms||[]).forEach(x=>{if(x.date&&x.date.startsWith(r.month))used.add(x.platform)}));
+    return `<div class="mchips"><button type="button" class="mchip ${!pfs.length?'on':''}" data-act="rpf" data-v="">Toutes${!pfs.length?icon('check'):''}</button>${PLATFORMS.map(([n,a])=>{const on=pfs.includes(n);const u=used.has(n);return `<button type="button" class="mchip ${on?'on':''}" data-act="rpf" data-v="${n}" ${!u&&!on?'style="opacity:.5"':''}><span class="pf">${a}</span>${n}${on?icon('check'):''}</button>`}).join('')}</div>
+    <div class="row" style="margin-top:12px">${sortSel('rep','rsort',RSORT)}</div>`})()}
+  </div>
+  <div class="card white">
+   <div class="eyebrow" style="margin-bottom:6px">4 · Contenus inclus (${cand.filter(c=>!r.exclude[c.id]&&c.share).length}/${cand.length})</div>
    ${cand.length?cand.map(c=>`<label class="rpick"><input type="checkbox" data-rinc="${c.id}" ${!r.exclude[c.id]&&c.share?'checked':''} ${c.share?'':'disabled'}>${thumbImg(c,'mini s')}<span title="${esc(c.title)}">${esc(c.title)}${c.share?'':' <em class="muted">(non partageable)</em>'}</span><span class="chip s-${gstat(c)}" style="font-size:10px;padding:1px 7px">${GS[gstat(c)].replace('En attente de validation','À valider')}</span></label>`).join(''):'<div class="muted" style="font-size:13px">Aucun contenu publié ou prévu ce mois.</div>'}
   </div>
   <div class="card dark">
@@ -2549,6 +2563,7 @@ document.addEventListener('click',async e=>{
   case 'thumb-center':ui.modal.draft.thumbPos={x:50,y:50,z:1};applyTpos();{const z=document.getElementById('thumb-z');if(z)z.value=1}break;
   case 'filt':{const o=ui[ds.o];let v=ds.v;if(ds.o==='xf'&&ds.k==='open')v=v==='true';if(ds.m){const arr=o[ds.k];const i=arr.indexOf(v);i<0?arr.push(v):arr.splice(i,1)}else{o[ds.k]=v}if(ds.o==='rep'&&ds.k==='partner'){ui.rep.exclude={};ui.rep.project=''}if(ds.k==='partner'&&ui[ds.o]&&'project' in ui[ds.o])ui[ds.o].project='';if(ds.o==='dash'&&ds.k==='partner'){ui.anim=true;render();window.scrollTo({top:0,behavior:'smooth'});break}if(ds.o==='rep'||ds.k==='partner')ui.anim=ds.o!=='rep'?false:false;render();break}
   case 'ropt':ui.rep.opts[ds.k]=!ui.rep.opts[ds.k];render();break;
+  case 'rpf':{const o=ui.rep.opts;let l=(o.pfs||[]).slice();if(!ds.v)l=[];else l=l.includes(ds.v)?l.filter(x=>x!==ds.v):l.concat(ds.v);o.pfs=l;render();break}
   case 'cal-more':ui.cal.more=!ui.cal.more;render();break;
   case 'pl-toggle':{syncDraft();const d=ui.modal.draft;const pf=ds.p;const ix=d.platforms.findIndex(x=>x.platform===pf);if(ix>=0){d.platforms.splice(ix,1)}else{const acc=(partner(d.partnerId).accounts||{})[pf];const ref=d.platforms[0];d.platforms.push({id:uid('pl'),platform:pf,date:ref?ref.date:'',time:ref?ref.time:'',text:'',accounts:acc?[acc]:[],tags:[],collabs:[],status:'prevu',link:''})}renderModalOnly();break}
   case 'mark-sent':{const r=S.reports.find(x=>x.id===ds.id);if(!r)return;const p=partner(r.partnerId);ui.modalAnim=true;ui.modal={type:'sent',draft:{reportId:r.id,date:TODAY,to:p.access.contact||(p.contacts[0]||{}).name||'',channel:'Email',log:true,awaiting:false}};renderModalOnly();break}
