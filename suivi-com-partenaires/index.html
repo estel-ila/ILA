@@ -873,6 +873,7 @@ input[type=password]:focus{outline:0;background-color:#F5F2EE;box-shadow:var(--i
 .chip.dchip.ds-a_valider{background:#FFF1DC;color:#9A5B00}
 .chip.dchip.ds-validee{background:var(--ok-soft);color:var(--ok)}
 .chip.dchip.ds-a_revoir{background:var(--red-soft);color:var(--red-ink)}
+.chip.asidechip{background:rgba(23,12,11,.82);color:#fff;border-color:transparent}
 .delbox{display:grid;gap:10px;padding:14px;border-radius:18px;background:rgba(217,20,14,.08);border:1px solid rgba(217,20,14,.25);margin-top:12px}.delbox .row .btn{width:auto}
 .selbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px);z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;margin-bottom:14px;border-radius:20px;background:rgba(23,12,11,.86);color:#fff;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .selbar .btn.ghost{color:#fff;background:rgba(255,255,255,.12)}
@@ -1087,6 +1088,7 @@ const IC={
  lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
  trash:'<path d="M4.5 7h15M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7M6.5 7l.8 11.3c.1 1 .9 1.7 1.9 1.7h5.6c1 0 1.8-.7 1.9-1.7L17.5 7M10 11v5.5M14 11v5.5"/>',
+ aside:'<rect x="3.5" y="4.5" width="17" height="4.5" rx="1.5"/><path d="M5.5 9v8.5a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V9M10 13h4"/>',
  copy:'<rect x="8.5" y="8.5" width="11" height="11" rx="2.5"/><path d="M15.5 8.5V6.5a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/>',
  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
  link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
@@ -1222,7 +1224,7 @@ let S;
 const ui={
  route:'tableau-de-bord',
  cal:{view:innerWidth<720?'liste':'mois',month:TODAY.slice(0,7),week:weekStart(TODAY),partner:'',project:'',kinds:{pub:true,prod:true,val:true,evt:true},platforms:[],statuses:[],more:false,day:null},
- cf:{partner:'',project:'',buckets:[],owner:'',q:''},
+ cf:{partner:'',project:'',buckets:[],owner:'',q:'',aside:false},
  xf:{partner:'',channels:[],open:false},
  rep:{mv:'reglages',lastExported:null,project:'',partner:'ph',month:TODAY.slice(0,7),opts:{chiffres:true,calendrier:true,descriptions:true,comptes:true,collabs:true,liens:true},exclude:{},viewing:null},
  pf:{disp:'',city:''}, dash:{partner:'',project:'',recap:addMonths(TODAY.slice(0,7),-1)}, fab:false, modal:null, mine:false, anim:true, modalAnim:false, sheet:false, saveState:'ok', savedAt:null, toast:null, busy:false
@@ -1359,9 +1361,9 @@ function can(perm,pid){
  return !!(u.perms&&u.perms[perm]);
 }
 const canSeeInternal=()=>!isPartner()&&can('notes_internes');
-function visibleContents(){
- if(isPartner()){const pid=me().partnerId;return S.contents.filter(c=>c.partnerId===pid&&c.share)}
- return S.contents;
+function visibleContents(withAside){
+ if(isPartner()){const pid=me().partnerId;return S.contents.filter(c=>c.partnerId===pid&&c.share&&!c.aside)}
+ return withAside?S.contents:S.contents.filter(c=>!c.aside);
 }
 function visibleExchanges(){
  if(isPartner()){const u=me(),a=partner(u.partnerId).access;if(!a.echanges)return [];return S.exchanges.filter(x=>x.partnerId===u.partnerId&&!x.confidential&&x.type!=='Note interne')}
@@ -1511,7 +1513,7 @@ function contentRow(c,right){
 }
 function contentCard(c){
  const p=partner(c.partnerId);const np=nextPub(c)||firstPub(c);const al=alertsOf(c);
- const sl=ui.sel&&ui.route==='contenus';return `<button class="ccard${sl?' selm':''}${sl&&ui.sel.ids[c.id]?' on':''}" style="--pc:${pcol(c.partnerId)}" data-open="${c.id}">${sl?`<span class="selck">${icon('check')}</span>`:''}<div class="thumb">${`<img src="${thumbSrc(c)}" alt="">`}${!isPartner()&&!sl?`<span class="qbtn" data-quick="${c.id}" role="button" aria-label="Mise à jour rapide" title="Mise à jour rapide">${icon('bolt')}</span>`:''}${al.some(a=>a.lv!=='manquant')?'<span class="dot" title="Retard ou blocage"></span>':''}<span class="badge">${chipS(c)}</span></div>
+ const sl=ui.sel&&ui.route==='contenus';return `<button class="ccard${sl?' selm':''}${sl&&ui.sel.ids[c.id]?' on':''}" style="--pc:${pcol(c.partnerId)}" data-open="${c.id}">${sl?`<span class="selck">${icon('check')}</span>`:''}<div class="thumb">${`<img src="${thumbSrc(c)}" alt="">`}${!isPartner()&&!sl?`<span class="qbtn" data-quick="${c.id}" role="button" aria-label="Mise à jour rapide" title="Mise à jour rapide">${icon('bolt')}</span>`:''}${al.some(a=>a.lv!=='manquant')?'<span class="dot" title="Retard ou blocage"></span>':''}<span class="badge">${c.aside?'<span class="chip asidechip">De côté</span>':chipS(c)}</span></div>
  <div class="t">${esc(c.title)}</div>
  <div class="m"><span class="pdot" style="--pc:${pcol(c.partnerId)}"></span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p?p.name:'')}${c.projectId&&project(c.projectId)?' › '+esc(project(c.projectId).name):''} · ${esc(c.format)}</span></div>
  ${taskIcons(c)}
@@ -1526,6 +1528,7 @@ const PLIM={Instagram:2200,TikTok:2200,LinkedIn:3000,Facebook:63206,YouTube:5000
 function descKeys(c){const ks=[{k:'common',label:'Description commune',pf:null,text:c.description||'',path:'description',limit:2200}];(c.platforms||[]).forEach((x,i)=>ks.push({k:x.id,label:x.platform,pf:x.platform,text:x.text||'',path:'platforms.'+i+'.text',limit:PLIM[x.platform]||2200}));return ks}
 function descReq(c){const ks=descKeys(c);const pl=ks.filter(k=>k.pf);const out=pl.filter(k=>k.text.trim());if(!pl.length||pl.some(k=>!k.text.trim())||c.description.trim())out.unshift(ks[0]);return out.filter(k=>k.text.trim()||k.k==='common')}
 function dStatus(c,K){if(K.pf&&!K.text.trim())return 'commune';const r=(c.descReview||{})[K.k];if(!K.text.trim())return 'brouillon';return r&&r.status?r.status:'a_valider'}
+function setAside(ids,on){const set=new Set(ids);S.contents.forEach(c=>{if(!set.has(c.id))return;if(on){c.aside=true;c.asideAt=new Date().toISOString();c.asideBy=me().id}else{delete c.aside;delete c.asideAt;delete c.asideBy}})}
 function delContents(ids){const set=new Set(ids);S.contents=S.contents.filter(c=>!set.has(c.id));S.exchanges.forEach(x=>{if(set.has(x.contentId))x.contentId=''});S.reports.forEach(r=>{if(Array.isArray(r.exclude))r.exclude=r.exclude.filter(i=>!set.has(i))})}
 function delProject(id,withContents){if(withContents)delContents(S.contents.filter(c=>c.projectId===id).map(c=>c.id));else S.contents.forEach(c=>{if(c.projectId===id)c.projectId=''});S.projects=S.projects.filter(x=>x.id!==id);S.exchanges.forEach(x=>{if(x.projectId===id)x.projectId=''});S.reports.forEach(r=>{if(r.opts&&r.opts.project===id)r.opts.project=''})}
 function prjDelBox(x){const n=S.contents.filter(c=>c.projectId===x.id).length;return `<div class="delbox"><b>Supprimer le projet « ${esc(x.name)} » ?</b>${n?`<span class="muted">Il contient ${n} contenu(s). Que faire de ces contenus ?</span><div class="row" style="gap:8px"><button class="btn sm" data-act="prj-del" data-id="${x.id}" data-mode="keep">Garder les contenus (sans projet)</button><button class="btn sm primary" data-act="prj-del" data-id="${x.id}" data-mode="all">${icon('trash')}Tout supprimer</button></div>`:`<div class="row" style="gap:8px"><button class="btn sm primary" data-act="prj-del" data-id="${x.id}" data-mode="keep">${icon('trash')}Supprimer</button></div>`}<button class="btn sm ghost" data-act="prj-del-cancel">Annuler</button></div>`}
@@ -1636,7 +1639,7 @@ function pageDashboard(){
    ${stpanel}
    <section class="card dark">
     <div class="card-h"><div><div class="eyebrow">Publications prévues</div><h2>Cette semaine : ${weekPubs.length} publication${weekPubs.length>1?'s':''}</h2></div><span class="muted tnum">${monthPubs.length} sur le mois · ${monthPubs.filter(x=>x.p.status==='publie').length} publiée(s)</span></div>
-    ${weekContents.length?`<div class="weekstrip">${weekContents.map(({c,p})=>`<button class="wcard" data-open="${c.id}"><div class="thumb"><img src="${thumbSrc(c)}" alt=""><span class="badge">${chipS(c)}</span></div><div class="t">${esc(c.title)}</div><div class="m tnum">${fmtD(p.date)} · ${esc(p.time||'—')} · ${(c.platforms||[]).filter(x=>x.date>=wk&&x.date<=we).map(x=>PFA[x.platform]).join(' ')}</div></button>`).join('')}</div>`:'<div class="empty" style="border-color:#333;color:#A9A3A1">Aucune publication cette semaine.</div>'}
+    ${weekContents.length?`<div class="weekstrip">${weekContents.map(({c,p})=>`<button class="wcard" data-open="${c.id}"><div class="thumb"><img src="${thumbSrc(c)}" alt=""><span class="badge">${c.aside?'<span class="chip asidechip">De côté</span>':chipS(c)}</span></div><div class="t">${esc(c.title)}</div><div class="m tnum">${fmtD(p.date)} · ${esc(p.time||'—')} · ${(c.platforms||[]).filter(x=>x.date>=wk&&x.date<=we).map(x=>PFA[x.platform]).join(' ')}</div></button>`).join('')}</div>`:'<div class="empty" style="border-color:#333;color:#A9A3A1">Aucune publication cette semaine.</div>'}
    </section>
 
    <section class="card white">
@@ -1682,7 +1685,8 @@ function pageDashboard(){
 /* ---------- Contenus ---------- */
 function pageContents(){
  const f=ui.cf;
- let cs=visibleContents().filter(c=>(!f.partner||c.partnerId===f.partner)&&projOk(c,f.partner?f.project:'')&&(!f.buckets.length||f.buckets.includes(gstat(c)))&&(!f.owner||c.owner===f.owner)&&(!f.q||(c.title+' '+c.description).toLowerCase().includes(f.q.toLowerCase())));
+ const nAside=visibleContents(true).filter(c=>c.aside).length;if(!nAside&&f.aside)f.aside=false;
+ let cs=visibleContents(true).filter(c=>!!c.aside===!!f.aside&&(!f.partner||c.partnerId===f.partner)&&projOk(c,f.partner?f.project:'')&&(!f.buckets.length||f.buckets.includes(gstat(c)))&&(!f.owner||c.owner===f.owner)&&(!f.q||(c.title+' '+c.description).toLowerCase().includes(f.q.toLowerCase())));
  const rk=c=>{const g=gstat(c);const np=nextPub(c);if(g==='publie'){const f=(c.platforms||[]).map(x=>x.date).filter(Boolean).sort().pop()||'0000';return '3'+(99999999-+f.replace(/-/g,''))}if(np&&np.date>=TODAY)return '0'+np.date;if(np&&np.date)return '1'+np.date;return '2'};
  cs=cs.slice().sort((a,b)=>rk(a).localeCompare(rk(b)));
  return `
@@ -1692,14 +1696,14 @@ function pageContents(){
   ${projChips('cf')}
   <div class="fbar-row"><span class="flabel">Statuts</span>${fchips('cf','buckets',Object.keys(GS).map(k=>[k,GS[k],`<i class="sdot s-${k}"></i>`]),true)}</div>
  </div>
- <div class="spread" style="margin:-6px 0 14px;gap:8px"><div class="muted" style="font-size:13px;min-width:0">${cs.length} contenu(s) · à venir d'abord, puis à planifier, puis publiés</div>${can('supprimer')&&cs.length?`<button class="btn sm ${ui.sel?'dark':'ghost'}" data-act="sel-mode">${ui.sel?'Terminer':icon('check')+'Sélectionner'}</button>`:''}</div>
- ${ui.sel?(()=>{const n=Object.keys(ui.sel.ids).length;return `<div class="selbar">${ui.sel.confirm?`<b>Supprimer ${n} contenu(s) ? C'est définitif.</b><div class="row" style="gap:8px"><button class="btn sm primary" data-act="sel-del">${icon('trash')}Oui, supprimer</button><button class="btn sm ghost" data-act="sel-del-cancel">Annuler</button></div>`:`<b class="tnum">${n} sélectionné(s)</b><div class="row" style="gap:8px"><button class="btn sm ghost" data-act="sel-all">Tout / rien</button><button class="btn sm primary" data-act="sel-del-ask" ${n?'':'disabled'}>${icon('trash')}Supprimer</button></div>`}</div>`})():''}
+ <div class="spread" style="margin:-6px 0 14px;gap:8px"><div class="muted" style="font-size:13px;min-width:0">${f.aside?`<b>${cs.length} contenu(s) mis de côté</b> · hors calendrier, tableau de bord et comptes rendus`:`${cs.length} contenu(s) · à venir d'abord, puis à planifier, puis publiés`}</div><div class="row" style="gap:6px;flex-wrap:nowrap">${!isPartner()&&(nAside||f.aside)?`<button class="btn sm ${f.aside?'dark':'ghost'}" data-act="cf-aside">${icon('aside')}${f.aside?'Retour aux contenus':'De côté · '+nAside}</button>`:''}${(can('supprimer')||can('contenus_modifier'))&&cs.length?`<button class="btn sm ${ui.sel?'dark':'ghost'}" data-act="sel-mode">${ui.sel?'Terminer':icon('check')+'Sélectionner'}</button>`:''}</div></div>
+ ${ui.sel?(()=>{const n=Object.keys(ui.sel.ids).length;return `<div class="selbar">${ui.sel.confirm?`<b>Supprimer ${n} contenu(s) ? C'est définitif.</b><div class="row" style="gap:8px"><button class="btn sm primary" data-act="sel-del">${icon('trash')}Oui, supprimer</button><button class="btn sm ghost" data-act="sel-del-cancel">Annuler</button></div>`:`<b class="tnum">${n} sélectionné(s)</b><div class="row" style="gap:8px"><button class="btn sm ghost" data-act="sel-all">Tout / rien</button>${can('contenus_modifier')?`<button class="btn sm ghost" data-act="sel-aside" ${n?'':'disabled'}>${icon('aside')}${ui.cf.aside?'Remettre en circuit':'Mettre de côté'}</button>`:''}${can('supprimer')?`<button class="btn sm primary" data-act="sel-del-ask" ${n?'':'disabled'}>${icon('trash')}Supprimer</button>`:''}</div>`}</div>`})():''}
  ${cs.length?`<div class="cgrid">${cs.map(contentCard).join('')}</div>`:'<div class="empty">Aucun contenu ne correspond à ces filtres.</div>'}`;
 }
 
 /* ---------- Partenaires ---------- */
 function partnerMonth(p,ym){
- const cs=S.contents.filter(c=>c.partnerId===p.id&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)));
+ const cs=S.contents.filter(c=>c.partnerId===p.id&&!c.aside&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)));
  return {planned:cs.length,done:cs.filter(c=>(c.platforms||[]).filter(x=>x.date.startsWith(ym)).every(x=>x.status==='publie')).length};
 }
 function pagePartners(){
@@ -1708,7 +1712,7 @@ function pagePartners(){
  const PL=S.partners.filter(x=>(!ui.pf.disp||x.dispositif===ui.pf.disp)&&(!ui.pf.city||x.city===ui.pf.city));
  return `${disps.length||cities.length?`<div class="fbar">${disps.length?`<div class="fbar-row"><span class="flabel">Dispositif</span>${fchips('pf','disp',[['','Tous'],...disps.map(d=>[d,d])],false)}</div>`:''}${cities.length?`<div class="fbar-row"><span class="flabel">Ville</span>${fchips('pf','city',[['','Toutes'],...cities.map(d=>[d,d])],false)}</div>`:''}</div>`:''}<div class="spread" style="margin-bottom:18px"><div class="muted">${PL.length} partenaire(s) · objectifs de ${fmtMonth(ym)}</div>${can('partenaires_gerer')?`<button class="btn primary" data-act="new-partner">${icon('plus')}Nouveau partenaire</button>`:''}</div>
  <div class="pgrid">${PL.map(p=>{
-  const m=partnerMonth(p,ym);const cs=S.contents.filter(c=>c.partnerId===p.id);const np=cs.map(c=>({c,p:nextPub(c)})).filter(x=>x.p&&x.p.date>=TODAY).sort((a,b)=>(a.p.date+a.p.time).localeCompare(b.p.date+b.p.time))[0];
+  const m=partnerMonth(p,ym);const cs=S.contents.filter(c=>c.partnerId===p.id&&!c.aside);const np=cs.map(c=>({c,p:nextPub(c)})).filter(x=>x.p&&x.p.date>=TODAY).sort((a,b)=>(a.p.date+a.p.time).localeCompare(b.p.date+b.p.time))[0];
   const al=cs.filter(c=>alertsOf(c).some(a=>a.lv!=='manquant')).length;const open=visibleExchanges().filter(x=>x.partnerId===p.id&&x.nextAction&&!x.done).length;
   const pct=p.target?Math.min(100,Math.round(m.planned/p.target*100)):0;
   return `<button class="card pcard glow" style="--pc:${p.color}" data-go="partenaire-${p.id}">
@@ -1755,7 +1759,7 @@ function pagePartner(pid){
 
  <div class="section-title" id="sec-projets">Projets</div>
  <div class="two">
-  ${prj.map(x=>{const pc=S.contents.filter(c=>c.projectId===x.id&&(!partnerView||c.share));const pub=pc.filter(c=>gstat(c)==='publie').length;return `<div class="card prjcard" style="--pc:${p.color}"><div class="spread"><h2>${esc(x.name)}</h2>${x.status==='termine'?'<span class="chip soft">Terminé</span>':'<span class="chip sent">En cours</span>'}</div><div class="muted tnum" style="font-size:12px;margin-top:2px">${x.start?fmtDY(x.start):'—'} → ${x.end?fmtDY(x.end):'—'}</div>${x.desc?`<p class="muted" style="margin:6px 0 0;font-size:13px">${esc(x.desc)}</p>`:''}
+  ${prj.map(x=>{const pc=S.contents.filter(c=>c.projectId===x.id&&!c.aside&&(!partnerView||c.share));const pub=pc.filter(c=>gstat(c)==='publie').length;return `<div class="card prjcard" style="--pc:${p.color}"><div class="spread"><h2>${esc(x.name)}</h2>${x.status==='termine'?'<span class="chip soft">Terminé</span>':'<span class="chip sent">En cours</span>'}</div><div class="muted tnum" style="font-size:12px;margin-top:2px">${x.start?fmtDY(x.start):'—'} → ${x.end?fmtDY(x.end):'—'}</div>${x.desc?`<p class="muted" style="margin:6px 0 0;font-size:13px">${esc(x.desc)}</p>`:''}
    <div class="row" style="flex-wrap:nowrap;gap:14px;margin:12px 0">${gauge(pub,pc.length,{size:76,stroke:7,ticks:false,tone:p.color,fs:17})}<div><b>${pc.length} contenu(s)</b><div class="muted" style="font-size:12.5px">${pub} publié(s) · ${pc.filter(c=>['attente'].includes(gstat(c))).length} à valider</div></div></div>
    <div class="row" style="gap:6px">${pc.slice(0,6).map(c=>`<button data-open="${c.id}" style="border:0;padding:0;background:none" title="${esc(c.title)}">${thumbImg(c,'mini')}</button>`).join('')}${pc.length>6?`<span class="muted">+${pc.length-6}</span>`:''}</div>
    <div class="row" style="margin-top:12px">${!partnerView?`<button class="btn sm ghost" data-act="prj-contents" data-partner="${pid}" data-id="${x.id}">Voir les contenus</button>`:''}${can('contenus_creer')&&!partnerView?`<button class="btn sm ghost" data-act="new-content" data-partner="${pid}" data-project="${x.id}">${icon('plus')}Contenu</button>`:''}${edit?`<button class="btn sm ghost" data-act="edit-project" data-id="${x.id}">Modifier</button>`:''}${edit&&can('supprimer')?`<button class="btn sm ghost" data-act="prj-del-ask" data-id="${x.id}" style="color:var(--red)">${icon('trash')}Supprimer</button>`:''}</div>${ui.prjDel===x.id?prjDelBox(x):''}</div>`}).join('')}
@@ -1907,12 +1911,12 @@ function pageCalendar(){
 /* ---------- Comptes rendus ---------- */
 function reportData(pid,ym,exclude,proj){
  const p=partner(pid);
- const cs=S.contents.filter(c=>c.partnerId===pid&&projOk(c,proj)&&c.share&&!(exclude||[]).includes(c.id)&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)))
+ const cs=S.contents.filter(c=>c.partnerId===pid&&!c.aside&&projOk(c,proj)&&c.share&&!(exclude||[]).includes(c.id)&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)))
   .sort((a,b)=>((firstPub(a)||{}).date||'').localeCompare((firstPub(b)||{}).date||''));
  const evs=S.events.filter(e=>e.partnerId===pid&&e.date.startsWith(ym));
  return {p,cs,evs};
 }
-function reportCandidates(pid,ym){return S.contents.filter(c=>c.partnerId===pid&&projOk(c,ui.rep.project)&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)))}
+function reportCandidates(pid,ym){return S.contents.filter(c=>c.partnerId===pid&&!c.aside&&projOk(c,ui.rep.project)&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)))}
 function buildReport(pid,ym,opts,exclude){
  const {p,cs,evs}=reportData(pid,ym,exclude,opts.project);
  const pages=[];
@@ -2208,6 +2212,7 @@ function modalContent(){
    <button class="btn ghost ${editable?'hide-m':''}" data-act="close">${editable?'Annuler':'Fermer'}</button>
    <span style="flex:1"></span>
    ${!isNew&&!pv&&can('echanges',c.partnerId)?`<button class="btn sm ghost" data-act="new-exchange" data-partner="${c.partnerId}" data-content="${c.id}" title="Consigner un échange" aria-label="Consigner un échange">${icon('chat')}<span class="lbl">Consigner un échange</span></button>`:''}
+   ${!isNew&&!pv&&can('contenus_modifier',c.partnerId)?`<button class="btn sm ghost" data-act="aside-toggle" title="${c.aside?'Remettre en circuit':'Mettre de côté'}" aria-label="${c.aside?'Remettre en circuit':'Mettre de côté'}">${icon('aside')}<span class="lbl">${c.aside?'Remettre':'De côté'}</span></button>`:''}
    ${!isNew&&can('supprimer',c.partnerId)&&!pv?(m.confirmDel?`<button class="btn sm primary" data-act="del-content" style="width:auto;padding:0 12px">${icon('trash')}Supprimer ?</button>`:`<button class="btn sm ghost" data-act="del-content-ask" aria-label="Supprimer le contenu" title="Supprimer le contenu" style="color:var(--red)">${icon('trash')}<span class="lbl">Supprimer</span></button>`):''}
   </div></div></div>`;
 }
@@ -2304,6 +2309,7 @@ function modalQuick(){
     ${c.platforms.map((x,i)=>`<div class="qrow"><div class="ql"><span class="pf">${PFA[x.platform]}</span>${esc(x.platform)}<small class="tnum">${x.date?fmtD(x.date):'Sans date'}${x.time?' · '+esc(x.time):''}</small></div>${qs(`data-act="qpub" data-i="${i}"`,[['prevu','Prévue'],['programme','Programmée'],['publie','Publiée']],x.status,!cPl)}${x.status==='publie'?`<input type="url" data-qlink="${i}" value="${esc(x.link)}" placeholder="Coller le lien du post publié" ${cPl?'':'disabled'} aria-label="Lien du post ${esc(x.platform)}">`:''}${(x.collabs||[]).map((k,j)=>`<div class="ql" style="font-size:12.5px;margin-top:4px">Collab · ${esc(k.account)}</div>${qs(`data-act="qcol" data-i="${i}" data-j="${j}"`,Object.entries(COLLAB),k.status,!cPl,'wrap5')}`).join('')}</div>`).join('')||'<div class="muted">Aucune plateforme.</div>'}
    </div>
    <div class="notice">${icon('info')}<div>Chaque changement est enregistré tout de suite et met à jour le calendrier, le tableau de bord et le compte rendu. Rien n'est envoyé au partenaire.</div></div>
+  ${can('contenus_modifier',c.partnerId)?`<div class="qsec">${c.aside?`<div class="muted" style="font-size:12.5px">Mis de côté${c.asideAt?' le '+fmtD(c.asideAt.slice(0,10)):''}${c.asideBy?' par '+esc(userName(c.asideBy)):''}. Il n'apparaît plus dans le calendrier, le tableau de bord ni les comptes rendus.</div><button class="btn dark" data-act="aside-toggle">${icon('aside')}Remettre en circuit</button>`:`<button class="btn ghost" data-act="aside-toggle">${icon('aside')}Mettre de côté</button><small class="muted" style="font-size:12px">Le contenu est conservé mais sort du calendrier, du tableau de bord et des comptes rendus. Retrouvez-le dans Contenus › De côté.</small>`}</div>`:''}
   ${can('supprimer',c.partnerId)?`<div class="qsec qdel">${ui.modal.confirmDel?`<div class="delbox"><b>Supprimer « ${esc(c.title)} » ?</b><span class="muted">Le contenu disparaît du calendrier, du tableau de bord et des comptes rendus. C'est définitif.</span><div class="row" style="gap:8px"><button class="btn sm primary" data-act="del-content">${icon('trash')}Oui, supprimer</button><button class="btn sm ghost" data-act="qdel-cancel">Annuler</button></div></div>`:`<button class="btn ghost" data-act="qdel-ask" style="color:var(--red)">${icon('trash')}Supprimer ce contenu</button>`}</div>`:''}
   </div>
   <div class="pf-foot"><button class="btn dark" data-act="quick-full" style="flex:1">Fiche complète</button>${can('echanges',c.partnerId)?`<button class="btn" data-act="new-exchange" data-partner="${c.partnerId}" data-content="${c.id}">${icon('chat')}Échange</button>`:''}</div>
@@ -2490,7 +2496,7 @@ document.addEventListener('click',async e=>{
   case 'save-project':{syncDraft();const d=ui.modal.draft;if(!d.name.trim()){toast('Donnez un nom au projet.',true);return}if(!d.id){d.id=uid('pr');S.projects.push(d)}else{const i=S.projects.findIndex(x=>x.id===d.id);const old=S.projects[i];if(old.partnerId!==d.partnerId)S.contents.forEach(c=>{if(c.projectId===d.id)c.partnerId=d.partnerId});S.projects[i]=d}ui.modal=null;commit('Projet enregistré');break}
   case 'del-project-ask':ui.modal.confirmDel=true;renderModalOnly();break;
 
-  case 'prj-contents':ui.cf={partner:ds.partner,project:ds.id,buckets:[],owner:'',q:''};navigate('contenus');break;
+  case 'prj-contents':ui.cf={partner:ds.partner,project:ds.id,buckets:[],owner:'',q:'',aside:false};navigate('contenus');break;
   case 'ci-save':{const d=ui.modal.draft;const p=partner(d.partnerId);const add=d.list.filter((k,i)=>d.sel[i]).filter(k=>!p.contacts.some(c=>(c.email&&c.email===k.email)||c.name===k.name)).map(k=>({name:k.name||k.email,role:k.role||k.org||'',email:k.email||'',phone:k.phone||''}));p.contacts.push(...add);ui.modal=null;commit(add.length+' contact(s) ajouté(s) à '+p.name);break}
   case 'to-project-ask':syncDraft();ui.modal.confirmMerge=true;renderModalOnly();break;
   case 'to-project':{const src=partner(ui.modal.draft.id);const tgt=partner((document.getElementById('merge-target')||{}).value);if(!src||!tgt||src.id===tgt.id){toast('Choisissez un autre partenaire.',true);return}
@@ -2512,6 +2518,9 @@ document.addEventListener('click',async e=>{
    syncDraft();const d=ui.modal.draft;d.comments.push({id:uid('k'),author:me().id,date:nowStamp(),text:txt.trim(),kind:ui.modal.modReq?'modification':internal?'interne':'commentaire'});if(ui.modal.modReq){d.validation='modifs';if(d.prod==='termine')d.prod='en_cours'}const wasMod=ui.modal.modReq;ui.modal.modReq=false;saveContent(wasMod?'Demande de modification enregistrée':'Commentaire ajouté');break}
   case 'del-content-ask':ui.modal.confirmDel=true;renderModalOnly();break;
   case 'del-content':delContents([ui.modal.draft?ui.modal.draft.id:ui.modal.id]);ui.modal=null;commit('Contenu supprimé');break;
+  case 'cf-aside':ui.cf.aside=!ui.cf.aside;ui.sel=null;render();break;
+  case 'aside-toggle':{const id=ui.modal.draft?ui.modal.draft.id:ui.modal.id;const c=content(id);if(!c)return;setAside([id],!c.aside);if(ui.modal.draft)Object.assign(ui.modal.draft,{aside:c.aside,asideAt:c.asideAt,asideBy:c.asideBy});if(ui.modal.type==='quick')ui.modal=null;commit(c.aside?'Contenu mis de côté · retrouvez-le dans Contenus › De côté':'Contenu remis en circuit');break}
+  case 'sel-aside':{const ids=Object.keys(ui.sel.ids);const on=!ui.cf.aside;setAside(ids,on);ui.sel=null;commit(ids.length+(on?' contenu(s) mis de côté':' contenu(s) remis en circuit'));break}
   case 'qdel-ask':ui.modal.confirmDel=true;renderModalOnly();setTimeout(()=>{const b=document.querySelector('#modal-root .qdel');if(b)b.scrollIntoView({block:'nearest'})},30);break;
   case 'qdel-cancel':ui.modal.confirmDel=false;renderModalOnly();break;
   case 'sel-mode':ui.sel=ui.sel?null:{ids:{},confirm:false};render();break;
