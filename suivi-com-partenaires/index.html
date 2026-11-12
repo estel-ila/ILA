@@ -875,6 +875,8 @@ input[type=password]:focus{outline:0;background-color:#F5F2EE;box-shadow:var(--i
 .chip.dchip.ds-a_revoir{background:var(--red-soft);color:var(--red-ink)}
 .chip.asidechip{background:rgba(23,12,11,.82);color:#fff;border-color:transparent}
 .lg2{display:flex;flex-direction:column;align-items:center;line-height:.98;gap:.04em}.lg2>span{display:block}.lg2>span+span{font-weight:700;opacity:.92}
+.chip.pst-terminee{background:rgba(23,12,11,.82);color:#fff;border-color:transparent}.chip.pst-en_pause{background:#FFF1D6;color:#8A5A00;border-color:transparent}
+.pcard.pdone{opacity:.72;filter:saturate(.55)}
 .delbox{display:grid;gap:10px;padding:14px;border-radius:18px;background:rgba(217,20,14,.08);border:1px solid rgba(217,20,14,.25);margin-top:12px}.delbox .row .btn{width:auto}
 .selbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px);z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;margin-bottom:14px;border-radius:20px;background:rgba(23,12,11,.86);color:#fff;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .selbar .btn.ghost{color:#fff;background:rgba(255,255,255,.12)}
@@ -1228,7 +1230,7 @@ const ui={
  cf:{partner:'',project:'',buckets:[],owner:'',q:'',aside:false},
  xf:{partner:'',channels:[],open:false},
  rep:{mv:'reglages',lastExported:null,project:'',partner:'ph',month:TODAY.slice(0,7),opts:{chiffres:true,calendrier:true,descriptions:true,comptes:true,collabs:true,liens:true},exclude:{},viewing:null},
- pf:{disp:'',city:''}, dash:{partner:'',project:'',recap:addMonths(TODAY.slice(0,7),-1)}, fab:false, modal:null, mine:false, anim:true, modalAnim:false, sheet:false, saveState:'ok', savedAt:null, toast:null, busy:false
+ pf:{disp:'',city:'',st:'actifs'}, dash:{partner:'',project:'',recap:addMonths(TODAY.slice(0,7),-1)}, fab:false, modal:null, mine:false, anim:true, modalAnim:false, sheet:false, saveState:'ok', savedAt:null, toast:null, busy:false
 };
 const hexA=(h,a)=>{const n=parseInt(String(h||'#888888').slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`};
 const lum=h=>{const n=parseInt(String(h||'#888888').slice(1),16);const c=[n>>16&255,n>>8&255,n&255].map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*c[0]+.7152*c[1]+.0722*c[2]};
@@ -1242,7 +1244,7 @@ const COLOR_SEED={ph:'#10A37F',rcs:'#2F6BFF',sk:'#7C4DFF',vc:'#00A8C6',an:'#F59E
 function migrate(D_){
  (D_.users||[]).forEach(u=>{if(u.role==='equipe'&&u.perms&&u.perms.valider_descriptions===undefined)u.perms.valider_descriptions=(u.id==='yassine')});
  D_.contents.forEach(c=>{if(!c.descReview)c.descReview={};if(!c.descHistory)c.descHistory=[]});
- D_.partners.forEach((p,i)=>{if(!p.color)p.color=COLOR_SEED[p.id]||PCOLORS[i%PCOLORS.length][0]});
+ D_.partners.forEach((p,i)=>{if(!p.color)p.color=COLOR_SEED[p.id]||PCOLORS[i%PCOLORS.length][0];if(!p.goalMode)p.goalMode='total';if(!p.status)p.status='en_cours'});
  D_.contents.forEach(c=>{if(!c.tasks){c.tasks=defaultTasks(c,c.prod==='termine'?'done':'todo');const o=TASK_SEED[c.id];if(o&&D_.demo)Object.entries(o).forEach(([k,v])=>{if(c.tasks[k])c.tasks[k].state=v});c._fmt=c.format;c.prod=prodOf(c)}if(c._fmt===undefined)c._fmt=c.format});
  D_.reports=D_.reports||[];D_.reports.forEach(r=>{if(r.sentAt===undefined){r.sentAt='';r.sentChannel='';r.sentTo='';r.sentBy=''}});
  if(D_.demo&&!D_._v3){const r1=D_.reports.find(r=>r.id==='r1');if(r1&&!r1.sentAt){r1.sentAt='2026-11-03';r1.sentChannel='Email';r1.sentTo='Claire Martin';r1.sentBy='estelle'}if(!D_.reports.find(r=>r.id==='r2'))D_.reports.push({id:'r2',partnerId:'rcs',month:'2026-10',opts:{chiffres:true,calendrier:true,descriptions:true,comptes:true,collabs:true,liens:true},exclude:[],createdAt:'2026-11-05T10:00',by:'yassine',shared:false,sentAt:'',sentChannel:'',sentTo:'',sentBy:''})}
@@ -1576,7 +1578,7 @@ function progressBar(c){const i=STEPS.indexOf(gstat(c));return `<div class="cpro
 
 /* ---------- Tableau de bord ---------- */
 function pageDashboard(){
- const u=me();const sp=ui.dash.partner&&partner(ui.dash.partner)?ui.dash.partner:'';const SPp=sp?partner(sp):null;const DP=sp?[SPp]:S.partners;
+ const u=me();const sp=ui.dash.partner&&partner(ui.dash.partner)?ui.dash.partner:'';const SPp=sp?partner(sp):null;const DP=sp?[SPp]:S.partners.filter(x=>pStatus(x)!=='terminee');
  let cs=visibleContents();
  if(sp)cs=cs.filter(c=>c.partnerId===sp&&projOk(c,ui.dash.project));
  if(ui.mine)cs=cs.filter(c=>c.owner===u.id);
@@ -1609,7 +1611,7 @@ function pageDashboard(){
  const recapcard=`<section class="card white"><div class="card-h"><div><div class="eyebrow">Récaps PDF partenaires</div><h2>Communiqués au partenaire</h2></div>${fseg('dash','recap',[[addMonths(TODAY.slice(0,7),-1),MOIS[D(addMonths(TODAY.slice(0,7),-1)+'-01').getMonth()]],[TODAY.slice(0,7),MOIS[D(TODAY).getMonth()]]])}</div>
   <div class="row" style="flex-wrap:nowrap;gap:16px;margin-bottom:12px">${gauge(nSent,DP.length,{size:96,stroke:9,tone:'ok',ticks:false,fs:22})}<div><div style="font-weight:800">${nSent} récap(s) envoyé(s) sur ${DP.length}</div><div class="muted" style="font-size:12.5px;text-transform:capitalize">${fmtMonth(rm)}</div></div></div>
   <div class="rcards">${rstat.map(({p,k,r})=>`<div class="rcard" style="--pc:${p.color}"><span class="plogo xs" style="${logoStyle(p)}">${logoTxt(p)}</span><div class="rb"><b>${esc(p.name)}</b><small>${k==='sent'?`Envoyé le ${fmtD(r.sentAt)} · ${esc(r.sentChannel)}${r.sentTo?' à '+esc(r.sentTo):''}`:k==='ready'?'PDF préparé, pas encore envoyé':'Récap à préparer'}</small></div>${k==='sent'?'<span class="chip sent">'+icon('check')+'Envoyé</span>':k==='ready'?(can('echanges')?`<button class="btn sm dark" data-act="mark-sent" data-id="${r.id}">Marquer envoyé</button>`:'<span class="chip ready">À envoyer</span>'):(can('comptes_rendus')?`<button class="btn sm ghost" data-act="prep-recap" data-partner="${p.id}" data-month="${rm}">Préparer</button>`:'<span class="chip none">À préparer</span>')}</div>`).join('')}</div></section>`;
- const pgauges=`<section class="card white"><div class="card-h"><div><div class="eyebrow">Objectifs mensuels</div><h2>Prévu / objectif par partenaire</h2></div></div><div class="ggrid">${DP.map(p=>{const m=partnerMonth(p,ym);return `<button class="gp" data-go="partenaire-${p.id}">${gauge(m.planned,p.target||0,{size:84,stroke:8,ticks:false,tone:p.color,fs:20})}<span class="n">${esc(p.name)}</span><span class="s">${m.done} publié(s)</span></button>`}).join('')}</div></section>`;
+ const pgauges=`<section class="card white"><div class="card-h"><div><div class="eyebrow">Objectifs</div><h2>Contenus prévus / objectif par partenaire</h2></div></div><div class="ggrid">${DP.map(p=>{const m=partnerGoal(p,ym);return `<button class="gp" data-go="partenaire-${p.id}">${gauge(m.planned,m.target,{size:84,stroke:8,ticks:false,tone:p.color,fs:20})}<span class="n">${esc(p.name)}</span><span class="s">${m.done} publié(s)</span></button>`}).join('')}</div></section>`;
  const gpanel=`<div class="gpanel">
   <section class="card dark"><div class="card-h"><div><div class="eyebrow">Avancement de ${MOIS[+ym.slice(5)-1]}</div><h2>Publications du mois</h2></div></div>
    <div class="gmain">${gauge(mPub,monthPubs.length,{size:178,stroke:14,tone:'light',dark:true,label:'publiées'})}
@@ -1705,6 +1707,11 @@ function pageContents(){
 }
 
 /* ---------- Partenaires ---------- */
+const PSTAT={en_cours:'Com en cours',en_pause:'En pause',terminee:'Com terminée'};
+function pStatus(p){return (p&&p.status)||'en_cours'}
+function pStatChip(p){const st=pStatus(p);return st==='en_cours'?'':`<span class="chip pst-${st}">${PSTAT[st]}</span>`}
+function partnerGoal(p,ym){const mode=p.goalMode||'total';if(mode==='mensuel'){const m=partnerMonth(p,ym);return Object.assign(m,{mode,target:+p.target||0,label:'objectif du mois',of:'Objectif de '+MOIS[+ym.slice(5)-1],pubLabel:'Publiés en '+MOIS[+ym.slice(5)-1]})}
+ const cs=S.contents.filter(c=>c.partnerId===p.id&&!c.aside);return {mode,planned:cs.length,done:cs.filter(c=>gstat(c)==='publie').length,target:+p.target||0,label:'objectif global',of:'Objectif global du partenaire',pubLabel:'Publiés au total'}}
 function partnerMonth(p,ym){
  const cs=S.contents.filter(c=>c.partnerId===p.id&&!c.aside&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)));
  return {planned:cs.length,done:cs.filter(c=>(c.platforms||[]).filter(x=>x.date.startsWith(ym)).every(x=>x.status==='publie')).length};
@@ -1712,22 +1719,22 @@ function partnerMonth(p,ym){
 function pagePartners(){
  const ym=TODAY.slice(0,7);
  const disps=[...new Set(S.partners.map(x=>x.dispositif).filter(Boolean))].sort();const cities=[...new Set(S.partners.map(x=>x.city).filter(Boolean))].sort();
- const PL=S.partners.filter(x=>(!ui.pf.disp||x.dispositif===ui.pf.disp)&&(!ui.pf.city||x.city===ui.pf.city));
- return `${disps.length||cities.length?`<div class="fbar">${disps.length?`<div class="fbar-row"><span class="flabel">Dispositif</span>${fchips('pf','disp',[['','Tous'],...disps.map(d=>[d,d])],false)}</div>`:''}${cities.length?`<div class="fbar-row"><span class="flabel">Ville</span>${fchips('pf','city',[['','Toutes'],...cities.map(d=>[d,d])],false)}</div>`:''}</div>`:''}<div class="spread" style="margin-bottom:18px"><div class="muted">${PL.length} partenaire(s) · objectifs de ${fmtMonth(ym)}</div>${can('partenaires_gerer')?`<button class="btn primary" data-act="new-partner">${icon('plus')}Nouveau partenaire</button>`:''}</div>
+ const nEnd=S.partners.filter(x=>pStatus(x)==='terminee').length;const stf=ui.pf.st||'actifs';
+ const PL=S.partners.filter(x=>(!ui.pf.disp||x.dispositif===ui.pf.disp)&&(!ui.pf.city||x.city===ui.pf.city)&&(stf==='tous'||(stf==='terminee'?pStatus(x)==='terminee':pStatus(x)!=='terminee')));
+ return `<div class="fbar"><div class="fbar-row"><span class="flabel">Statut</span>${fchips('pf','st',[['actifs','En cours'],['terminee','Com terminée'+(nEnd?' · '+nEnd:'')],['tous','Tous']],false)}</div>${disps.length||cities.length?`${disps.length?`<div class="fbar-row"><span class="flabel">Dispositif</span>${fchips('pf','disp',[['','Tous'],...disps.map(d=>[d,d])],false)}</div>`:''}${cities.length?`<div class="fbar-row"><span class="flabel">Ville</span>${fchips('pf','city',[['','Toutes'],...cities.map(d=>[d,d])],false)}</div>`:''}`:''}</div><div class="spread" style="margin-bottom:18px"><div class="muted">${PL.length} partenaire(s)</div>${can('partenaires_gerer')?`<button class="btn primary" data-act="new-partner">${icon('plus')}Nouveau partenaire</button>`:''}</div>
  <div class="pgrid">${PL.map(p=>{
-  const m=partnerMonth(p,ym);const cs=S.contents.filter(c=>c.partnerId===p.id&&!c.aside);const np=cs.map(c=>({c,p:nextPub(c)})).filter(x=>x.p&&x.p.date>=TODAY).sort((a,b)=>(a.p.date+a.p.time).localeCompare(b.p.date+b.p.time))[0];
+  const m=partnerGoal(p,ym);const cs=S.contents.filter(c=>c.partnerId===p.id&&!c.aside);const np=cs.map(c=>({c,p:nextPub(c)})).filter(x=>x.p&&x.p.date>=TODAY).sort((a,b)=>(a.p.date+a.p.time).localeCompare(b.p.date+b.p.time))[0];
   const al=cs.filter(c=>alertsOf(c).some(a=>a.lv!=='manquant')).length;const open=visibleExchanges().filter(x=>x.partnerId===p.id&&x.nextAction&&!x.done).length;
-  const pct=p.target?Math.min(100,Math.round(m.planned/p.target*100)):0;
-  return `<button class="card pcard glow" style="--pc:${p.color}" data-go="partenaire-${p.id}">
+  return `<button class="card pcard glow${pStatus(p)==='terminee'?' pdone':''}" style="--pc:${p.color}" data-go="partenaire-${p.id}">
    <div class="row" style="flex-wrap:nowrap"><span class="plogo" style="${logoStyle(p)}">${logoTxt(p)}</span><div style="min-width:0"><h2 style="font-size:17px">${esc(p.name)}</h2><div class="muted" style="font-size:12.5px">${esc(pSub(p))}</div></div></div>
-   <div class="row" style="flex-wrap:nowrap;gap:16px">${gauge(m.planned,p.target||0,{size:92,stroke:9,ticks:false,tone:p.color,fs:22})}<div style="min-width:0"><div style="font-weight:800;font-size:15px">${m.planned} / ${p.target||'—'} contenus</div><div class="muted" style="font-size:12.5px">Objectif de ${MOIS[+ym.slice(5)-1]}</div><div class="muted" style="font-size:12.5px">${m.done} publié(s)</div></div></div>
-   <div class="row" style="gap:6px">${al?`<span class="chip alert">${al} alerte(s)</span>`:''}${open?`<span class="chip soft">${open} action(s) ouverte(s)</span>`:''}${p.access.enabled?`<span class="chip lock">${icon('lock')}Accès partenaire</span>`:''}</div>
+   <div class="row" style="flex-wrap:nowrap;gap:16px">${gauge(m.planned,m.target,{size:92,stroke:9,ticks:false,tone:p.color,fs:22})}<div style="min-width:0"><div style="font-weight:800;font-size:15px">${m.planned} / ${m.target||'—'} contenus</div><div class="muted" style="font-size:12.5px">${m.of}</div><div class="muted" style="font-size:12.5px">${m.done} publié(s)</div></div></div>
+   <div class="row" style="gap:6px">${pStatChip(p)}${al&&pStatus(p)!=='terminee'?`<span class="chip alert">${al} alerte(s)</span>`:''}${open?`<span class="chip soft">${open} action(s) ouverte(s)</span>`:''}${p.access.enabled?`<span class="chip lock">${icon('lock')}Accès partenaire</span>`:''}</div>
    ${np?`<div class="row" style="flex-wrap:nowrap;gap:10px;margin-top:auto">${thumbImg(np.c,'mini')}<div style="min-width:0"><div class="eyebrow">Prochaine publication</div><div style="font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(np.c.title)}</div><div class="muted tnum" style="font-size:12px">${fmtD(np.p.date)} · ${esc(np.p.time)} · ${esc(np.p.platform)}</div></div></div>`:'<div class="muted" style="font-size:13px;margin-top:auto">Aucune publication à venir.</div>'}
   </button>`}).join('')}</div>`;
 }
 function pagePartner(pid){
  const p=partner(pid);if(!p)return '<div class="empty">Partenaire introuvable.</div>';
- const ym=TODAY.slice(0,7);const m=partnerMonth(p,ym);
+ const ym=TODAY.slice(0,7);const m=partnerGoal(p,ym);
  const cs=visibleContents().filter(c=>c.partnerId===pid).sort((a,b)=>((nextPub(a)||firstPub(a)||{date:'9'}).date).localeCompare((nextPub(b)||firstPub(b)||{date:'9'}).date));
  const xs=visibleExchanges().filter(x=>x.partnerId===pid).sort((a,b)=>b.date.localeCompare(a.date));
  const prj=S.projects.filter(x=>x.partnerId===pid);
@@ -1738,7 +1745,7 @@ function pagePartner(pid){
  <section class="card dark glow" style="--pc:${p.color}">
   <div class="phead">
    <span class="plogo" style="${logoStyle(p)};width:64px;height:64px;font-size:22px">${logoTxt(p)}</span>
-   <div style="min-width:0"><div class="eyebrow">${esc(pSub(p))}</div><h2>${esc(p.name)}</h2>${(p.dispositif||p.city)&&p.sector?`<div class="muted" style="font-size:12.5px;margin-top:2px">${esc(p.sector)}</div>`:''}</div>
+   <div style="min-width:0"><div class="eyebrow">${esc(pSub(p))}</div><h2>${esc(p.name)}</h2>${pStatChip(p)?`<div style="margin-top:6px">${pStatChip(p)}</div>`:''}${(p.dispositif||p.city)&&p.sector?`<div class="muted" style="font-size:12.5px;margin-top:2px">${esc(p.sector)}</div>`:''}</div>
    <div class="row acts">
     ${!partnerView?`<button class="btn sm primary" data-act="dash-partner" data-partner="${pid}">${icon('home')}Tableau de bord</button><button class="btn sm" data-act="cal-partner" data-partner="${pid}">${icon('cal')}Calendrier</button>`:''}
     ${!partnerView&&can('comptes_rendus')?`<button class="btn sm" data-act="report-partner" data-partner="${pid}">${icon('doc')}Compte rendu</button>`:''}
@@ -1746,8 +1753,8 @@ function pagePartner(pid){
    </div>
   </div>
   <div class="pstats">
-   <div class="pstat g">${gauge(m.planned,p.target||0,{size:132,stroke:11,tone:p.color,dark:true,label:'objectif du mois'})}</div>
-   <div class="pstat"><b class="tnum">${m.done}</b><span>Publiés en ${MOIS[+ym.slice(5)-1]}</span></div>
+   <div class="pstat g">${gauge(m.planned,m.target,{size:132,stroke:11,tone:p.color,dark:true,label:m.label})}</div>
+   <div class="pstat"><b class="tnum">${m.done}</b><span>${m.pubLabel}</span></div>
    <div class="pstat"><b class="tnum" style="color:${pendingVal?'#FF6B63':'#fff'}">${pendingVal}</b><span>En attente de validation</span></div>
    <div class="pstat"><b class="tnum">${prj.length}</b><span>Projets en cours</span></div>
   </div>
@@ -2262,7 +2269,9 @@ function modalPartner(){
    <label class="fld"><span>Dispositif</span><input type="text" data-f="dispositif" list="dl-disp" value="${esc(p.dispositif||'')}" placeholder="Ex. CTF, O2R, Média Day…"><datalist id="dl-disp">${[...new Set(S.partners.map(x=>x.dispositif).filter(Boolean))].map(v=>`<option value="${esc(v)}">`).join('')}</datalist></label>
    <label class="fld"><span>Ville</span><input type="text" data-f="city" list="dl-city" value="${esc(p.city||'')}" placeholder="Ex. Colombes"><datalist id="dl-city">${[...new Set(S.partners.map(x=>x.city).filter(Boolean))].map(v=>`<option value="${esc(v)}">`).join('')}</datalist></label>
    <label class="fld"><span>Secteur</span><input type="text" data-f="sector" value="${esc(p.sector)}"></label>
-   <label class="fld"><span>Objectif de contenus par mois</span><input type="number" min="0" data-f="target" value="${esc(p.target)}"></label>
+   <div class="fld full"><span>Statut de la communication</span>${pick('status',[['en_cours','En cours'],['en_pause','En pause'],['terminee','Terminée']],p.status||'en_cours')}<small>Un partenaire « Terminée » est rangé dans le filtre « Com terminée » et sort des jauges du tableau de bord. Rien n'est supprimé.</small></div>
+   <div class="fld full"><span>Type d'objectif</span>${pick('goalMode',[['total','Nombre total de contenus'],['mensuel','Par mois']],p.goalMode||'total')}</div>
+   <label class="fld"><span>Objectif (nombre de contenus)</span><input type="number" min="0" data-f="target" value="${esc(p.target)}"></label>
    <div class="fld full"><span>Couleur du partenaire</span>${pick('color',PCOLORS.map(([h,n])=>[h,n,`<i class="swatch" style="background:${h}"></i>`]),p.color||PCOLORS[0][0],{rerender:true,cls:'wrap'})}<small>Utilisée dans le calendrier, les cartes, les miniatures, les jauges et les comptes rendus.</small></div>
   </div>
   <div class="box" style="margin-top:16px"><h3>Interlocuteurs</h3>
