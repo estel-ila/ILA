@@ -873,6 +873,7 @@ input[type=password]:focus{outline:0;background-color:#F5F2EE;box-shadow:var(--i
 .chip.dchip.ds-a_valider{background:#FFF1DC;color:#9A5B00}
 .chip.dchip.ds-validee{background:var(--ok-soft);color:var(--ok)}
 .chip.dchip.ds-a_revoir{background:var(--red-soft);color:var(--red-ink)}
+.cpy{flex:none;white-space:nowrap}.cpy.ok{color:#1E8A52}.fld>span.spread{display:flex;align-items:center;gap:8px}
 .dmeta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
 .dtext{margin:0;font-size:13.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
 .dtext.sm{font-size:12.5px;color:var(--ink-2)}
@@ -1080,6 +1081,7 @@ const IC={
  more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
  lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+ copy:'<rect x="8.5" y="8.5" width="11" height="11" rx="2.5"/><path d="M15.5 8.5V6.5a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/>',
  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
  link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
  clip:'<path d="M20 11.5l-7.8 7.8a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8"/>',
@@ -1518,6 +1520,9 @@ const PLIM={Instagram:2200,TikTok:2200,LinkedIn:3000,Facebook:63206,YouTube:5000
 function descKeys(c){const ks=[{k:'common',label:'Description commune',pf:null,text:c.description||'',path:'description',limit:2200}];(c.platforms||[]).forEach((x,i)=>ks.push({k:x.id,label:x.platform,pf:x.platform,text:x.text||'',path:'platforms.'+i+'.text',limit:PLIM[x.platform]||2200}));return ks}
 function descReq(c){const ks=descKeys(c);const pl=ks.filter(k=>k.pf);const out=pl.filter(k=>k.text.trim());if(!pl.length||pl.some(k=>!k.text.trim())||c.description.trim())out.unshift(ks[0]);return out.filter(k=>k.text.trim()||k.k==='common')}
 function dStatus(c,K){if(K.pf&&!K.text.trim())return 'commune';const r=(c.descReview||{})[K.k];if(!K.text.trim())return 'brouillon';return r&&r.status?r.status:'a_valider'}
+function copyText(t,btn){const done=()=>{toast('Texte copié — prêt à coller');if(btn){const h=btn.innerHTML;btn.classList.add('ok');btn.innerHTML=icon('check','width="15" height="15"')+'Copié';setTimeout(()=>{btn.classList.remove('ok');btn.innerHTML=h},1600)}};
+ const fb=()=>{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,t.length);let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();ok?done():toast('Copie impossible ici : sélectionnez le texte à la main.',true)};
+ try{if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(done,fb);else fb()}catch(e){fb()}}
 function trunc(t,n=160){t=String(t||'');return t.length>n?t.slice(0,n)+'…':t}
 function descValidator(){const u=S.users.find(x=>x.role==='equipe'&&x.perms&&x.perms.valider_descriptions);return u?u.name:'Estelle'}
 const canValDesc=pid=>!isPartner()&&(isAdmin()||can('valider_descriptions',pid));
@@ -2133,7 +2138,7 @@ function modalContent(){
    <div class="form">
     <label class="fld"><span>Date de publication</span><input type="date" data-f="platforms.${i}.date" value="${esc(x.date)}"></label>
     <label class="fld"><span>Horaire</span><input type="time" data-f="platforms.${i}.time" value="${esc(x.time)}"></label>
-    <div class="fld full"><span>Texte ${esc(x.platform)}</span><button type="button" class="dlink" data-act="tab" data-tab="descriptions"><span>${esc(trunc(x.text||'Reprend la description commune',100))}</span><b>${DSTAT[dStatus(c,{k:x.id,pf:x.platform,text:x.text||''})]} ›</b></button></div>
+    <div class="fld full"><span class="spread">Texte ${esc(x.platform)}<button type="button" class="btn sm ghost cpy" data-act="copy-desc" data-k="${x.id}">${icon('copy','width="15" height="15"')}Copier</button></span><button type="button" class="dlink" data-act="tab" data-tab="descriptions"><span>${esc(trunc(x.text||'Reprend la description commune',100))}</span><b>${DSTAT[dStatus(c,{k:x.id,pf:x.platform,text:x.text||''})]} ›</b></button></div>
     <label class="fld"><span>Comptes qui publient</span><input type="text" data-f="platforms.${i}.accounts" data-list value="${esc((x.accounts||[]).join(', '))}" placeholder="@compte, séparés par des virgules"></label>
     <label class="fld"><span>Comptes à identifier</span><input type="text" data-f="platforms.${i}.tags" data-list value="${esc((x.tags||[]).join(', '))}" placeholder="@compte1, @compte2"></label>
     <div class="fld full"><span>Collaborations (invitations à suivre manuellement)</span>
@@ -2170,7 +2175,7 @@ function modalContent(){
   const canVD=canValDesc(c.partnerId);const ro=pv||!canMod;
   body=`<div class="notice" style="margin-bottom:14px">${icon('info')}<div>Une description commune et un texte par plateforme. Chaque texte modifié repasse <b>à valider</b> ; la validation est faite par <b>${esc(descValidator())}</b>. Tout est historisé.</div></div>
   ${descKeys(c).map(K=>{const st=dStatus(c,K);const rv=(c.descReview||{})[K.k]||{};const hist=(c.descHistory||[]).filter(h=>h.key===K.k);const len=K.text.length;
-   return `<div class="dbox ds-${st}"><div class="spread"><h3>${K.pf?`<span class="pf">${PFA[K.pf]||'?'}</span>`:icon('text','width="16" height="16"')}${esc(K.label)}</h3><span class="chip dchip ds-${st}">${DSTAT[st]}</span></div>
+   return `<div class="dbox ds-${st}"><div class="spread"><h3>${K.pf?`<span class="pf">${PFA[K.pf]||'?'}</span>`:icon('text','width="16" height="16"')}${esc(K.label)}</h3><div class="row" style="gap:6px;flex-wrap:nowrap"><button type="button" class="btn sm ghost cpy" data-act="copy-desc" data-k="${K.k}">${icon('copy','width="15" height="15"')}Copier</button><span class="chip dchip ds-${st}">${DSTAT[st]}</span></div></div>
     ${ro?`<p class="dtext">${esc(K.text||(K.pf?'Reprend la description commune.':'—'))}</p>`:`<textarea data-f="${K.path}" placeholder="${K.pf?'Laisser vide pour reprendre la description commune':'Texte commun à toutes les plateformes'}">${esc(K.text)}</textarea>`}
     <div class="dmeta"><span class="tnum" style="${len>K.limit?'color:var(--red);font-weight:800':''}">${len} / ${K.limit} car.</span>${rv.by?`<span>${rv.status==='validee'?'Validée':'Reprise demandée'} par <b>${esc(userName(rv.by))}</b> · ${fmtStamp(rv.at)}</span>`:''}</div>
     ${st==='a_revoir'&&rv.note?`<div class="notice r">${icon('alert')}<div>${esc(rv.note)}</div></div>`:''}
@@ -2279,7 +2284,7 @@ function modalQuick(){
     ${TASKS.filter(([k])=>c.tasks[k].state!=='na').map(([k,l])=>`<div class="qrow"><div class="ql"><span class="tk ${c.tasks[k].state}">${icon(TICON[k])}</span>${l}<small>${avatar(c.tasks[k].owner)} ${c.tasks[k].due?fmtD(c.tasks[k].due):''}</small></div>${qs(`data-act="qtask" data-t="${k}"`,[['a_faire','À faire'],['en_cours','En cours'],['fait','Fait']],c.tasks[k].state,!cP)}</div>`).join('')||'<div class="muted">Aucune sous-tâche pour ce format.</div>'}
    </div>
    <div class="qsec"><div class="spread"><div class="eyebrow">Descriptions</div><button class="linkbtn" data-act="open-desc" data-id="${c.id}">Modifier les textes</button></div>
-    ${descReq(c).filter(K=>K.text.trim()).map(K=>{const st=dStatus(c,K);return `<div class="qrow"><div class="ql">${K.pf?`<span class="pf">${PFA[K.pf]}</span>`:icon('text','width="16" height="16"')}${esc(K.label)}<small><span class="chip dchip ds-${st}">${DSTAT[st]}</span></small></div><p class="dtext sm">${esc(trunc(K.text,180))}</p>${canValDesc(c.partnerId)&&st!=='validee'?`<div class="qvals" style="grid-template-columns:1fr 1fr"><button class="btn primary" data-act="qdval" data-k="${K.k}" data-v="validee">${icon('check')}Valider</button><button class="btn" data-act="qdval" data-k="${K.k}" data-v="a_revoir">À revoir</button></div>`:''}</div>`}).join('')||'<div class="muted">Aucune description rédigée.</div>'}
+    ${descReq(c).filter(K=>K.text.trim()).map(K=>{const st=dStatus(c,K);return `<div class="qrow"><div class="ql">${K.pf?`<span class="pf">${PFA[K.pf]}</span>`:icon('text','width="16" height="16"')}${esc(K.label)}<small><span class="chip dchip ds-${st}">${DSTAT[st]}</span></small></div><p class="dtext sm">${esc(trunc(K.text,180))}</p><div><button type="button" class="btn sm ghost cpy" data-act="copy-desc" data-k="${K.k}">${icon('copy','width="15" height="15"')}Copier</button></div>${canValDesc(c.partnerId)&&st!=='validee'?`<div class="qvals" style="grid-template-columns:1fr 1fr"><button class="btn primary" data-act="qdval" data-k="${K.k}" data-v="validee">${icon('check')}Valider</button><button class="btn" data-act="qdval" data-k="${K.k}" data-v="a_revoir">À revoir</button></div>`:''}</div>`}).join('')||'<div class="muted">Aucune description rédigée.</div>'}
    </div>
    <div class="qsec"><div class="spread"><div class="eyebrow">Validation</div><span class="chip ${c.validation==='valide'?'s-valide':c.validation==='en_attente'?'s-attente':c.validation==='modifs'?'alert':'s-prevu'}">${VAL[c.validation]}</span></div>
     <div class="qvals"><button class="btn ${c.validation==='en_attente'?'dark':''}" data-act="qval" data-v="en_attente" ${cP?'':'disabled'}>En attente de validation</button><button class="btn ${c.validation==='valide'?'dark':'primary'}" data-act="qval" data-v="valide" ${cV?'':'disabled'} title="${cV?'':'Réservé à Estelle'}">${icon('check')}Validé</button><button class="btn ${c.validation==='modifs'?'dark':''}" data-act="qval" data-v="modifs" ${cP?'':'disabled'}>Modifs demandées</button></div>
@@ -2465,6 +2470,9 @@ document.addEventListener('click',async e=>{
   case 'dval-rev':{const note=(document.getElementById('rev-note')||{}).value||'';syncDraft();const d=ui.modal.draft;const o0=d.id?content(d.id):null;trackDescs(o0,d);setDescReview(d,ds.k,'a_revoir',note.trim());ui.modal.revKey=null;saveContent('Reprise demandée sur la description');break}
   case 'dval-cancel':ui.modal.revKey=null;renderModalOnly();break;
   case 'open-desc':{ui.modal=null;openContent(ds.id,true);if(ui.modal){ui.modal.tab='descriptions';renderModalOnly()}break}
+  case 'copy-desc':{const c=(ui.modal&&ui.modal.draft)||content(ui.modal&&ui.modal.id);if(!c)return;const K=descKeys(c).find(x=>x.k===ds.k);if(!K)return;
+   const live=document.querySelector('#modal-root [data-f="'+K.path+'"]');let t=live?live.value:K.text;if(K.pf&&!t.trim()){const cm=document.querySelector('#modal-root [data-f="description"]');t=cm?cm.value:(c.description||'')}
+   if(!t.trim()){toast('Rien à copier : texte vide.',true);return}copyText(t,act);break}
   case 'qdval':{const c=content(ui.modal.id);setDescReview(c,ds.k,ds.v);c.prod=prodOf(c);commit(ds.v==='validee'?'Description validée':'Reprise demandée');break}
   case 'new-project':ui.modalAnim=true;ui.modal={type:'project',draft:{id:'',partnerId:ds.partner,name:'',desc:'',start:TODAY,end:'',status:'en_cours'}};renderModalOnly();break;
   case 'edit-project':{const x=project(ds.id);if(!x)return;ui.modalAnim=true;ui.modal={type:'project',draft:Object.assign({status:'en_cours'},clone(x))};renderModalOnly();break}
