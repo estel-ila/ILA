@@ -878,6 +878,12 @@ input[type=password]:focus{outline:0;background-color:#F5F2EE;box-shadow:var(--i
 .chip.pst-terminee{background:rgba(23,12,11,.82);color:#fff;border-color:transparent}.chip.pst-en_pause{background:#FFF1D6;color:#8A5A00;border-color:transparent}
 .gp.pdone{opacity:.6;filter:saturate(.5)}
 .pcard.pdone{opacity:.72;filter:saturate(.55)}
+.section-title.foldable{cursor:pointer;user-select:none;border-radius:12px;padding:6px 0}
+.section-title::after{order:2}.section-title .fchev{order:3;display:grid;flex:none;place-items:center;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.14);transition:transform .25s}
+.section-title .fchev svg{width:16px;height:16px}.section-title .fchev{transform:rotate(90deg)}.section-title.closed .fchev{transform:none}
+.fold-hide{display:none!important}
+.folder{display:flex;align-items:center;gap:10px;width:100%;margin:18px 0 12px;padding:14px 16px;border-radius:20px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:var(--ink);font:inherit;cursor:pointer;box-shadow:0 8px 24px -14px rgba(0,0,0,.4)}
+.folder .fi svg,.folder .chev svg{width:18px;height:18px}.folder .chev{display:grid;transition:transform .25s}.folder.open .chev{transform:rotate(90deg)}
 .delbox{display:grid;gap:10px;padding:14px;border-radius:18px;background:rgba(217,20,14,.08);border:1px solid rgba(217,20,14,.25);margin-top:12px}.delbox .row .btn{width:auto}
 .selbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px);z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;margin-bottom:14px;border-radius:20px;background:rgba(23,12,11,.86);color:#fff;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .selbar .btn.ghost{color:#fff;background:rgba(255,255,255,.12)}
@@ -1500,7 +1506,10 @@ function renderPage(){
 function logoTxt(p){const a=esc((p&&p.short)||''),b=esc((p&&p.short2)||'');return b?`<span class="lg2"><span>${a}</span><span>${b}</span></span>`:a}
 function logoFs(p,w){const a=((p&&p.short)||'').length,b=((p&&p.short2)||'').length;if(b){const n=Math.max(a,b,3);return Math.max(6,Math.round(Math.min(w*.8/(n*.62),w*.78/2.1)))}const k=a<=2?.36:a===3?.31:a===4?.25:.21;return Math.max(7,Math.round(w*k))}
 function fitLogos(root){(root||document).querySelectorAll('.plogo,.rp-logo').forEach(el=>{const two=el.querySelector('.lg2');const sp=two?two.children:null;const fake={short:sp?sp[0].textContent:(el.textContent||'').trim(),short2:sp?sp[1].textContent:''};const w=el.clientWidth||parseFloat(el.style.width)||52;el.style.fontSize=logoFs(fake,w)+'px';el.style.letterSpacing=(fake.short.length>3||two)?'-.04em':''})}
-function afterRender(){fitLogos();
+function loadFolds(){if(ui.folds)return ui.folds;try{ui.folds=JSON.parse(localStorage.getItem('scp-folds')||'{}')}catch(e){ui.folds={}}return ui.folds}
+function saveFolds(){try{localStorage.setItem('scp-folds',JSON.stringify(ui.folds||{}))}catch(e){}}
+function applyFolds(){const F=loadFolds();document.querySelectorAll('main .section-title[id^="sec-"], #app .section-title[id^="sec-"]').forEach(t=>{const id=t.id;const closed=!!F[id];t.classList.add('foldable');t.classList.toggle('closed',closed);t.setAttribute('role','button');t.setAttribute('tabindex','0');t.setAttribute('aria-expanded',String(!closed));if(!t.querySelector('.fchev'))t.insertAdjacentHTML('beforeend','<span class="fchev">'+icon('r')+'</span>');let n=t.nextElementSibling;while(n&&!(n.classList.contains('section-title'))){n.classList.toggle('fold-hide',closed);n=n.nextElementSibling}})}
+function afterRender(){fitLogos();applyFolds();
  fitPages();
  document.querySelectorAll('.mscroll').forEach(w=>{const on=w.querySelector('.on');if(on)w.scrollLeft=on.offsetLeft-w.clientWidth/2+on.clientWidth/2});
  if(ui.anim&&!matchMedia('(prefers-reduced-motion:reduce)').matches){document.querySelectorAll('#page [data-count]').forEach(el=>{const to=+el.dataset.count;const sm=el.querySelector('small');const tail=sm?sm.outerHTML:'';const t0=performance.now();const step=t=>{const k=Math.min(1,(t-t0)/1100);const e=1-Math.pow(1-k,3);el.innerHTML=Math.round(to*e)+tail;if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
@@ -1526,7 +1535,7 @@ function contentCard(c){
  <div class="row" style="gap:6px">${pfBadges(c)}<span class="m tnum">${np?fmtD(np.date)+(np.time?' · '+np.time:''):'Sans date'}</span>${isPartner()?'':`<span style="margin-left:auto">${avatar(c.owner)}</span>`}</div></button>`;
 }
 function partnerSelect(id,val,{all=true,label='Tous les partenaires',f='',dis=false}={}){
- return `<select id="${id}" ${f?`data-f="${f}"`:''} ${dis?'disabled':''}>${all?`<option value="">${label}</option>`:''}${S.partners.map(p=>`<option value="${p.id}" ${val===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}</select>`;
+ return `<select id="${id}" ${f?`data-f="${f}"`:''} ${dis?'disabled':''}>${all?`<option value="">${label}</option>`:''}${partnersByNext(S.partners).map(p=>`<option value="${p.id}" ${val===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}</select>`;
 }
 
 const DSTAT={brouillon:'Brouillon',a_valider:'À valider',validee:'Validée',a_revoir:'À revoir',commune:'Reprend la commune'};
@@ -1567,7 +1576,7 @@ function partnersByNext(list){const k=p=>{const u=partnerUpcoming(p);const n=par
  return list.map(p=>({p,k:k(p)})).sort((a,b)=>a.k[0]-b.k[0]||a.k[1].localeCompare(b.k[1])||a.k[2].localeCompare(b.k[2])).map(x=>x.p)}
 function pchips(o,k,{all=true}={}){
  const v=ui[o][k];
- return `<div class="pchips" role="radiogroup">${all?`<button type="button" class="pchip ${!v?'on':''}" data-act="filt" data-o="${o}" data-k="${k}" data-v="" role="radio" aria-checked="${!v}"><span class="plogo xs all">${icon('users')}</span>Tous</button>`:''}${(o==='dash'?partnersByNext(S.partners):S.partners).map(p=>{const on=v===p.id;return `<button type="button" class="pchip ${on?'on':''}" data-act="filt" data-o="${o}" data-k="${k}" data-v="${p.id}" role="radio" aria-checked="${on}"><span class="plogo xs" style="${logoStyle(p)}">${logoTxt(p)}</span>${esc(p.name)}</button>`}).join('')}</div>`;
+ return `<div class="pchips" role="radiogroup">${all?`<button type="button" class="pchip ${!v?'on':''}" data-act="filt" data-o="${o}" data-k="${k}" data-v="" role="radio" aria-checked="${!v}"><span class="plogo xs all">${icon('users')}</span>Tous</button>`:''}${partnersByNext(S.partners).map(p=>{const on=v===p.id;return `<button type="button" class="pchip ${on?'on':''}" data-act="filt" data-o="${o}" data-k="${k}" data-v="${p.id}" role="radio" aria-checked="${on}"><span class="plogo xs" style="${logoStyle(p)}">${logoTxt(p)}</span>${esc(p.name)}</button>`}).join('')}</div>`;
 }
 /* Jauge radiale 270° */
 function gauge(val,max,{size=150,stroke=12,label='',center=null,tone='ink',dark=false,ticks=true,fs=null}={}){
@@ -1728,7 +1737,7 @@ function pagePartners(){
  const nEnd=S.partners.filter(x=>pStatus(x)==='terminee').length;const stf=ui.pf.st||'actifs';
  const PL=S.partners.filter(x=>(!ui.pf.disp||x.dispositif===ui.pf.disp)&&(!ui.pf.city||x.city===ui.pf.city)&&(stf==='tous'||(stf==='terminee'?pStatus(x)==='terminee':pStatus(x)!=='terminee')));
  return `<div class="fbar"><div class="fbar-row"><span class="flabel">Statut</span>${fchips('pf','st',[['actifs','En cours'],['terminee','Com terminée'+(nEnd?' · '+nEnd:'')],['tous','Tous']],false)}</div>${disps.length||cities.length?`${disps.length?`<div class="fbar-row"><span class="flabel">Dispositif</span>${fchips('pf','disp',[['','Tous'],...disps.map(d=>[d,d])],false)}</div>`:''}${cities.length?`<div class="fbar-row"><span class="flabel">Ville</span>${fchips('pf','city',[['','Toutes'],...cities.map(d=>[d,d])],false)}</div>`:''}`:''}</div><div class="spread" style="margin-bottom:18px"><div class="muted">${PL.length} partenaire(s)</div>${can('partenaires_gerer')?`<button class="btn primary" data-act="new-partner">${icon('plus')}Nouveau partenaire</button>`:''}</div>
- <div class="pgrid">${PL.map(p=>{
+ <div class="pgrid">${partnersByNext(PL).map(p=>{
   const m=partnerGoal(p,ym);const cs=S.contents.filter(c=>c.partnerId===p.id&&!c.aside);const np=cs.map(c=>({c,p:nextPub(c)})).filter(x=>x.p&&x.p.date>=TODAY).sort((a,b)=>(a.p.date+a.p.time).localeCompare(b.p.date+b.p.time))[0];
   const al=cs.filter(c=>alertsOf(c).some(a=>a.lv!=='manquant')).length;const open=visibleExchanges().filter(x=>x.partnerId===p.id&&x.nextAction&&!x.done).length;
   return `<button class="card pcard glow${pStatus(p)==='terminee'?' pdone':''}" style="--pc:${p.color}" data-go="partenaire-${p.id}">
@@ -1769,9 +1778,15 @@ function pagePartner(pid){
 
  ${partnerView?`<div class="notice" style="margin-top:16px">${icon('lock')}<div>Vous consultez l'espace partagé par l'équipe. ${a.commenter?'Vous pouvez commenter les contenus.':''} ${a.valider?'Vous pouvez valider les contenus.':''} Les autres informations restent internes.</div></div>`:''}
 
- <div class="section-title" id="sec-contenus">Contenus <span class="muted" style="font-weight:600;letter-spacing:0;text-transform:none">${cs.length}</span></div>
+ <div class="section-title" id="sec-contenus">Contenus <span class="muted" style="font-weight:600;letter-spacing:0;text-transform:none">${cs.filter(c=>gstat(c)!=='publie').length} à venir · ${cs.filter(c=>gstat(c)==='publie').length} publiés</span></div>
  <div class="spread" style="margin:-4px 0 14px"><span></span>${can('contenus_creer')?`<button class="btn sm primary" data-act="new-content" data-partner="${pid}">${icon('plus')}Nouveau contenu</button>`:''}</div>
- ${cs.length?`<div class="cgrid">${cs.map(contentCard).join('')}</div>`:'<div class="empty">Aucun contenu partagé pour le moment.</div>'}
+ ${(()=>{if(!cs.length)return '<div class="empty">Aucun contenu partagé pour le moment.</div>';
+  const pubd=cs.filter(c=>gstat(c)==='publie');const todo=cs.filter(c=>gstat(c)!=='publie');
+  const dOf=c=>{const n=nextPub(c)||firstPub(c);return n?n.date+(n.time||''):'9999'};const lastD=c=>(c.platforms||[]).filter(x=>x.date).map(x=>x.date+(x.time||'')).sort().pop()||'';
+  todo.sort((a,b)=>dOf(a).localeCompare(dOf(b)));pubd.sort((a,b)=>lastD(b).localeCompare(lastD(a)));
+  const open=!!(ui.pubOpen||{})[pid];
+  return `${todo.length?`<div class="cgrid">${todo.map(contentCard).join('')}</div>`:'<div class="empty">Tout est publié 🎉</div>'}
+  ${pubd.length?`<button type="button" class="folder${open?' open':''}" data-act="pub-folder" data-id="${pid}"><span class="fi">${icon('aside')}</span><b>Publiés</b><span class="chip ready">${pubd.length}</span><span class="muted" style="font-size:12.5px;margin-left:auto">${open?'Masquer':'Afficher'}</span><span class="chev">${icon('r')}</span></button>${open?`<div class="cgrid">${pubd.map(contentCard).join('')}</div>`:''}`:''}`})()}
 
  <div class="section-title" id="sec-projets">Projets</div>
  <div class="two">
@@ -2451,7 +2466,8 @@ document.addEventListener('click',async e=>{
  const ope=t.closest('[data-opene]');
  const act=t.closest('[data-act]');
  const sc=t.closest('[data-scroll]');
- if(sc){e.preventDefault();const el=document.getElementById('sec-'+sc.dataset.scroll);if(el)el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});return}
+ const ft=t.closest('.section-title.foldable');if(ft&&!t.closest('a,button')){const F=loadFolds();F[ft.id]=!F[ft.id];if(!F[ft.id])delete F[ft.id];saveFolds();applyFolds();return}
+ if(sc){e.preventDefault();{const F=loadFolds();if(F['sec-'+sc.dataset.scroll]){delete F['sec-'+sc.dataset.scroll];saveFolds();applyFolds()}}const el=document.getElementById('sec-'+sc.dataset.scroll);if(el)el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});return}
  // priority: innermost
  const cands=[go,op,opx,ope,act].filter(Boolean);
  if(!cands.length)return;
@@ -2540,6 +2556,7 @@ document.addEventListener('click',async e=>{
   case 'cf-aside':ui.cf.aside=!ui.cf.aside;ui.sel=null;render();break;
   case 'aside-toggle':{const id=ui.modal.draft?ui.modal.draft.id:ui.modal.id;const c=content(id);if(!c)return;setAside([id],!c.aside);if(ui.modal.draft)Object.assign(ui.modal.draft,{aside:c.aside,asideAt:c.asideAt,asideBy:c.asideBy});if(ui.modal.type==='quick')ui.modal=null;commit(c.aside?'Contenu mis de côté · retrouvez-le dans Contenus › De côté':'Contenu remis en circuit');break}
   case 'sel-aside':{const ids=Object.keys(ui.sel.ids);const on=!ui.cf.aside;setAside(ids,on);ui.sel=null;commit(ids.length+(on?' contenu(s) mis de côté':' contenu(s) remis en circuit'));break}
+  case 'pub-folder':ui.pubOpen=ui.pubOpen||{};ui.pubOpen[ds.id]=!ui.pubOpen[ds.id];render();break;
   case 'qdel-ask':ui.modal.confirmDel=true;renderModalOnly();setTimeout(()=>{const b=document.querySelector('#modal-root .qdel');if(b)b.scrollIntoView({block:'nearest'})},30);break;
   case 'qdel-cancel':ui.modal.confirmDel=false;renderModalOnly();break;
   case 'sel-mode':ui.sel=ui.sel?null:{ids:{},confirm:false};render();break;
