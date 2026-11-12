@@ -183,7 +183,7 @@ button.card{font:inherit;color:inherit;border:0;text-align:left}
 
 /* Miniatures */
 .thumb{position:relative;aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:rgba(14,14,14,.06);max-width:100%;box-shadow:inset 0 0 0 1px rgba(255,255,255,.4),0 16px 30px -18px rgba(50,15,10,.6)}
-.thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--ease)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(var(--z,1));transition:transform .6s var(--ease)}
 .thumb::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(155deg,rgba(255,255,255,.32),rgba(255,255,255,0) 38%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.25);pointer-events:none}
 .thumb .badge{position:absolute;left:8px;top:8px;z-index:1}
 .thumb .dot{position:absolute;right:9px;top:9px;width:12px;height:12px;border-radius:50%;background:var(--red);box-shadow:0 0 0 3px rgba(255,255,255,.85),0 0 14px 2px rgba(217,20,14,.6);z-index:1}
@@ -303,7 +303,7 @@ button.card{font:inherit;color:inherit;border:0;text-align:left}
 .weekstrip{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 6px;scroll-snap-type:x mandatory;scrollbar-width:none}
 .weekstrip::-webkit-scrollbar{display:none}
 .wcard{flex:0 0 150px;scroll-snap-align:start;border:0;background:none;padding:0;text-align:left;color:inherit}
-.wcard:hover .thumb img,.ccard:hover .thumb img{transform:scale(1.05)}
+.wcard:hover .thumb img,.ccard:hover .thumb img{transform:scale(calc(var(--z,1) * 1.05))}
 .wcard .t{font-weight:700;font-size:13px;margin-top:9px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .wcard .m{font-size:12px;color:#A9A3A1;margin-top:3px}
 .alert-tag{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
@@ -884,6 +884,14 @@ input[type=password]:focus{outline:0;background-color:#F5F2EE;box-shadow:var(--i
 .fold-hide{display:none!important}
 .folder{display:flex;align-items:center;gap:10px;width:100%;margin:18px 0 12px;padding:14px 16px;border-radius:20px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:var(--ink);font:inherit;cursor:pointer;box-shadow:0 8px 24px -14px rgba(0,0,0,.4)}
 .folder .fi svg,.folder .chev svg{width:18px;height:18px}.folder .chev{display:grid;transition:transform .25s}.folder.open .chev{transform:rotate(90deg)}
+.tframe{position:relative;width:100%}.tframe.editable{cursor:grab;touch-action:none}.tframe.editable.dragging{cursor:grabbing}.tframe.editable img,.tframe.dragging img{transition:none}
+.tframe .tdhint{position:absolute;left:50%;top:50%;translate:-50% -50%;display:flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;background:rgba(14,14,14,.6);color:#fff;font-size:11.5px;font-weight:700;white-space:nowrap;pointer-events:none;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:.92;transition:opacity .2s}
+.tframe .tdhint svg{width:14px;height:14px}.tframe.dragging .tdhint{opacity:0}
+.tframe .tfmt{position:absolute;left:8px;bottom:8px;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.82);color:#111;font-size:10.5px;font-weight:700;pointer-events:none}
+.tframe.dragging::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(255,255,255,.35) 1px,transparent 1px) 0 33.33%/100% 33.33%,linear-gradient(90deg,rgba(255,255,255,.35) 1px,transparent 1px) 33.33% 0/33.33% 100%}
+.tzoom{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700}.tzoom input{flex:1;min-width:0;accent-color:var(--red)}
+.ficheTop .thumbed.land{grid-column:1/-1}.ficheTop .thumbed.land .thumb{max-width:none!important}
+@media (max-width:640px){.ficheTop>.grid.thumbed{grid-template-columns:minmax(0,1fr)!important}.ficheTop>.grid.thumbed>.thumb{grid-row:auto!important;max-width:220px!important;margin:0 auto}.ficheTop>.grid.thumbed.land>.thumb{max-width:none!important}}
 .delbox{display:grid;gap:10px;padding:14px;border-radius:18px;background:rgba(217,20,14,.08);border:1px solid rgba(217,20,14,.25);margin-top:12px}.delbox .row .btn{width:auto}
 .selbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px);z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;margin-bottom:14px;border-radius:20px;background:rgba(23,12,11,.86);color:#fff;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .selbar .btn.ghost{color:#fff;background:rgba(255,255,255,.12)}
@@ -1430,7 +1438,11 @@ function genThumb(c){
  return thumbCache[key]='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
 }
 const thumbSrc=c=>c.thumb||genThumb(c);
-const thumbImg=(c,cls='')=>`<div class="thumb ${cls}"><img src="${thumbSrc(c)}" alt=""></div>`;
+const FRATIO={Reel:'9/16',Story:'9/16','Vidéo':'16/9','Couverture événement':'16/9',Post:'4/5',Photo:'4/5',Carrousel:'4/5',Newsletter:'4/5'};
+const FRLABEL={'9/16':'9:16 vertical','16/9':'16:9 horizontal','4/5':'4:5 portrait'};
+function tpos(c){const t=(c&&c.thumb&&c.thumbPos)||{};return {x:t.x??50,y:t.y??50,z:t.z??1}}
+function imgPos(c){const t=tpos(c);return `object-position:${t.x}% ${t.y}%;transform-origin:${t.x}% ${t.y}%;--z:${t.z}`}
+const thumbImg=(c,cls='')=>`<div class="thumb ${cls}"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}" draggable="false"></div>`;
 const pSub=p=>[p&&p.dispositif,p&&p.city].filter(Boolean).join(' · ')||(p&&p.sector)||'';
 function logoStyle(p){const c=(p&&p.color)||'#0E0E0E';return `background:linear-gradient(155deg,rgba(255,255,255,.28),rgba(255,255,255,0) 55%),${c};color:${onCol(c)};box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 20px -10px ${hexA(c,.9)}`}
 const TICON={retouche:'img',montage:'film',miniature:'frame',description:'text'};
@@ -1528,7 +1540,7 @@ function contentRow(c,right){
 }
 function contentCard(c){
  const p=partner(c.partnerId);const np=nextPub(c)||firstPub(c);const al=alertsOf(c);
- const sl=ui.sel&&ui.route==='contenus';return `<button class="ccard${sl?' selm':''}${sl&&ui.sel.ids[c.id]?' on':''}" style="--pc:${pcol(c.partnerId)}" data-open="${c.id}">${sl?`<span class="selck">${icon('check')}</span>`:''}<div class="thumb">${`<img src="${thumbSrc(c)}" alt="">`}${!isPartner()&&!sl?`<span class="qbtn" data-quick="${c.id}" role="button" aria-label="Mise à jour rapide" title="Mise à jour rapide">${icon('bolt')}</span>`:''}${al.some(a=>a.lv!=='manquant')?'<span class="dot" title="Retard ou blocage"></span>':''}<span class="badge">${c.aside?'<span class="chip asidechip">De côté</span>':chipS(c)}</span></div>
+ const sl=ui.sel&&ui.route==='contenus';return `<button class="ccard${sl?' selm':''}${sl&&ui.sel.ids[c.id]?' on':''}" style="--pc:${pcol(c.partnerId)}" data-open="${c.id}">${sl?`<span class="selck">${icon('check')}</span>`:''}<div class="thumb">${`<img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}">`}${!isPartner()&&!sl?`<span class="qbtn" data-quick="${c.id}" role="button" aria-label="Mise à jour rapide" title="Mise à jour rapide">${icon('bolt')}</span>`:''}${al.some(a=>a.lv!=='manquant')?'<span class="dot" title="Retard ou blocage"></span>':''}<span class="badge">${c.aside?'<span class="chip asidechip">De côté</span>':chipS(c)}</span></div>
  <div class="t">${esc(c.title)}</div>
  <div class="m"><span class="pdot" style="--pc:${pcol(c.partnerId)}"></span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p?p.name:'')}${c.projectId&&project(c.projectId)?' › '+esc(project(c.projectId).name):''} · ${esc(c.format)}</span></div>
  ${taskIcons(c)}
@@ -1547,6 +1559,18 @@ function setAside(ids,on){const set=new Set(ids);S.contents.forEach(c=>{if(!set.
 function delContents(ids){const set=new Set(ids);S.contents=S.contents.filter(c=>!set.has(c.id));S.exchanges.forEach(x=>{if(set.has(x.contentId))x.contentId=''});S.reports.forEach(r=>{if(Array.isArray(r.exclude))r.exclude=r.exclude.filter(i=>!set.has(i))})}
 function delProject(id,withContents){if(withContents)delContents(S.contents.filter(c=>c.projectId===id).map(c=>c.id));else S.contents.forEach(c=>{if(c.projectId===id)c.projectId=''});S.projects=S.projects.filter(x=>x.id!==id);S.exchanges.forEach(x=>{if(x.projectId===id)x.projectId=''});S.reports.forEach(r=>{if(r.opts&&r.opts.project===id)r.opts.project=''})}
 function prjDelBox(x){const n=S.contents.filter(c=>c.projectId===x.id).length;return `<div class="delbox"><b>Supprimer le projet « ${esc(x.name)} » ?</b>${n?`<span class="muted">Il contient ${n} contenu(s). Que faire de ces contenus ?</span><div class="row" style="gap:8px"><button class="btn sm" data-act="prj-del" data-id="${x.id}" data-mode="keep">Garder les contenus (sans projet)</button><button class="btn sm primary" data-act="prj-del" data-id="${x.id}" data-mode="all">${icon('trash')}Tout supprimer</button></div>`:`<div class="row" style="gap:8px"><button class="btn sm primary" data-act="prj-del" data-id="${x.id}" data-mode="keep">${icon('trash')}Supprimer</button></div>`}<button class="btn sm ghost" data-act="prj-del-cancel">Annuler</button></div>`}
+function applyTpos(){const d=ui.modal&&ui.modal.draft;const im=document.querySelector('#modal-root .tframe img');if(!d||!im)return;const c=Object.assign({},d,{thumbPos:d.thumbPos||{x:50,y:50,z:1}});im.setAttribute('style',imgPos(c))}
+(function(){let st=null;
+ document.addEventListener('pointerdown',e=>{const fr=e.target.closest('[data-tdrag]');if(!fr||!ui.modal||!ui.modal.draft)return;const im=fr.querySelector('img');e.preventDefault();fr.setPointerCapture&&fr.setPointerCapture(e.pointerId);
+  const d=ui.modal.draft;d.thumbPos=Object.assign({x:50,y:50,z:1},d.thumbPos||{});const r=fr.getBoundingClientRect();const nw=im.naturalWidth||r.width,nh=im.naturalHeight||r.height;const sc=Math.max(r.width/nw,r.height/nh);
+  st={id:e.pointerId,x0:e.clientX,y0:e.clientY,p0:Object.assign({},d.thumbPos),ox:nw*sc-r.width,oy:nh*sc-r.height,w:r.width,h:r.height,fr};fr.classList.add('dragging')});
+ document.addEventListener('pointermove',e=>{if(!st||e.pointerId!==st.id)return;const d=ui.modal&&ui.modal.draft;if(!d){st=null;return}const z=d.thumbPos.z||1;
+  const rx=st.ox*z+(z-1)*st.w,ry=st.oy*z+(z-1)*st.h;const cl=v=>Math.max(0,Math.min(100,Math.round(v*10)/10));
+  if(rx>0.5)d.thumbPos.x=cl(st.p0.x-(e.clientX-st.x0)/rx*100);if(ry>0.5)d.thumbPos.y=cl(st.p0.y-(e.clientY-st.y0)/ry*100);applyTpos()});
+ const end=e=>{if(!st||e.pointerId!==st.id)return;st.fr.classList.remove('dragging');st=null};
+ document.addEventListener('pointerup',end);document.addEventListener('pointercancel',end);
+ document.addEventListener('input',e=>{if(e.target.id==='thumb-z'&&ui.modal&&ui.modal.draft){const d=ui.modal.draft;d.thumbPos=Object.assign({x:50,y:50,z:1},d.thumbPos||{});d.thumbPos.z=+e.target.value;applyTpos()}});
+})();
 function copyText(t,btn){const done=()=>{toast('Texte copié — prêt à coller');if(btn){const h=btn.innerHTML;btn.classList.add('ok');btn.innerHTML=icon('check','width="15" height="15"')+'Copié';setTimeout(()=>{btn.classList.remove('ok');btn.innerHTML=h},1600)}};
  const fb=()=>{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,t.length);let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();ok?done():toast('Copie impossible ici : sélectionnez le texte à la main.',true)};
  try{if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(done,fb);else fb()}catch(e){fb()}}
@@ -1659,7 +1683,7 @@ function pageDashboard(){
    ${stpanel}
    <section class="card dark">
     <div class="card-h"><div><div class="eyebrow">Publications prévues</div><h2>Cette semaine : ${weekPubs.length} publication${weekPubs.length>1?'s':''}</h2></div><span class="muted tnum">${monthPubs.length} sur le mois · ${monthPubs.filter(x=>x.p.status==='publie').length} publiée(s)</span></div>
-    ${weekContents.length?`<div class="weekstrip">${weekContents.map(({c,p})=>`<button class="wcard" data-open="${c.id}"><div class="thumb"><img src="${thumbSrc(c)}" alt=""><span class="badge">${c.aside?'<span class="chip asidechip">De côté</span>':chipS(c)}</span></div><div class="t">${esc(c.title)}</div><div class="m tnum">${fmtD(p.date)} · ${esc(p.time||'—')} · ${(c.platforms||[]).filter(x=>x.date>=wk&&x.date<=we).map(x=>PFA[x.platform]).join(' ')}</div></button>`).join('')}</div>`:'<div class="empty" style="border-color:#333;color:#A9A3A1">Aucune publication cette semaine.</div>'}
+    ${weekContents.length?`<div class="weekstrip">${weekContents.map(({c,p})=>`<button class="wcard" data-open="${c.id}"><div class="thumb"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}"><span class="badge">${c.aside?'<span class="chip asidechip">De côté</span>':chipS(c)}</span></div><div class="t">${esc(c.title)}</div><div class="m tnum">${fmtD(p.date)} · ${esc(p.time||'—')} · ${(c.platforms||[]).filter(x=>x.date>=wk&&x.date<=we).map(x=>PFA[x.platform]).join(' ')}</div></button>`).join('')}</div>`:'<div class="empty" style="border-color:#333;color:#A9A3A1">Aucune publication cette semaine.</div>'}
    </section>
 
    <section class="card white">
@@ -1883,7 +1907,7 @@ function calItems(){
  return out.sort((a,b)=>(a.date+(a.time||'00')+ord[a.k]).localeCompare(b.date+(b.time||'00')+ord[b.k]));
 }
 function evChip(it){
- if(it.k==='pub'){const s=gstat(it.c);return `<button class="ev pub ${it.p.status==='publie'?'done':''}" style="--pc:${pcol(it.c.partnerId)}" data-open="${it.c.id}" title="${esc(it.c.title)} · ${esc(it.p.platform)} · ${PUB[it.p.status]}"><img src="${thumbSrc(it.c)}" alt=""><span class="tm">${esc(it.time)}</span><span class="tx">${PFA[it.p.platform]} · ${esc(it.c.title)}</span><span class="sd s-${s}"></span></button>`}
+ if(it.k==='pub'){const s=gstat(it.c);return `<button class="ev pub ${it.p.status==='publie'?'done':''}" style="--pc:${pcol(it.c.partnerId)}" data-open="${it.c.id}" title="${esc(it.c.title)} · ${esc(it.p.platform)} · ${PUB[it.p.status]}"><img src="${thumbSrc(it.c)}" alt="" style="${imgPos(it.c)}"><span class="tm">${esc(it.time)}</span><span class="tx">${PFA[it.p.platform]} · ${esc(it.c.title)}</span><span class="sd s-${s}"></span></button>`}
  if(it.k==='prod')return `<button class="ev prod" style="--pc:${pcol(it.c.partnerId)}" data-open="${it.c.id}" title="Remise : ${esc(it.c.title)}"><span class="tx">Remise · ${esc(it.c.title)}</span></button>`;
  if(it.k==='val')return `<button class="ev val" style="--pc:${pcol(it.c.partnerId)}" data-open="${it.c.id}" title="Validation : ${esc(it.c.title)}"><span class="tx">Validation · ${esc(it.c.title)}</span></button>`;
  return `<button class="ev evt" style="--pc:${pcol(it.e.partnerId)}" data-opene="${it.e.id}" title="${esc(it.e.title)}"><span class="tx">${esc(it.e.title)}</span></button>`;
@@ -1900,7 +1924,7 @@ function pageCalendar(){
  if(f.view==='semaine'){
   const ws=f.week;head=`Semaine du ${D(ws).getDate()} ${MOIS[D(ws).getMonth()]}`;
   body=`<div class="weekg">${[0,1,2,3,4,5,6].map(i=>{const d=addDays(ws,i);const its=items.filter(x=>x.date===d);return `<div class="wday ${d===TODAY?'today':''}"><h3>${JOURSL[i]} <span class="muted">${D(d).getDate()}</span></h3><div class="witems">${its.map(it=>{
-   if(it.k==='pub')return `<button class="witem" style="--pc:${pcol(it.c.partnerId)}" data-open="${it.c.id}"><div class="thumb"><img src="${thumbSrc(it.c)}" alt=""><span class="badge"><span class="pf">${PFA[it.p.platform]}</span></span></div><div class="t">${esc(it.c.title)}</div><div class="row" style="gap:6px;justify-content:space-between"><b class="tnum" style="font-size:12px">${esc(it.time)}</b><span class="chip ${it.p.status==='publie'?'s-publie':'s-'+gstat(it.c)}" style="font-size:10.5px;padding:1px 7px">${it.p.status==='publie'?'Publié':GS[gstat(it.c)].replace('En attente de validation','À valider')}</span></div></button>`;
+   if(it.k==='pub')return `<button class="witem" style="--pc:${pcol(it.c.partnerId)}" data-open="${it.c.id}"><div class="thumb"><img src="${thumbSrc(it.c)}" alt="" style="${imgPos(it.c)}"><span class="badge"><span class="pf">${PFA[it.p.platform]}</span></span></div><div class="t">${esc(it.c.title)}</div><div class="row" style="gap:6px;justify-content:space-between"><b class="tnum" style="font-size:12px">${esc(it.time)}</b><span class="chip ${it.p.status==='publie'?'s-publie':'s-'+gstat(it.c)}" style="font-size:10.5px;padding:1px 7px">${it.p.status==='publie'?'Publié':GS[gstat(it.c)].replace('En attente de validation','À valider')}</span></div></button>`;
    if(it.k==='evt')return `<button class="witem evt" data-opene="${it.e.id}"><div class="kindtag">${esc(it.e.type)}</div><div class="t">${esc(it.e.title)}</div></button>`;
    return `<button class="witem ${it.k}" style="--pc:${pcol(it.c.partnerId)}" data-open="${it.c.id}"><div class="kindtag" style="${it.k==='val'?'color:var(--red)':'color:var(--muted)'}">${it.k==='val'?'Validation':'Remise'}</div><div class="t">${esc(it.c.title)}</div></button>`}).join('')||'<span class="muted" style="font-size:12px">—</span>'}</div></div>`}).join('')}</div>`;
  }else{
@@ -1961,9 +1985,9 @@ function buildReport(pid,ym,opts,exclude){
  const p1=()=>`
   <div style="height:7px;margin:-48px -52px 41px;background:${p.color||'#0E0E0E'}"></div><div class="rp-top"><div><div class="rp-kick">Compte rendu de communication${pSub(p)?' · '+esc(pSub(p)):''}</div><div class="rp-title">${esc(p.name)}</div>${opts.project&&project(opts.project)?`<div style="font-size:15px;font-weight:700;margin-top:6px">Projet · ${esc(project(opts.project).name)}</div>`:''}<div class="rp-month">${fmtMonth(ym)}</div></div><div class="rp-logo" style="${logoStyle(p)};font-size:${logoFs(p,58)}px">${logoTxt(p)}</div></div>
   ${opts.chiffres?`<div class="rp-stats"><div class="rp-stat k"><b>${st.total}</b><span>Contenus du mois</span></div><div class="rp-stat"><b>${st.pub}</b><span>Publiés</span></div><div class="rp-stat"><b>${st.val}</b><span>Validés, à paraître</span></div><div class="rp-stat"><b>${st.att}</b><span>En attente de validation</span></div><div class="rp-stat"><b>${evs.length}</b><span>Événements</span></div></div>`:''}
-  ${opts.calendrier?`<div class="rp-sec">Calendrier du mois</div><div class="rp-cal">${JOURS.map(j=>`<div class="rp-dow">${j}</div>`).join('')}${Array.from({length:cells},(_,i)=>{const d=addDays(start,i);const out=!d.startsWith(ym);const l=(pubsByDay[d]||[]);const e=evs.filter(x=>x.date===d);const maxN=Math.max(1,Math.floor((cellH-20)/23));const all=[...e.map(x=>`<div class="rp-ev e">${esc(x.title)}</div>`),...l.map(({c,x})=>`<div class="rp-ev"><img src="${thumbSrc(c)}" alt="">${esc(x.time||'')} ${PFA[x.platform]||''}</div>`)];return `<div class="rp-cell ${out?'out':''}" style="height:${cellH}px"><div class="rp-dn">${D(d).getDate()}</div>${out?'':all.slice(0,maxN).join('')+(all.length>maxN?`<div class="rp-more">+${all.length-maxN}</div>`:'')}</div>`}).join('')}</div>
+  ${opts.calendrier?`<div class="rp-sec">Calendrier du mois</div><div class="rp-cal">${JOURS.map(j=>`<div class="rp-dow">${j}</div>`).join('')}${Array.from({length:cells},(_,i)=>{const d=addDays(start,i);const out=!d.startsWith(ym);const l=(pubsByDay[d]||[]);const e=evs.filter(x=>x.date===d);const maxN=Math.max(1,Math.floor((cellH-20)/23));const all=[...e.map(x=>`<div class="rp-ev e">${esc(x.title)}</div>`),...l.map(({c,x})=>`<div class="rp-ev"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}">${esc(x.time||'')} ${PFA[x.platform]||''}</div>`)];return `<div class="rp-cell ${out?'out':''}" style="height:${cellH}px"><div class="rp-dn">${D(d).getDate()}</div>${out?'':all.slice(0,maxN).join('')+(all.length>maxN?`<div class="rp-more">+${all.length-maxN}</div>`:'')}</div>`}).join('')}</div>
   <div class="rp-legend"><span>■ Publication : miniature, horaire, plateforme</span><span style="color:#D9140E">■ Événement</span><span>IG Instagram · IN LinkedIn · TT TikTok · FB Facebook · YT YouTube · NL Newsletter</span></div>`:''}
-  ${!opts.calendrier?`<div class="rp-sec">Contenus du mois</div>${cs.map(c=>`<div style="display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid #EFECEA"><img src="${thumbSrc(c)}" style="width:28px;height:35px;border-radius:5px;object-fit:cover"><b style="font-size:12px;flex:1">${esc(c.title)}</b><span class="rp-chip s-${gstat(c)}">${GS[gstat(c)]}</span></div>`).join('')}`:''}`;
+  ${!opts.calendrier?`<div class="rp-sec">Contenus du mois</div>${cs.map(c=>`<div style="display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid #EFECEA"><img src="${thumbSrc(c)}" style="width:28px;height:35px;border-radius:5px;object-fit:cover;${imgPos(c)}"><b style="font-size:12px;flex:1">${esc(c.title)}</b><span class="rp-chip s-${gstat(c)}">${GS[gstat(c)]}</span></div>`).join('')}`:''}`;
  // Pages détaillées
  const detail=[];let cur=[],h=0;const budget=900;
  cs.forEach(c=>{const ph=Math.max(200,96+(opts.descriptions?66:0)+Math.ceil(c.platforms.length/2)*(48+(opts.comptes?28:0)+(opts.collabs?14:0)+(opts.liens?10:0)));if(h+ph>budget&&cur.length){detail.push(cur);cur=[];h=0}cur.push(c);h+=ph});
@@ -1974,7 +1998,7 @@ function buildReport(pid,ym,opts,exclude){
   pages.push(`<div class="rp-page"><div style="height:7px;margin:-48px -52px 41px;background:${p.color||'#0E0E0E'}"></div><div class="rp-head2"><b>${esc(p.name)} — Détail des publications</b><span>${fmtMonth(ym)}</span></div>
   ${group.map(c=>{const s=gstat(c);const pr=c.projectId?project(c.projectId):null;
    const cols=['Plateforme','Date et heure'];if(opts.comptes)cols.push('Publié par','Identifications');if(opts.collabs)cols.push('Collaborations');cols.push('Statut');if(opts.liens)cols.push('Lien');
-   return `<div class="rp-post"><div class="rp-pthumb"><img src="${thumbSrc(c)}" alt=""></div><div class="rp-pb"><div class="rp-pt">${esc(c.title)}</div>
+   return `<div class="rp-post"><div class="rp-pthumb"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}"></div><div class="rp-pb"><div class="rp-pt">${esc(c.title)}</div>
    <div class="rp-chips"><span class="rp-chip s-${s}">${GS[s]}</span><span class="rp-chip">${esc(c.format)}</span>${pr?`<span class="rp-chip">${esc(pr.name)}</span>`:''}</div>
    ${opts.descriptions?`<div class="rp-desc">${esc(c.description||'Description à venir.')}</div>`:''}
    <div class="rp-pls">${c.platforms.map(x=>`<div class="rp-pl"><div class="rp-plh"><span class="rp-pfb">${PFA[x.platform]||''}</span><b>${esc(x.platform)}</b><span class="rp-plt">${x.date?fmtD(x.date):'—'}${x.time?' · '+esc(x.time):''}</span><span class="rp-cs ${x.status==='publie'?'c-acceptee':x.status==='programme'?'c-envoyee':''}">${PUB[x.status]}</span></div>${opts.comptes?`<div class="rp-l"><span>Publié par</span>${esc((x.accounts||[]).join(', ')||'—')}</div><div class="rp-l"><span>Identifications</span>${esc((x.tags||[]).join(', ')||'—')}</div>`:''}${opts.collabs&&(x.collabs||[]).length?`<div class="rp-l"><span>Collaborations</span><div>${x.collabs.map(k=>`${esc(k.account)}<span class="rp-cs c-${k.status}">${COLLAB[k.status]}</span>`).join('<br>')}</div></div>`:''}${opts.liens&&x.status==='publie'&&x.link?`<div class="rp-l"><span>Lien</span><a class="rp-link" href="${esc(x.link)}">Voir le post ↗</a></div>`:''}</div>`).join('')}</div>
@@ -2139,10 +2163,9 @@ function modalContent(){
   }else{
    const prjs=S.projects.filter(x=>x.partnerId===c.partnerId);
    body=`<div class="ficheTop">
-    <div class="grid" style="gap:8px">${thumbImg(c)}
-     <label class="btn sm ghost" for="thumb-in" style="${canMod?'':'display:none'}">Importer une miniature</label><input type="file" id="thumb-in" accept="image/*" hidden>
+    <div class="grid thumbed${(FRATIO[c.format]||'4/5')==='16/9'?' land':''}" style="gap:8px">${(()=>{const r=FRATIO[c.format]||'4/5';const t=tpos(c);const ed=c.thumb&&canMod;return `<div class="thumb tframe${ed?' editable':''}" style="aspect-ratio:${r}" ${ed?'data-tdrag="1"':''}><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}" draggable="false">${ed?`<span class="tdhint">${icon('frame')}Glissez pour cadrer</span>`:''}<span class="tfmt">${esc(c.format||'Post')} · ${FRLABEL[r]}</span></div>${ed?`<label class="tzoom"><span>Zoom</span><input type="range" id="thumb-z" min="1" max="3" step="0.02" value="${t.z}"></label><button class="btn sm ghost" data-act="thumb-center">Recentrer</button>`:''}`})()}
+     <label class="btn sm ghost" for="thumb-in" style="${canMod?'':'display:none'}">${c.thumb?'Changer la miniature':'Importer une miniature'}</label><input type="file" id="thumb-in" accept="image/*" hidden>
      ${c.thumb&&canMod?'<button class="btn sm ghost" data-act="thumb-reset">Miniature générée</button>':''}
-     <small class="muted" style="font-size:11.5px">Image réduite et gardée dans ce navigateur. Stockage des médias à connecter.</small>
     </div>
     <div class="form">
      <label class="fld full"><span>Titre du contenu *</span><input type="text" data-f="title" value="${esc(c.title)}" ${dis(canMod)} placeholder="Ex. Portrait — Inès, coureuse" required></label>
@@ -2450,7 +2473,7 @@ function saveContent(silentMsg){
  return true;
 }
 async function readThumb(file){
- return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const W=480,H=600;const cv=document.createElement('canvas');cv.width=W;cv.height=H;const g=cv.getContext('2d');const s=Math.max(W/im.width,H/im.height);const w=im.width*s,h=im.height*s;g.drawImage(im,(W-w)/2,(H-h)/2,w,h);res(cv.toDataURL('image/jpeg',0.8))};im.onerror=rej;im.src=fr.result};fr.onerror=rej;fr.readAsDataURL(file)});
+ return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const M=1000;const s=Math.min(1,M/Math.max(im.width,im.height));const W=Math.round(im.width*s),H=Math.round(im.height*s);const cv=document.createElement('canvas');cv.width=W;cv.height=H;const g=cv.getContext('2d');g.drawImage(im,0,0,W,H);res(cv.toDataURL('image/jpeg',0.82))};im.onerror=rej;im.src=fr.result};fr.onerror=rej;fr.readAsDataURL(file)});
 }
 
 /* ---------- Événements ---------- */
@@ -2492,7 +2515,8 @@ document.addEventListener('click',async e=>{
   case 'save-content':saveContent();break;
   case 'media-add':syncDraft();ui.modal.draft.media.push({label:'',url:''});renderModalOnly();break;
   case 'media-del':syncDraft();ui.modal.draft.media.splice(+ds.i,1);renderModalOnly();break;
-  case 'thumb-reset':syncDraft();ui.modal.draft.thumb='';renderModalOnly();break;
+  case 'thumb-reset':syncDraft();ui.modal.draft.thumb='';delete ui.modal.draft.thumbPos;renderModalOnly();break;
+  case 'thumb-center':ui.modal.draft.thumbPos={x:50,y:50,z:1};applyTpos();{const z=document.getElementById('thumb-z');if(z)z.value=1}break;
   case 'filt':{const o=ui[ds.o];let v=ds.v;if(ds.o==='xf'&&ds.k==='open')v=v==='true';if(ds.m){const arr=o[ds.k];const i=arr.indexOf(v);i<0?arr.push(v):arr.splice(i,1)}else{o[ds.k]=v}if(ds.o==='rep'&&ds.k==='partner'){ui.rep.exclude={};ui.rep.project=''}if(ds.k==='partner'&&ui[ds.o]&&'project' in ui[ds.o])ui[ds.o].project='';if(ds.o==='dash'&&ds.k==='partner'){ui.anim=true;render();window.scrollTo({top:0,behavior:'smooth'});break}if(ds.o==='rep'||ds.k==='partner')ui.anim=ds.o!=='rep'?false:false;render();break}
   case 'ropt':ui.rep.opts[ds.k]=!ui.rep.opts[ds.k];render();break;
   case 'cal-more':ui.cal.more=!ui.cal.more;render();break;
@@ -2611,7 +2635,7 @@ document.addEventListener('change',async e=>{
  const t=e.target;
  if(t.id==='role-sel'||t.id==='role-sel2'){S.currentUser=t.value;ui.anim=true;ui.modal=null;ui.sheet=false;if(t.value.startsWith('partner:'))ui.route='partenaire-'+t.value.slice(8);save();location.hash=ui.route;render();toast('Vous voyez maintenant l\'application comme : '+me().name);return}
  if(t.hasAttribute('data-rerender')){syncDraft();renderModalOnly();return}
- if(t.id==='thumb-in'&&t.files[0]){try{syncDraft();ui.modal.draft.thumb=await readThumb(t.files[0]);renderModalOnly();toast('Miniature importée · pensez à enregistrer')}catch(err){toast('Image illisible.',true)}return}
+ if(t.id==='thumb-in'&&t.files[0]){try{syncDraft();ui.modal.draft.thumb=await readThumb(t.files[0]);ui.modal.draft.thumbPos={x:50,y:50,z:1};renderModalOnly();toast('Miniature importée · pensez à enregistrer')}catch(err){toast('Image illisible.',true)}return}
  if(t.id==='att-in'){syncDraft();[...t.files].forEach(f=>ui.modal.draft.attachments.push(f.name));renderModalOnly();return}
  if(t.id==='import-json'&&t.files[0]){try{const txt=await t.files[0].text();const d=JSON.parse(txt);if(!d.partners||!d.contents)throw 0;S=migrate(d);commit('Données importées')}catch(err){toast('Fichier non reconnu.',true)}return}
  const map={'cf-partner':['cf','partner'],'cf-bucket':['cf','bucket'],'cf-owner':['cf','owner'],'xf-partner':['xf','partner'],'xf-channel':['xf','channel'],'calf-partner':['cal','partner'],'calf-platform':['cal','platform'],'calf-status':['cal','status']};
