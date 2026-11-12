@@ -873,6 +873,11 @@ input[type=password]:focus{outline:0;background-color:#F5F2EE;box-shadow:var(--i
 .chip.dchip.ds-a_valider{background:#FFF1DC;color:#9A5B00}
 .chip.dchip.ds-validee{background:var(--ok-soft);color:var(--ok)}
 .chip.dchip.ds-a_revoir{background:var(--red-soft);color:var(--red-ink)}
+.delbox{display:grid;gap:10px;padding:14px;border-radius:18px;background:rgba(217,20,14,.08);border:1px solid rgba(217,20,14,.25);margin-top:12px}.delbox .row .btn{width:auto}
+.selbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px);z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;margin-bottom:14px;border-radius:20px;background:rgba(23,12,11,.86);color:#fff;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.selbar .btn.ghost{color:#fff;background:rgba(255,255,255,.12)}
+.ccard.selm{position:relative}.ccard .selck{position:absolute;z-index:3;top:10px;right:10px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.85);border:2px solid rgba(0,0,0,.25);color:transparent}
+.ccard .selck svg{width:16px;height:16px}.ccard.selm.on{outline:3px solid var(--red);outline-offset:2px}.ccard.selm.on .selck{background:var(--red);border-color:var(--red);color:#fff}
 .cpy{flex:none;white-space:nowrap}.cpy.ok{color:#1E8A52}.fld>span.spread{display:flex;align-items:center;gap:8px}
 .dmeta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
 .dtext{margin:0;font-size:13.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
@@ -1081,6 +1086,7 @@ const IC={
  more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
  lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+ trash:'<path d="M4.5 7h15M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7M6.5 7l.8 11.3c.1 1 .9 1.7 1.9 1.7h5.6c1 0 1.8-.7 1.9-1.7L17.5 7M10 11v5.5M14 11v5.5"/>',
  copy:'<rect x="8.5" y="8.5" width="11" height="11" rx="2.5"/><path d="M15.5 8.5V6.5a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/>',
  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
  link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
@@ -1505,7 +1511,7 @@ function contentRow(c,right){
 }
 function contentCard(c){
  const p=partner(c.partnerId);const np=nextPub(c)||firstPub(c);const al=alertsOf(c);
- return `<button class="ccard" style="--pc:${pcol(c.partnerId)}" data-open="${c.id}"><div class="thumb">${`<img src="${thumbSrc(c)}" alt="">`}${!isPartner()?`<span class="qbtn" data-quick="${c.id}" role="button" aria-label="Mise à jour rapide" title="Mise à jour rapide">${icon('bolt')}</span>`:''}${al.some(a=>a.lv!=='manquant')?'<span class="dot" title="Retard ou blocage"></span>':''}<span class="badge">${chipS(c)}</span></div>
+ const sl=ui.sel&&ui.route==='contenus';return `<button class="ccard${sl?' selm':''}${sl&&ui.sel.ids[c.id]?' on':''}" style="--pc:${pcol(c.partnerId)}" data-open="${c.id}">${sl?`<span class="selck">${icon('check')}</span>`:''}<div class="thumb">${`<img src="${thumbSrc(c)}" alt="">`}${!isPartner()&&!sl?`<span class="qbtn" data-quick="${c.id}" role="button" aria-label="Mise à jour rapide" title="Mise à jour rapide">${icon('bolt')}</span>`:''}${al.some(a=>a.lv!=='manquant')?'<span class="dot" title="Retard ou blocage"></span>':''}<span class="badge">${chipS(c)}</span></div>
  <div class="t">${esc(c.title)}</div>
  <div class="m"><span class="pdot" style="--pc:${pcol(c.partnerId)}"></span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p?p.name:'')}${c.projectId&&project(c.projectId)?' › '+esc(project(c.projectId).name):''} · ${esc(c.format)}</span></div>
  ${taskIcons(c)}
@@ -1520,6 +1526,9 @@ const PLIM={Instagram:2200,TikTok:2200,LinkedIn:3000,Facebook:63206,YouTube:5000
 function descKeys(c){const ks=[{k:'common',label:'Description commune',pf:null,text:c.description||'',path:'description',limit:2200}];(c.platforms||[]).forEach((x,i)=>ks.push({k:x.id,label:x.platform,pf:x.platform,text:x.text||'',path:'platforms.'+i+'.text',limit:PLIM[x.platform]||2200}));return ks}
 function descReq(c){const ks=descKeys(c);const pl=ks.filter(k=>k.pf);const out=pl.filter(k=>k.text.trim());if(!pl.length||pl.some(k=>!k.text.trim())||c.description.trim())out.unshift(ks[0]);return out.filter(k=>k.text.trim()||k.k==='common')}
 function dStatus(c,K){if(K.pf&&!K.text.trim())return 'commune';const r=(c.descReview||{})[K.k];if(!K.text.trim())return 'brouillon';return r&&r.status?r.status:'a_valider'}
+function delContents(ids){const set=new Set(ids);S.contents=S.contents.filter(c=>!set.has(c.id));S.exchanges.forEach(x=>{if(set.has(x.contentId))x.contentId=''});S.reports.forEach(r=>{if(Array.isArray(r.exclude))r.exclude=r.exclude.filter(i=>!set.has(i))})}
+function delProject(id,withContents){if(withContents)delContents(S.contents.filter(c=>c.projectId===id).map(c=>c.id));else S.contents.forEach(c=>{if(c.projectId===id)c.projectId=''});S.projects=S.projects.filter(x=>x.id!==id);S.exchanges.forEach(x=>{if(x.projectId===id)x.projectId=''});S.reports.forEach(r=>{if(r.opts&&r.opts.project===id)r.opts.project=''})}
+function prjDelBox(x){const n=S.contents.filter(c=>c.projectId===x.id).length;return `<div class="delbox"><b>Supprimer le projet « ${esc(x.name)} » ?</b>${n?`<span class="muted">Il contient ${n} contenu(s). Que faire de ces contenus ?</span><div class="row" style="gap:8px"><button class="btn sm" data-act="prj-del" data-id="${x.id}" data-mode="keep">Garder les contenus (sans projet)</button><button class="btn sm primary" data-act="prj-del" data-id="${x.id}" data-mode="all">${icon('trash')}Tout supprimer</button></div>`:`<div class="row" style="gap:8px"><button class="btn sm primary" data-act="prj-del" data-id="${x.id}" data-mode="keep">${icon('trash')}Supprimer</button></div>`}<button class="btn sm ghost" data-act="prj-del-cancel">Annuler</button></div>`}
 function copyText(t,btn){const done=()=>{toast('Texte copié — prêt à coller');if(btn){const h=btn.innerHTML;btn.classList.add('ok');btn.innerHTML=icon('check','width="15" height="15"')+'Copié';setTimeout(()=>{btn.classList.remove('ok');btn.innerHTML=h},1600)}};
  const fb=()=>{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,t.length);let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();ok?done():toast('Copie impossible ici : sélectionnez le texte à la main.',true)};
  try{if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(done,fb);else fb()}catch(e){fb()}}
@@ -1683,7 +1692,8 @@ function pageContents(){
   ${projChips('cf')}
   <div class="fbar-row"><span class="flabel">Statuts</span>${fchips('cf','buckets',Object.keys(GS).map(k=>[k,GS[k],`<i class="sdot s-${k}"></i>`]),true)}</div>
  </div>
- <div class="muted" style="margin:-6px 0 14px;font-size:13px">${cs.length} contenu(s) · à venir d'abord, puis à planifier, puis publiés</div>
+ <div class="spread" style="margin:-6px 0 14px;gap:8px"><div class="muted" style="font-size:13px;min-width:0">${cs.length} contenu(s) · à venir d'abord, puis à planifier, puis publiés</div>${can('supprimer')&&cs.length?`<button class="btn sm ${ui.sel?'dark':'ghost'}" data-act="sel-mode">${ui.sel?'Terminer':icon('check')+'Sélectionner'}</button>`:''}</div>
+ ${ui.sel?(()=>{const n=Object.keys(ui.sel.ids).length;return `<div class="selbar">${ui.sel.confirm?`<b>Supprimer ${n} contenu(s) ? C'est définitif.</b><div class="row" style="gap:8px"><button class="btn sm primary" data-act="sel-del">${icon('trash')}Oui, supprimer</button><button class="btn sm ghost" data-act="sel-del-cancel">Annuler</button></div>`:`<b class="tnum">${n} sélectionné(s)</b><div class="row" style="gap:8px"><button class="btn sm ghost" data-act="sel-all">Tout / rien</button><button class="btn sm primary" data-act="sel-del-ask" ${n?'':'disabled'}>${icon('trash')}Supprimer</button></div>`}</div>`})():''}
  ${cs.length?`<div class="cgrid">${cs.map(contentCard).join('')}</div>`:'<div class="empty">Aucun contenu ne correspond à ces filtres.</div>'}`;
 }
 
@@ -1748,7 +1758,7 @@ function pagePartner(pid){
   ${prj.map(x=>{const pc=S.contents.filter(c=>c.projectId===x.id&&(!partnerView||c.share));const pub=pc.filter(c=>gstat(c)==='publie').length;return `<div class="card prjcard" style="--pc:${p.color}"><div class="spread"><h2>${esc(x.name)}</h2>${x.status==='termine'?'<span class="chip soft">Terminé</span>':'<span class="chip sent">En cours</span>'}</div><div class="muted tnum" style="font-size:12px;margin-top:2px">${x.start?fmtDY(x.start):'—'} → ${x.end?fmtDY(x.end):'—'}</div>${x.desc?`<p class="muted" style="margin:6px 0 0;font-size:13px">${esc(x.desc)}</p>`:''}
    <div class="row" style="flex-wrap:nowrap;gap:14px;margin:12px 0">${gauge(pub,pc.length,{size:76,stroke:7,ticks:false,tone:p.color,fs:17})}<div><b>${pc.length} contenu(s)</b><div class="muted" style="font-size:12.5px">${pub} publié(s) · ${pc.filter(c=>['attente'].includes(gstat(c))).length} à valider</div></div></div>
    <div class="row" style="gap:6px">${pc.slice(0,6).map(c=>`<button data-open="${c.id}" style="border:0;padding:0;background:none" title="${esc(c.title)}">${thumbImg(c,'mini')}</button>`).join('')}${pc.length>6?`<span class="muted">+${pc.length-6}</span>`:''}</div>
-   <div class="row" style="margin-top:12px">${!partnerView?`<button class="btn sm ghost" data-act="prj-contents" data-partner="${pid}" data-id="${x.id}">Voir les contenus</button>`:''}${can('contenus_creer')&&!partnerView?`<button class="btn sm ghost" data-act="new-content" data-partner="${pid}" data-project="${x.id}">${icon('plus')}Contenu</button>`:''}${edit?`<button class="btn sm ghost" data-act="edit-project" data-id="${x.id}">Modifier</button>`:''}</div></div>`}).join('')}
+   <div class="row" style="margin-top:12px">${!partnerView?`<button class="btn sm ghost" data-act="prj-contents" data-partner="${pid}" data-id="${x.id}">Voir les contenus</button>`:''}${can('contenus_creer')&&!partnerView?`<button class="btn sm ghost" data-act="new-content" data-partner="${pid}" data-project="${x.id}">${icon('plus')}Contenu</button>`:''}${edit?`<button class="btn sm ghost" data-act="edit-project" data-id="${x.id}">Modifier</button>`:''}${edit&&can('supprimer')?`<button class="btn sm ghost" data-act="prj-del-ask" data-id="${x.id}" style="color:var(--red)">${icon('trash')}Supprimer</button>`:''}</div>${ui.prjDel===x.id?prjDelBox(x):''}</div>`}).join('')}
   ${edit?`<button class="card white addprj" data-act="new-project" data-partner="${pid}">${icon('plus')}<b>Nouveau projet</b><span class="muted">Un partenaire peut avoir plusieurs projets</span></button>`:''}
   ${!prj.length&&!edit?'<div class="empty">Aucun projet.</div>':''}
  </div>
@@ -2198,7 +2208,7 @@ function modalContent(){
    <button class="btn ghost ${editable?'hide-m':''}" data-act="close">${editable?'Annuler':'Fermer'}</button>
    <span style="flex:1"></span>
    ${!isNew&&!pv&&can('echanges',c.partnerId)?`<button class="btn sm ghost" data-act="new-exchange" data-partner="${c.partnerId}" data-content="${c.id}" title="Consigner un échange" aria-label="Consigner un échange">${icon('chat')}<span class="lbl">Consigner un échange</span></button>`:''}
-   ${!isNew&&can('supprimer',c.partnerId)&&!pv?(m.confirmDel?`<button class="btn sm primary" data-act="del-content" style="width:auto;padding:0 12px">Confirmer</button>`:`<button class="btn sm ghost" data-act="del-content-ask" aria-label="Supprimer" title="Supprimer">${icon('x')}<span class="lbl">Supprimer</span></button>`):''}
+   ${!isNew&&can('supprimer',c.partnerId)&&!pv?(m.confirmDel?`<button class="btn sm primary" data-act="del-content" style="width:auto;padding:0 12px">${icon('trash')}Supprimer ?</button>`:`<button class="btn sm ghost" data-act="del-content-ask" aria-label="Supprimer le contenu" title="Supprimer le contenu" style="color:var(--red)">${icon('trash')}<span class="lbl">Supprimer</span></button>`):''}
   </div></div></div>`;
 }
 function modalExchange(){
@@ -2294,6 +2304,7 @@ function modalQuick(){
     ${c.platforms.map((x,i)=>`<div class="qrow"><div class="ql"><span class="pf">${PFA[x.platform]}</span>${esc(x.platform)}<small class="tnum">${x.date?fmtD(x.date):'Sans date'}${x.time?' · '+esc(x.time):''}</small></div>${qs(`data-act="qpub" data-i="${i}"`,[['prevu','Prévue'],['programme','Programmée'],['publie','Publiée']],x.status,!cPl)}${x.status==='publie'?`<input type="url" data-qlink="${i}" value="${esc(x.link)}" placeholder="Coller le lien du post publié" ${cPl?'':'disabled'} aria-label="Lien du post ${esc(x.platform)}">`:''}${(x.collabs||[]).map((k,j)=>`<div class="ql" style="font-size:12.5px;margin-top:4px">Collab · ${esc(k.account)}</div>${qs(`data-act="qcol" data-i="${i}" data-j="${j}"`,Object.entries(COLLAB),k.status,!cPl,'wrap5')}`).join('')}</div>`).join('')||'<div class="muted">Aucune plateforme.</div>'}
    </div>
    <div class="notice">${icon('info')}<div>Chaque changement est enregistré tout de suite et met à jour le calendrier, le tableau de bord et le compte rendu. Rien n'est envoyé au partenaire.</div></div>
+  ${can('supprimer',c.partnerId)?`<div class="qsec qdel">${ui.modal.confirmDel?`<div class="delbox"><b>Supprimer « ${esc(c.title)} » ?</b><span class="muted">Le contenu disparaît du calendrier, du tableau de bord et des comptes rendus. C'est définitif.</span><div class="row" style="gap:8px"><button class="btn sm primary" data-act="del-content">${icon('trash')}Oui, supprimer</button><button class="btn sm ghost" data-act="qdel-cancel">Annuler</button></div></div>`:`<button class="btn ghost" data-act="qdel-ask" style="color:var(--red)">${icon('trash')}Supprimer ce contenu</button>`}</div>`:''}
   </div>
   <div class="pf-foot"><button class="btn dark" data-act="quick-full" style="flex:1">Fiche complète</button>${can('echanges',c.partnerId)?`<button class="btn" data-act="new-exchange" data-partner="${c.partnerId}" data-content="${c.id}">${icon('chat')}Échange</button>`:''}</div>
  </div></div>`;
@@ -2308,8 +2319,8 @@ function modalProject(){const d=ui.modal.draft,isNew=!d.id;const p=partner(d.par
    <label class="fld"><span>Début</span><input type="date" data-f="start" value="${esc(d.start||'')}"></label>
    <label class="fld"><span>Fin</span><input type="date" data-f="end" value="${esc(d.end||'')}"></label>
    <label class="fld full"><span>Description</span><textarea data-f="desc" style="min-height:70px">${esc(d.desc||'')}</textarea></label>
-  </div>${!isNew?`<p class="muted" style="font-size:12.5px;margin:12px 0 0">Changer de partenaire déplace aussi les ${S.contents.filter(c=>c.projectId===d.id).length} contenu(s) du projet.</p>`:''}</div>
-  <div class="pf-foot"><button class="btn primary" data-act="save-project">${icon('check')}Enregistrer</button><button class="btn ghost" data-act="close">Annuler</button><span style="flex:1"></span>${!isNew&&can('supprimer')?(ui.modal.confirmDel?'<button class="btn sm primary" data-act="del-project" style="width:auto;padding:0 12px">Confirmer</button>':'<button class="btn sm ghost" data-act="del-project-ask">Supprimer</button>'):''}</div>
+  </div>${!isNew&&ui.modal.confirmDel?prjDelBox(d):''}${!isNew?`<p class="muted" style="font-size:12.5px;margin:12px 0 0">Changer de partenaire déplace aussi les ${S.contents.filter(c=>c.projectId===d.id).length} contenu(s) du projet.</p>`:''}</div>
+  <div class="pf-foot"><button class="btn primary" data-act="save-project">${icon('check')}Enregistrer</button><button class="btn ghost" data-act="close">Annuler</button><span style="flex:1"></span>${!isNew&&can('supprimer')?'<button class="btn sm ghost" data-act="del-project-ask" style="color:var(--red);width:auto;padding:0 12px">'+icon('trash')+'Supprimer</button>':''}</div>
  </div></div>`}
 function modalCImport(){const d=ui.modal.draft;const p=partner(d.partnerId);const q=(d.q||'').toLowerCase();const list=d.list.map((k,i)=>({k,i})).filter(({k})=>!q||(k.name+' '+k.email+' '+k.org).toLowerCase().includes(q));
  return `<div class="modal ${ui.modalAnim?'enter':''}" data-act="modal-bg"><div class="panel narrow" role="dialog" aria-modal="true" aria-label="Importer des contacts" data-stop>
@@ -2420,7 +2431,7 @@ document.addEventListener('click',async e=>{
  const cands=[go,op,opx,ope,act].filter(Boolean);
  if(!cands.length)return;
  const inner=cands.reduce((a,b)=>a.contains(b)?b:a);
- if(inner===op){e.preventDefault();openContent(op.dataset.open);return}
+ if(inner===op){e.preventDefault();if(ui.sel&&ui.route==='contenus'&&op.closest('.cgrid')){const ids=ui.sel.ids;ids[op.dataset.open]?delete ids[op.dataset.open]:ids[op.dataset.open]=true;ui.sel.confirm=false;render();return}openContent(op.dataset.open);return}
  if(inner===opx){e.preventDefault();openExchange(opx.dataset.openx);return}
  if(inner===ope){e.preventDefault();const ev=S.events.find(x=>x.id===ope.dataset.opene);if(ev){ui.modalAnim=true;ui.modal={type:'event',draft:clone(ev)};renderModalOnly()}return}
  if(inner===go){e.preventDefault();ui.sheet=false;ui.modal=null;navigate(go.dataset.go);return}
@@ -2478,7 +2489,7 @@ document.addEventListener('click',async e=>{
   case 'edit-project':{const x=project(ds.id);if(!x)return;ui.modalAnim=true;ui.modal={type:'project',draft:Object.assign({status:'en_cours'},clone(x))};renderModalOnly();break}
   case 'save-project':{syncDraft();const d=ui.modal.draft;if(!d.name.trim()){toast('Donnez un nom au projet.',true);return}if(!d.id){d.id=uid('pr');S.projects.push(d)}else{const i=S.projects.findIndex(x=>x.id===d.id);const old=S.projects[i];if(old.partnerId!==d.partnerId)S.contents.forEach(c=>{if(c.projectId===d.id)c.partnerId=d.partnerId});S.projects[i]=d}ui.modal=null;commit('Projet enregistré');break}
   case 'del-project-ask':ui.modal.confirmDel=true;renderModalOnly();break;
-  case 'del-project':{const id=ui.modal.draft.id;S.projects=S.projects.filter(x=>x.id!==id);S.contents.forEach(c=>{if(c.projectId===id)c.projectId=''});S.exchanges.forEach(x=>{if(x.projectId===id)x.projectId=''});ui.modal=null;commit('Projet supprimé · ses contenus restent chez le partenaire');break}
+
   case 'prj-contents':ui.cf={partner:ds.partner,project:ds.id,buckets:[],owner:'',q:''};navigate('contenus');break;
   case 'ci-save':{const d=ui.modal.draft;const p=partner(d.partnerId);const add=d.list.filter((k,i)=>d.sel[i]).filter(k=>!p.contacts.some(c=>(c.email&&c.email===k.email)||c.name===k.name)).map(k=>({name:k.name||k.email,role:k.role||k.org||'',email:k.email||'',phone:k.phone||''}));p.contacts.push(...add);ui.modal=null;commit(add.length+' contact(s) ajouté(s) à '+p.name);break}
   case 'to-project-ask':syncDraft();ui.modal.confirmMerge=true;renderModalOnly();break;
@@ -2500,7 +2511,17 @@ document.addEventListener('click',async e=>{
    if(isPartner()){const c=content(ui.modal.draft.id);c.comments.push({id:uid('k'),author:me().id,date:nowStamp(),text:txt.trim(),kind:ui.modal.modReq?'modification':'commentaire'});if(ui.modal.modReq){c.validation='modifs';c.history.push({at:nowStamp(),by:me().id,text:'Modification demandée par le partenaire'})}ui.modal={type:'content',draft:clone(c),tab:'validation'};commit(ui.modal.modReq?'Demande de modification enregistrée':'Commentaire ajouté');break}
    syncDraft();const d=ui.modal.draft;d.comments.push({id:uid('k'),author:me().id,date:nowStamp(),text:txt.trim(),kind:ui.modal.modReq?'modification':internal?'interne':'commentaire'});if(ui.modal.modReq){d.validation='modifs';if(d.prod==='termine')d.prod='en_cours'}const wasMod=ui.modal.modReq;ui.modal.modReq=false;saveContent(wasMod?'Demande de modification enregistrée':'Commentaire ajouté');break}
   case 'del-content-ask':ui.modal.confirmDel=true;renderModalOnly();break;
-  case 'del-content':S.contents=S.contents.filter(c=>c.id!==ui.modal.draft.id);S.exchanges.forEach(x=>{if(x.contentId===ui.modal.draft.id)x.contentId=''});ui.modal=null;commit('Contenu supprimé');break;
+  case 'del-content':delContents([ui.modal.draft?ui.modal.draft.id:ui.modal.id]);ui.modal=null;commit('Contenu supprimé');break;
+  case 'qdel-ask':ui.modal.confirmDel=true;renderModalOnly();setTimeout(()=>{const b=document.querySelector('#modal-root .qdel');if(b)b.scrollIntoView({block:'nearest'})},30);break;
+  case 'qdel-cancel':ui.modal.confirmDel=false;renderModalOnly();break;
+  case 'sel-mode':ui.sel=ui.sel?null:{ids:{},confirm:false};render();break;
+  case 'sel-all':{const all=document.querySelectorAll('.cgrid [data-open]');const ids=ui.sel.ids;const every=[...all].every(b=>ids[b.dataset.open]);all.forEach(b=>{if(every)delete ids[b.dataset.open];else ids[b.dataset.open]=true});ui.sel.confirm=false;render();break}
+  case 'sel-del-ask':ui.sel.confirm=true;render();break;
+  case 'sel-del-cancel':ui.sel.confirm=false;render();break;
+  case 'sel-del':{const ids=Object.keys(ui.sel.ids);delContents(ids);ui.sel=null;commit(ids.length+' contenu(s) supprimé(s)');break}
+  case 'prj-del-ask':ui.prjDel=ds.id;render();break;
+  case 'prj-del-cancel':ui.prjDel=null;render();break;
+  case 'prj-del':{const id=ds.id;const withC=ds.mode==='all';const n=S.contents.filter(c=>c.projectId===id).length;delProject(id,withC);ui.prjDel=null;if(ui.modal&&ui.modal.type==='project')ui.modal=null;commit(withC?`Projet et ${n} contenu(s) supprimés`:'Projet supprimé · ses contenus restent chez le partenaire');break}
   case 'advance':{const c=content(ds.id);if(!c)return;const from=c.prod;c.prod=c.prod==='a_preparer'?'en_cours':'termine';if(c.prod==='termine')c.blocked=false;c.history.push({at:nowStamp(),by:me().id,text:`Production : ${PROD[from]} → ${PROD[c.prod]}`});commit(`« ${c.title} » : ${PROD[c.prod].toLowerCase()}`);break}
   case 'new-exchange':if(!can('echanges'))return;if(ui.fab){ui.fab=false;render()}if(!S.partners.length){toast('Créez d\'abord un partenaire.',true);return}if(ui.modal&&ui.modal.type==='content')syncDraft();newExchange({partner:ds.partner,content:ds.content,type:ds.type});break;
   case 'save-exchange':{syncDraft();const d=ui.modal.draft;if(!d.summary.trim()){toast('Ajoutez un résumé de l\'échange.',true);return}if(d.contentId&&content(d.contentId)?.partnerId!==d.partnerId)d.contentId='';if(d.projectId&&project(d.projectId)?.partnerId!==d.partnerId)d.projectId='';if(!d.id){d.id=uid('x');S.exchanges.push(d)}else{const i=S.exchanges.findIndex(x=>x.id===d.id);S.exchanges[i]=d}ui.modal=null;commit('Échange consigné · aucun message envoyé au partenaire');break}
@@ -2581,7 +2602,7 @@ document.addEventListener('submit',async e=>{
  if(f.dataset.form==='user'){const fd=new FormData(f);const name=(fd.get('name')||'').trim();if(!name)return;S.users.push({id:uid('u'),name,role:'equipe',title:fd.get('title')||'Équipe',perms:{contenus_creer:false,contenus_modifier:false,production_avancer:false,publication_planifier:false,valider:false,echanges:true,partenaires_gerer:false,comptes_rendus:false,notes_internes:false,acces_partenaires:false,supprimer:false}});commit(name+' ajouté · réglez ses droits ci-dessus')}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ui.modal){ui.modal=null;renderModalOnly()}});
-function navigate(r){ui.route=r;ui.anim=true;if(r==='administration')setTimeout(loadMembers,0);if(location.hash!=='#'+r)location.hash=r;render();window.scrollTo(0,0)}
+function navigate(r){if(r!=="contenus")ui.sel=null;ui.prjDel=null;ui.route=r;ui.anim=true;if(r==='administration')setTimeout(loadMembers,0);if(location.hash!=='#'+r)location.hash=r;render();window.scrollTo(0,0)}
 addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(h&&h!==ui.route){ui.route=h;ui.anim=true;ui.modal=null;render();window.scrollTo(0,0)}});
 
 /* ---------- Démarrage ---------- */
