@@ -876,6 +876,7 @@ input[type=password]:focus{outline:0;background-color:#F5F2EE;box-shadow:var(--i
 .chip.asidechip{background:rgba(23,12,11,.82);color:#fff;border-color:transparent}
 .lg2{display:flex;flex-direction:column;align-items:center;line-height:.98;gap:.04em}.lg2>span{display:block}.lg2>span+span{font-weight:700;opacity:.92}
 .chip.pst-terminee{background:rgba(23,12,11,.82);color:#fff;border-color:transparent}.chip.pst-en_pause{background:#FFF1D6;color:#8A5A00;border-color:transparent}
+.gp.pdone{opacity:.6;filter:saturate(.5)}
 .pcard.pdone{opacity:.72;filter:saturate(.55)}
 .delbox{display:grid;gap:10px;padding:14px;border-radius:18px;background:rgba(217,20,14,.08);border:1px solid rgba(217,20,14,.25);margin-top:12px}.delbox .row .btn{width:auto}
 .selbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px);z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;margin-bottom:14px;border-radius:20px;background:rgba(23,12,11,.86);color:#fff;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
@@ -1559,9 +1560,14 @@ function fchips(o,k,opts,multi){
  return `<div class="mchips" role="group">${opts.map(([v,l,pre])=>{const on=multi?cur.includes(v):cur===v;return `<button type="button" class="mchip ${on?'on':''}" data-act="filt" data-o="${o}" data-k="${k}" data-v="${esc(v)}" ${multi?'data-m="1"':''} aria-pressed="${on}">${pre||''}${esc(l)}${on&&multi?icon('check'):''}</button>`}).join('')}</div>`;
 }
 function fseg(o,k,opts){const cur=ui[o][k];return `<div class="seg" role="radiogroup">${opts.map(([v,l])=>{const on=cur===v;return `<button type="button" role="radio" aria-checked="${on}" class="${on?'on':''}" data-act="filt" data-o="${o}" data-k="${k}" data-v="${esc(v)}">${esc(l)}</button>`}).join('')}</div>`}
+function isILA(p){return /^\s*ila\b/i.test(p.name||'')||(p.short||'').toUpperCase()==='ILA'}
+function partnerNext(p){let best=null;S.contents.forEach(c=>{if(c.partnerId!==p.id||c.aside)return;const n=nextPub(c);if(n&&(!best||(n.date+n.time)<(best.date+best.time)))best=n});return best}
+function partnerUpcoming(p){let best=null;S.contents.forEach(c=>{if(c.partnerId!==p.id||c.aside)return;(c.platforms||[]).forEach(x=>{if(x.status==='publie'||!x.date||x.date<TODAY)return;if(!best||(x.date+x.time)<(best.date+best.time))best=x})});return best}
+function partnersByNext(list){const k=p=>{const u=partnerUpcoming(p);const n=partnerNext(p);const done=pStatus(p)==='terminee';return [isILA(p)?0:done?4:u?1:n?2:3,u?u.date+u.time:n?String(99999999-+(n.date.replace(/-/g,''))):'',(p.name||'').toLowerCase()]};
+ return list.map(p=>({p,k:k(p)})).sort((a,b)=>a.k[0]-b.k[0]||a.k[1].localeCompare(b.k[1])||a.k[2].localeCompare(b.k[2])).map(x=>x.p)}
 function pchips(o,k,{all=true}={}){
  const v=ui[o][k];
- return `<div class="pchips" role="radiogroup">${all?`<button type="button" class="pchip ${!v?'on':''}" data-act="filt" data-o="${o}" data-k="${k}" data-v="" role="radio" aria-checked="${!v}"><span class="plogo xs all">${icon('users')}</span>Tous</button>`:''}${S.partners.map(p=>{const on=v===p.id;return `<button type="button" class="pchip ${on?'on':''}" data-act="filt" data-o="${o}" data-k="${k}" data-v="${p.id}" role="radio" aria-checked="${on}"><span class="plogo xs" style="${logoStyle(p)}">${logoTxt(p)}</span>${esc(p.name)}</button>`}).join('')}</div>`;
+ return `<div class="pchips" role="radiogroup">${all?`<button type="button" class="pchip ${!v?'on':''}" data-act="filt" data-o="${o}" data-k="${k}" data-v="" role="radio" aria-checked="${!v}"><span class="plogo xs all">${icon('users')}</span>Tous</button>`:''}${(o==='dash'?partnersByNext(S.partners):S.partners).map(p=>{const on=v===p.id;return `<button type="button" class="pchip ${on?'on':''}" data-act="filt" data-o="${o}" data-k="${k}" data-v="${p.id}" role="radio" aria-checked="${on}"><span class="plogo xs" style="${logoStyle(p)}">${logoTxt(p)}</span>${esc(p.name)}</button>`}).join('')}</div>`;
 }
 /* Jauge radiale 270° */
 function gauge(val,max,{size=150,stroke=12,label='',center=null,tone='ink',dark=false,ticks=true,fs=null}={}){
@@ -1578,7 +1584,7 @@ function progressBar(c){const i=STEPS.indexOf(gstat(c));return `<div class="cpro
 
 /* ---------- Tableau de bord ---------- */
 function pageDashboard(){
- const u=me();const sp=ui.dash.partner&&partner(ui.dash.partner)?ui.dash.partner:'';const SPp=sp?partner(sp):null;const DP=sp?[SPp]:S.partners.filter(x=>pStatus(x)!=='terminee');
+ const u=me();const sp=ui.dash.partner&&partner(ui.dash.partner)?ui.dash.partner:'';const SPp=sp?partner(sp):null;const DP=sp?[SPp]:partnersByNext(S.partners);
  let cs=visibleContents();
  if(sp)cs=cs.filter(c=>c.partnerId===sp&&projOk(c,ui.dash.project));
  if(ui.mine)cs=cs.filter(c=>c.owner===u.id);
@@ -1611,7 +1617,7 @@ function pageDashboard(){
  const recapcard=`<section class="card white"><div class="card-h"><div><div class="eyebrow">Récaps PDF partenaires</div><h2>Communiqués au partenaire</h2></div>${fseg('dash','recap',[[addMonths(TODAY.slice(0,7),-1),MOIS[D(addMonths(TODAY.slice(0,7),-1)+'-01').getMonth()]],[TODAY.slice(0,7),MOIS[D(TODAY).getMonth()]]])}</div>
   <div class="row" style="flex-wrap:nowrap;gap:16px;margin-bottom:12px">${gauge(nSent,DP.length,{size:96,stroke:9,tone:'ok',ticks:false,fs:22})}<div><div style="font-weight:800">${nSent} récap(s) envoyé(s) sur ${DP.length}</div><div class="muted" style="font-size:12.5px;text-transform:capitalize">${fmtMonth(rm)}</div></div></div>
   <div class="rcards">${rstat.map(({p,k,r})=>`<div class="rcard" style="--pc:${p.color}"><span class="plogo xs" style="${logoStyle(p)}">${logoTxt(p)}</span><div class="rb"><b>${esc(p.name)}</b><small>${k==='sent'?`Envoyé le ${fmtD(r.sentAt)} · ${esc(r.sentChannel)}${r.sentTo?' à '+esc(r.sentTo):''}`:k==='ready'?'PDF préparé, pas encore envoyé':'Récap à préparer'}</small></div>${k==='sent'?'<span class="chip sent">'+icon('check')+'Envoyé</span>':k==='ready'?(can('echanges')?`<button class="btn sm dark" data-act="mark-sent" data-id="${r.id}">Marquer envoyé</button>`:'<span class="chip ready">À envoyer</span>'):(can('comptes_rendus')?`<button class="btn sm ghost" data-act="prep-recap" data-partner="${p.id}" data-month="${rm}">Préparer</button>`:'<span class="chip none">À préparer</span>')}</div>`).join('')}</div></section>`;
- const pgauges=`<section class="card white"><div class="card-h"><div><div class="eyebrow">Objectifs</div><h2>Contenus prévus / objectif par partenaire</h2></div></div><div class="ggrid">${DP.map(p=>{const m=partnerGoal(p,ym);return `<button class="gp" data-go="partenaire-${p.id}">${gauge(m.planned,m.target,{size:84,stroke:8,ticks:false,tone:p.color,fs:20})}<span class="n">${esc(p.name)}</span><span class="s">${m.done} publié(s)</span></button>`}).join('')}</div></section>`;
+ const pgauges=`<section class="card white"><div class="card-h"><div><div class="eyebrow">Objectifs</div><h2>Contenus prévus / objectif par partenaire</h2></div></div><div class="ggrid">${DP.map(p=>{const m=partnerGoal(p,ym);return `<button class="gp${pStatus(p)==='terminee'?' pdone':''}" data-go="partenaire-${p.id}">${gauge(m.planned,m.target,{size:84,stroke:8,ticks:false,tone:p.color,fs:20})}<span class="n">${esc(p.name)}</span><span class="s">${(()=>{if(pStatus(p)==='terminee')return 'Com terminée';const u=partnerUpcoming(p);if(u)return 'Prochaine · '+fmtD(u.date);const n=partnerNext(p);return n?'En retard · '+fmtD(n.date):'Rien de prévu'})()} · ${m.done} publié(s)</span></button>`}).join('')}</div></section>`;
  const gpanel=`<div class="gpanel">
   <section class="card dark"><div class="card-h"><div><div class="eyebrow">Avancement de ${MOIS[+ym.slice(5)-1]}</div><h2>Publications du mois</h2></div></div>
    <div class="gmain">${gauge(mPub,monthPubs.length,{size:178,stroke:14,tone:'light',dark:true,label:'publiées'})}
