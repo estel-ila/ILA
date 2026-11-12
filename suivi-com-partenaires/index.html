@@ -892,6 +892,12 @@ input[type=password]:focus{outline:0;background-color:#F5F2EE;box-shadow:var(--i
 .tzoom{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700}.tzoom input{flex:1;min-width:0;accent-color:var(--red)}
 .ficheTop .thumbed.land{grid-column:1/-1}.ficheTop .thumbed.land .thumb{max-width:none!important}
 @media (max-width:640px){.ficheTop>.grid.thumbed{grid-template-columns:minmax(0,1fr)!important}.ficheTop>.grid.thumbed>.thumb{grid-row:auto!important;max-width:220px!important;margin:0 auto}.ficheTop>.grid.thumbed.land>.thumb{max-width:none!important}}
+.sortsel{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 4px 0 12px;border-radius:999px;background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.6);color:var(--ink);font-size:12.5px;font-weight:700;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);max-width:100%;box-shadow:0 6px 16px -10px rgba(0,0,0,.4)}
+.sortsel svg{width:14px;height:14px;transform:rotate(90deg);flex:none}.sortsel select{border:0;background:transparent;font:inherit;color:inherit;padding:0 6px;height:34px;min-width:0;max-width:200px;cursor:pointer;outline:none;appearance:auto}
+.sortline{display:flex;justify-content:flex-start;margin:0 0 12px}
+.sgroup{display:flex;align-items:center;gap:10px;margin:20px 0 10px;font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.sgroup b{display:inline-grid;place-items:center;min-width:24px;height:22px;padding:0 7px;border-radius:999px;background:rgba(255,255,255,.85);color:#111;font-size:11px;letter-spacing:0}
+.sgroup::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.3)}
 .delbox{display:grid;gap:10px;padding:14px;border-radius:18px;background:rgba(217,20,14,.08);border:1px solid rgba(217,20,14,.25);margin-top:12px}.delbox .row .btn{width:auto}
 .selbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px);z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;margin-bottom:14px;border-radius:20px;background:rgba(23,12,11,.86);color:#fff;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .selbar .btn.ghost{color:#fff;background:rgba(255,255,255,.12)}
@@ -1571,6 +1577,23 @@ function applyTpos(){const d=ui.modal&&ui.modal.draft;const im=document.querySel
  document.addEventListener('pointerup',end);document.addEventListener('pointercancel',end);
  document.addEventListener('input',e=>{if(e.target.id==='thumb-z'&&ui.modal&&ui.modal.draft){const d=ui.modal.draft;d.thumbPos=Object.assign({x:50,y:50,z:1},d.thumbPos||{});d.thumbPos.z=+e.target.value;applyTpos()}});
 })();
+/* ---------- Tris ---------- */
+const CSORT=[['date','Date de sortie'],['date_desc','Date de sortie (plus lointaine d\'abord)'],['statut','Statut de production'],['partenaire','Partenaire'],['titre','Titre (A → Z)']];
+function lastPubD(c){return (c.platforms||[]).filter(x=>x.date).map(x=>x.date+(x.time||'')).sort().pop()||''}
+function relD(c){const n=nextPub(c);return n?n.date+(n.time||''):''}
+function sortContents(cs,mode){const byT=(a,b)=>(a.title||'').localeCompare(b.title||'','fr');
+ const asc=(a,b)=>(relD(a)||'9999').localeCompare(relD(b)||'9999')||byT(a,b);
+ if(mode==='titre')return [{items:cs.slice().sort(byT)}];
+ if(mode==='partenaire'){const order=partnersByNext(S.partners).map(p=>p.id);return order.map(pid=>{const it=cs.filter(c=>c.partnerId===pid);return it.length?{label:(partner(pid)||{}).name,items:sortContents(it,'date').flatMap(g=>g.items)}:null}).filter(Boolean)}
+ if(mode==='statut'){return Object.keys(GS).map(k=>{const it=cs.filter(c=>gstat(c)===k);return it.length?{label:GS[k],items:k==='publie'?it.sort((a,b)=>lastPubD(b).localeCompare(lastPubD(a))):it.sort(asc)}:null}).filter(Boolean)}
+ const pub=cs.filter(c=>gstat(c)==='publie').sort((a,b)=>lastPubD(b).localeCompare(lastPubD(a)));const rest=cs.filter(c=>gstat(c)!=='publie');
+ const up=rest.filter(c=>{const d=relD(c);return d&&d.slice(0,10)>=TODAY});const late=rest.filter(c=>{const d=relD(c);return d&&d.slice(0,10)<TODAY});const none=rest.filter(c=>!relD(c));
+ if(mode==='date_desc')return [{label:'À venir',items:up.sort((a,b)=>relD(b).localeCompare(relD(a)))},{label:'En retard (date passée, pas encore publié)',items:late.sort((a,b)=>relD(b).localeCompare(relD(a)))},{label:'À planifier (sans date)',items:none.sort(byT)},{label:'Publiés',items:pub}].filter(g=>g.items.length);
+ return [{label:'À venir',items:up.sort(asc)},{label:'En retard (date passée, pas encore publié)',items:late.sort((a,b)=>relD(b).localeCompare(relD(a)))},{label:'À planifier (sans date)',items:none.sort(byT)},{label:'Publiés',items:pub}].filter(g=>g.items.length)}
+function sortSel(o,k,opts){const v=ui[o][k]||opts[0][0];return `<label class="sortsel">${icon('r')}<span>Trier</span><select data-sort="${o}.${k}" aria-label="Trier">${opts.map(([a,b])=>`<option value="${a}" ${a===v?'selected':''}>${b}</option>`).join('')}</select></label>`}
+function groupedGrid(groups,card){if(groups.length===1&&!groups[0].label)return `<div class="cgrid">${groups[0].items.map(card).join('')}</div>`;return groups.map(g=>`<div class="sgroup"><span>${esc(g.label)}</span><b class="tnum">${g.items.length}</b></div><div class="cgrid">${g.items.map(card).join('')}</div>`).join('')}
+document.addEventListener('change',e=>{const t=e.target;if(!t.dataset||!t.dataset.sort)return;const [o,k]=t.dataset.sort.split('.');ui[o][k]=t.value;try{localStorage.setItem('scp-sort-'+o,t.value)}catch(_){}render()});
+function savedSort(o,def){try{return localStorage.getItem('scp-sort-'+o)||def}catch(_){return def}}
 function copyText(t,btn){const done=()=>{toast('Texte copié — prêt à coller');if(btn){const h=btn.innerHTML;btn.classList.add('ok');btn.innerHTML=icon('check','width="15" height="15"')+'Copié';setTimeout(()=>{btn.classList.remove('ok');btn.innerHTML=h},1600)}};
  const fb=()=>{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,t.length);let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();ok?done():toast('Copie impossible ici : sélectionnez le texte à la main.',true)};
  try{if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(done,fb);else fb()}catch(e){fb()}}
@@ -1731,6 +1754,7 @@ function pageContents(){
  const f=ui.cf;
  const nAside=visibleContents(true).filter(c=>c.aside).length;if(!nAside&&f.aside)f.aside=false;
  let cs=visibleContents(true).filter(c=>!!c.aside===!!f.aside&&(!f.partner||c.partnerId===f.partner)&&projOk(c,f.partner?f.project:'')&&(!f.buckets.length||f.buckets.includes(gstat(c)))&&(!f.owner||c.owner===f.owner)&&(!f.q||(c.title+' '+c.description).toLowerCase().includes(f.q.toLowerCase())));
+ if(!f.sort)f.sort=savedSort('cf','date');
  const rk=c=>{const g=gstat(c);const np=nextPub(c);if(g==='publie'){const f=(c.platforms||[]).map(x=>x.date).filter(Boolean).sort().pop()||'0000';return '3'+(99999999-+f.replace(/-/g,''))}if(np&&np.date>=TODAY)return '0'+np.date;if(np&&np.date)return '1'+np.date;return '2'};
  cs=cs.slice().sort((a,b)=>rk(a).localeCompare(rk(b)));
  return `
@@ -1740,9 +1764,9 @@ function pageContents(){
   ${projChips('cf')}
   <div class="fbar-row"><span class="flabel">Statuts</span>${fchips('cf','buckets',Object.keys(GS).map(k=>[k,GS[k],`<i class="sdot s-${k}"></i>`]),true)}</div>
  </div>
- <div class="spread" style="margin:-6px 0 14px;gap:8px"><div class="muted" style="font-size:13px;min-width:0">${f.aside?`<b>${cs.length} contenu(s) mis de côté</b> · hors calendrier, tableau de bord et comptes rendus`:`${cs.length} contenu(s) · à venir d'abord, puis à planifier, puis publiés`}</div><div class="row" style="gap:6px;flex-wrap:nowrap">${!isPartner()&&(nAside||f.aside)?`<button class="btn sm ${f.aside?'dark':'ghost'}" data-act="cf-aside">${icon('aside')}${f.aside?'Retour aux contenus':'De côté · '+nAside}</button>`:''}${(can('supprimer')||can('contenus_modifier'))&&cs.length?`<button class="btn sm ${ui.sel?'dark':'ghost'}" data-act="sel-mode">${ui.sel?'Terminer':icon('check')+'Sélectionner'}</button>`:''}</div></div>
+ <div class="spread" style="margin:-6px 0 14px;gap:8px"><div class="muted" style="font-size:13px;min-width:0">${f.aside?`<b>${cs.length} contenu(s) mis de côté</b> · hors calendrier, tableau de bord et comptes rendus`:`${cs.length} contenu(s)`} ${sortSel('cf','sort',CSORT)}</div><div class="row" style="gap:6px;flex-wrap:nowrap">${!isPartner()&&(nAside||f.aside)?`<button class="btn sm ${f.aside?'dark':'ghost'}" data-act="cf-aside">${icon('aside')}${f.aside?'Retour aux contenus':'De côté · '+nAside}</button>`:''}${(can('supprimer')||can('contenus_modifier'))&&cs.length?`<button class="btn sm ${ui.sel?'dark':'ghost'}" data-act="sel-mode">${ui.sel?'Terminer':icon('check')+'Sélectionner'}</button>`:''}</div></div>
  ${ui.sel?(()=>{const n=Object.keys(ui.sel.ids).length;return `<div class="selbar">${ui.sel.confirm?`<b>Supprimer ${n} contenu(s) ? C'est définitif.</b><div class="row" style="gap:8px"><button class="btn sm primary" data-act="sel-del">${icon('trash')}Oui, supprimer</button><button class="btn sm ghost" data-act="sel-del-cancel">Annuler</button></div>`:`<b class="tnum">${n} sélectionné(s)</b><div class="row" style="gap:8px"><button class="btn sm ghost" data-act="sel-all">Tout / rien</button>${can('contenus_modifier')?`<button class="btn sm ghost" data-act="sel-aside" ${n?'':'disabled'}>${icon('aside')}${ui.cf.aside?'Remettre en circuit':'Mettre de côté'}</button>`:''}${can('supprimer')?`<button class="btn sm primary" data-act="sel-del-ask" ${n?'':'disabled'}>${icon('trash')}Supprimer</button>`:''}</div>`}</div>`})():''}
- ${cs.length?`<div class="cgrid">${cs.map(contentCard).join('')}</div>`:'<div class="empty">Aucun contenu ne correspond à ces filtres.</div>'}`;
+ ${cs.length?groupedGrid(sortContents(cs,f.sort),contentCard):'<div class="empty">Aucun contenu ne correspond à ces filtres.</div>'}`;
 }
 
 /* ---------- Partenaires ---------- */
@@ -1760,8 +1784,8 @@ function pagePartners(){
  const disps=[...new Set(S.partners.map(x=>x.dispositif).filter(Boolean))].sort();const cities=[...new Set(S.partners.map(x=>x.city).filter(Boolean))].sort();
  const nEnd=S.partners.filter(x=>pStatus(x)==='terminee').length;const stf=ui.pf.st||'actifs';
  const PL=S.partners.filter(x=>(!ui.pf.disp||x.dispositif===ui.pf.disp)&&(!ui.pf.city||x.city===ui.pf.city)&&(stf==='tous'||(stf==='terminee'?pStatus(x)==='terminee':pStatus(x)!=='terminee')));
- return `<div class="fbar"><div class="fbar-row"><span class="flabel">Statut</span>${fchips('pf','st',[['actifs','En cours'],['terminee','Com terminée'+(nEnd?' · '+nEnd:'')],['tous','Tous']],false)}</div>${disps.length||cities.length?`${disps.length?`<div class="fbar-row"><span class="flabel">Dispositif</span>${fchips('pf','disp',[['','Tous'],...disps.map(d=>[d,d])],false)}</div>`:''}${cities.length?`<div class="fbar-row"><span class="flabel">Ville</span>${fchips('pf','city',[['','Toutes'],...cities.map(d=>[d,d])],false)}</div>`:''}`:''}</div><div class="spread" style="margin-bottom:18px"><div class="muted">${PL.length} partenaire(s)</div>${can('partenaires_gerer')?`<button class="btn primary" data-act="new-partner">${icon('plus')}Nouveau partenaire</button>`:''}</div>
- <div class="pgrid">${partnersByNext(PL).map(p=>{
+ return `<div class="fbar"><div class="fbar-row"><span class="flabel">Statut</span>${fchips('pf','st',[['actifs','En cours'],['terminee','Com terminée'+(nEnd?' · '+nEnd:'')],['tous','Tous']],false)}</div>${disps.length||cities.length?`${disps.length?`<div class="fbar-row"><span class="flabel">Dispositif</span>${fchips('pf','disp',[['','Tous'],...disps.map(d=>[d,d])],false)}</div>`:''}${cities.length?`<div class="fbar-row"><span class="flabel">Ville</span>${fchips('pf','city',[['','Toutes'],...cities.map(d=>[d,d])],false)}</div>`:''}`:''}</div><div class="spread" style="margin-bottom:18px"><div class="muted" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">${PL.length} partenaire(s) ${sortSel('pf','sort',[['next','Prochaines sorties (ILA en premier)'],['nom','Nom (A → Z)'],['ville','Ville'],['objectif','Objectif le moins avancé'],['contenus','Nombre de contenus']])}</div>${can('partenaires_gerer')?`<button class="btn primary" data-act="new-partner">${icon('plus')}Nouveau partenaire</button>`:''}</div>
+ <div class="pgrid">${(()=>{const m=ui.pf.sort||(ui.pf.sort=savedSort('pf','next'));if(m==='nom')return PL.slice().sort((a,b)=>a.name.localeCompare(b.name,'fr'));if(m==='ville')return PL.slice().sort((a,b)=>(a.city||'~').localeCompare(b.city||'~','fr')||a.name.localeCompare(b.name,'fr'));if(m==='objectif'){const r=p=>{const g=partnerGoal(p,TODAY.slice(0,7));return g.target?g.planned/g.target:9};return PL.slice().sort((a,b)=>r(a)-r(b))}if(m==='contenus')return PL.slice().sort((a,b)=>S.contents.filter(c=>c.partnerId===b.id&&!c.aside).length-S.contents.filter(c=>c.partnerId===a.id&&!c.aside).length);return partnersByNext(PL)})().map(p=>{
   const m=partnerGoal(p,ym);const cs=S.contents.filter(c=>c.partnerId===p.id&&!c.aside);const np=cs.map(c=>({c,p:nextPub(c)})).filter(x=>x.p&&x.p.date>=TODAY).sort((a,b)=>(a.p.date+a.p.time).localeCompare(b.p.date+b.p.time))[0];
   const al=cs.filter(c=>alertsOf(c).some(a=>a.lv!=='manquant')).length;const open=visibleExchanges().filter(x=>x.partnerId===p.id&&x.nextAction&&!x.done).length;
   return `<button class="card pcard glow${pStatus(p)==='terminee'?' pdone':''}" style="--pc:${p.color}" data-go="partenaire-${p.id}">
@@ -1807,9 +1831,9 @@ function pagePartner(pid){
  ${(()=>{if(!cs.length)return '<div class="empty">Aucun contenu partagé pour le moment.</div>';
   const pubd=cs.filter(c=>gstat(c)==='publie');const todo=cs.filter(c=>gstat(c)!=='publie');
   const dOf=c=>{const n=nextPub(c)||firstPub(c);return n?n.date+(n.time||''):'9999'};const lastD=c=>(c.platforms||[]).filter(x=>x.date).map(x=>x.date+(x.time||'')).sort().pop()||'';
-  todo.sort((a,b)=>dOf(a).localeCompare(dOf(b)));pubd.sort((a,b)=>lastD(b).localeCompare(lastD(a)));
+  ui.pp=ui.pp||{sort:savedSort('pp','date')};pubd.sort((a,b)=>lastD(b).localeCompare(lastD(a)));const tg=sortContents(todo,ui.pp.sort).filter(g=>g.label!=='Publiés');
   const open=!!(ui.pubOpen||{})[pid];
-  return `${todo.length?`<div class="cgrid">${todo.map(contentCard).join('')}</div>`:'<div class="empty">Tout est publié 🎉</div>'}
+  return `<div class="sortline">${sortSel('pp','sort',CSORT.filter(x=>x[0]!=='partenaire'))}</div>${todo.length?groupedGrid(tg,contentCard):'<div class="empty">Tout est publié 🎉</div>'}
   ${pubd.length?`<button type="button" class="folder${open?' open':''}" data-act="pub-folder" data-id="${pid}"><span class="fi">${icon('aside')}</span><b>Publiés</b><span class="chip ready">${pubd.length}</span><span class="muted" style="font-size:12.5px;margin-left:auto">${open?'Masquer':'Afficher'}</span><span class="chev">${icon('r')}</span></button>${open?`<div class="cgrid">${pubd.map(contentCard).join('')}</div>`:''}`:''}`})()}
 
  <div class="section-title" id="sec-projets">Projets</div>
@@ -1876,16 +1900,22 @@ function exchangeItem(x){
 }
 function pageExchanges(){
  const f=ui.xf;
- let xs=visibleExchanges().filter(x=>(!f.partner||x.partnerId===f.partner)&&(!f.channels.length||f.channels.includes(x.channel))&&(!f.open||(!x.done&&(x.nextAction||x.awaitingReply)))).sort((a,b)=>b.date.localeCompare(a.date));
- const groups={};xs.forEach(x=>{const k=x.date.slice(0,7);(groups[k]=groups[k]||[]).push(x)});
+ if(!f.sort)f.sort=savedSort('xf','recent');
+ let xs=visibleExchanges().filter(x=>(!f.partner||x.partnerId===f.partner)&&(!f.channels.length||f.channels.includes(x.channel))&&(!f.open||(!x.done&&(x.nextAction||x.awaitingReply))));
+ xs=f.sort==='ancien'?xs.sort((a,b)=>a.date.localeCompare(b.date)):xs.sort((a,b)=>b.date.localeCompare(a.date));
+ const groups={};
+ if(f.sort==='echeance'){xs=xs.slice().sort((a,b)=>((!a.done&&a.nextDue)||'9999').localeCompare((!b.done&&b.nextDue)||'9999')||b.date.localeCompare(a.date));xs.forEach(x=>{const k=!x.done&&x.nextDue?'Prochaines actions':'Sans échéance';(groups[k]=groups[k]||[]).push(x)})}
+ else if(f.sort==='partenaire'){partnersByNext(S.partners).forEach(p=>{const it=xs.filter(x=>x.partnerId===p.id);if(it.length)groups[p.name]=it})}
+ else xs.forEach(x=>{const k=x.date.slice(0,7);(groups[k]=groups[k]||[]).push(x)});
+ const gl=k=>/^\d{4}-\d{2}$/.test(k)?fmtMonth(k):esc(k);
  return `
  <div class="fbar">
-  <div class="fbar-row">${fseg('xf','open',[[false,'Tout l\'historique'],[true,'À traiter']])}<span style="flex:1"></span>${can('echanges')?`<button class="btn primary" data-act="new-exchange" data-partner="${f.partner}">${icon('plus')}Consigner un échange</button>`:''}</div>
+  <div class="fbar-row">${fseg('xf','open',[[false,'Tout l\'historique'],[true,'À traiter']])}${sortSel('xf','sort',[['recent','Plus récents d\'abord'],['ancien','Plus anciens d\'abord'],['echeance','Prochaine action (échéance)'],['partenaire','Partenaire']])}<span style="flex:1"></span>${can('echanges')?`<button class="btn primary" data-act="new-exchange" data-partner="${f.partner}">${icon('plus')}Consigner un échange</button>`:''}</div>
   <div class="fbar-row">${pchips('xf','partner')}</div>
   <div class="fbar-row"><span class="flabel">Canaux</span>${fchips('xf','channels',CHANNELS.map(c=>[c,c]),true)}</div>
  </div>
  <div class="notice" style="margin-bottom:16px">${icon('info')}<div>Consigner un échange sert à garder une trace (téléphone, email, message, réunion). <b>Aucun message n'est envoyé au partenaire.</b></div></div>
- ${xs.length?Object.keys(groups).map(k=>`<div class="section-title" style="text-transform:capitalize">${fmtMonth(k)}</div><div class="card white" style="padding-block:4px">${groups[k].map(exchangeItem).join('')}</div>`).join(''):'<div class="empty">Aucun échange pour ces filtres.</div>'}`;
+ ${xs.length?Object.keys(groups).map(k=>`<div class="section-title" style="text-transform:capitalize">${gl(k)}</div><div class="card white" style="padding-block:4px">${groups[k].map(exchangeItem).join('')}</div>`).join(''):'<div class="empty">Aucun échange pour ces filtres.</div>'}`;
 }
 
 /* ---------- Calendrier ---------- */
