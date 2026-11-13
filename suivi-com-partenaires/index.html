@@ -937,6 +937,14 @@ h3 .pfl,.ql .pfl,dt .pfl,.badge .pfl{margin-right:6px}
 .pdk{display:flex;gap:3px;flex-wrap:wrap}.pdk .tk{width:19px;height:19px;border-radius:6px}.pdk .tk svg{width:11px;height:11px}
 @media (max-width:1100px){.prodcal .pgts{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:760px){.pweek{grid-template-columns:minmax(0,1fr)}.pday{grid-template-columns:44px minmax(0,1fr);min-height:0;align-items:start}.pdh{flex-direction:column;align-items:center;gap:0}.pdh em{margin:2px 0 0}.pdl{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.pday.fut{display:none}.prodcal .pgts{grid-template-columns:minmax(0,1fr)}}
+.gpanel.one{grid-template-columns:minmax(0,1fr)!important}
+section.cfoldable{position:relative}section.cfoldable>.card-h{cursor:pointer;user-select:none;padding-right:40px}section.cfoldable>.card-h>.cchev{position:absolute;top:14px;right:14px;margin:0}
+.card-h .cchev{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:rgba(14,14,14,.07);transition:transform .25s;transform:rotate(90deg);margin-left:8px}
+.card.dark .card-h .cchev{background:rgba(255,255,255,.14)}
+.card-h .cchev svg{width:15px;height:15px}
+section.cfolded>.card-h .cchev{transform:none}
+section.cfolded>:not(.card-h){display:none!important}
+section.cfolded>.card-h{margin-bottom:0!important}
 .delbox{display:grid;gap:10px;padding:14px;border-radius:18px;background:rgba(217,20,14,.08);border:1px solid rgba(217,20,14,.25);margin-top:12px}.delbox .row .btn{width:auto}
 .selbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px);z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;margin-bottom:14px;border-radius:20px;background:rgba(23,12,11,.86);color:#fff;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .selbar .btn.ghost{color:#fff;background:rgba(255,255,255,.12)}
@@ -1575,7 +1583,10 @@ function fitLogos(root){(root||document).querySelectorAll('.plogo,.rp-logo').for
 function loadFolds(){if(ui.folds)return ui.folds;try{ui.folds=JSON.parse(localStorage.getItem('scp-folds')||'{}')}catch(e){ui.folds={}}return ui.folds}
 function saveFolds(){try{localStorage.setItem('scp-folds',JSON.stringify(ui.folds||{}))}catch(e){}}
 function applyFolds(){const F=loadFolds();document.querySelectorAll('main .section-title[id^="sec-"], #app .section-title[id^="sec-"]').forEach(t=>{const id=t.id;const closed=!!F[id];t.classList.add('foldable');t.classList.toggle('closed',closed);t.setAttribute('role','button');t.setAttribute('tabindex','0');t.setAttribute('aria-expanded',String(!closed));if(!t.querySelector('.fchev'))t.insertAdjacentHTML('beforeend','<span class="fchev">'+icon('r')+'</span>');let n=t.nextElementSibling;while(n&&!(n.classList.contains('section-title'))){n.classList.toggle('fold-hide',closed);n=n.nextElementSibling}})}
-function afterRender(){fitLogos();applyFolds();
+function applyCardFolds(){const F=loadFolds();const mob=innerWidth<720;const DEF=['Récaps PDF partenaires','Suivi par partenaire','Jauges du mois','Objectifs','Demandes reçues','Communication','Validations en attente'];
+ document.querySelectorAll('#app .dash section.card').forEach(sec=>{const h=sec.querySelector(':scope>.card-h');if(!h)return;const eb=(h.querySelector('.eyebrow')||{}).textContent||'';const key='card:'+eb.replace(/\s+/g,' ').trim().replace(/[0-9]+/g,'#').slice(0,40);if(!eb)return;
+  let closed=F[key];if(closed===undefined)closed=mob&&DEF.some(d=>eb.trim().startsWith(d));sec.classList.add('cfoldable');sec.classList.toggle('cfolded',!!closed);h.dataset.cfold=key;h.setAttribute('role','button');h.setAttribute('aria-expanded',String(!closed));if(!h.querySelector('.cchev'))h.insertAdjacentHTML('beforeend','<span class="cchev">'+icon('r')+'</span>')})}
+function afterRender(){fitLogos();applyFolds();applyCardFolds();
  fitPages();
  document.querySelectorAll('.mscroll').forEach(w=>{const on=w.querySelector('.on');if(on)w.scrollLeft=on.offsetLeft-w.clientWidth/2+on.clientWidth/2});
  if(ui.anim&&!matchMedia('(prefers-reduced-motion:reduce)').matches){document.querySelectorAll('#page [data-count]').forEach(el=>{const to=+el.dataset.count;const sm=el.querySelector('small');const tail=sm?sm.outerHTML:'';const t0=performance.now();const step=t=>{const k=Math.min(1,(t-t0)/1100);const e=1-Math.pow(1-k,3);el.innerHTML=Math.round(to*e)+tail;if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
@@ -1754,10 +1765,7 @@ function pageDashboard(){
   <div class="row" style="flex-wrap:nowrap;gap:16px;margin-bottom:12px">${gauge(nSent,DP.length,{size:96,stroke:9,tone:'ok',ticks:false,fs:22})}<div><div style="font-weight:800">${nSent} récap(s) envoyé(s) sur ${DP.length}</div><div class="muted" style="font-size:12.5px;text-transform:capitalize">${fmtMonth(rm)}</div></div></div>
   <div class="rcards">${rstat.map(({p,k,r})=>`<div class="rcard" style="--pc:${p.color}"><span class="plogo xs" style="${logoStyle(p)}">${logoTxt(p)}</span><div class="rb"><b>${esc(p.name)}</b><small>${k==='sent'?`Envoyé le ${fmtD(r.sentAt)} · ${esc(r.sentChannel)}${r.sentTo?' à '+esc(r.sentTo):''}`:k==='ready'?'PDF préparé, pas encore envoyé':'Récap à préparer'}</small></div>${k==='sent'?'<span class="chip sent">'+icon('check')+'Envoyé</span>':k==='ready'?(can('echanges')?`<button class="btn sm dark" data-act="mark-sent" data-id="${r.id}">Marquer envoyé</button>`:'<span class="chip ready">À envoyer</span>'):(can('comptes_rendus')?`<button class="btn sm ghost" data-act="prep-recap" data-partner="${p.id}" data-month="${rm}">Préparer</button>`:'<span class="chip none">À préparer</span>')}</div>`).join('')}</div></section>`;
  const pgauges=`<section class="card white"><div class="card-h"><div><div class="eyebrow">Objectifs</div><h2>Contenus prévus / objectif par partenaire</h2></div></div><div class="ggrid">${DP.map(p=>{const m=partnerGoal(p,ym);return `<button class="gp${pStatus(p)==='terminee'?' pdone':''}" data-go="partenaire-${p.id}">${gauge(m.planned,m.target,{size:84,stroke:8,ticks:false,tone:p.color,fs:20})}<span class="n">${esc(p.name)}</span><span class="s">${(()=>{if(pStatus(p)==='terminee')return 'Com terminée';const u=partnerUpcoming(p);if(u)return 'Prochaine · '+fmtD(u.date);const n=partnerNext(p);return n?'En retard · '+fmtD(n.date):'Rien de prévu'})()} · ${m.done} publié(s)</span></button>`}).join('')}</div></section>`;
- const gpanel=`<div class="gpanel">
-  <section class="card dark"><div class="card-h"><div><div class="eyebrow">Avancement de ${MOIS[+ym.slice(5)-1]}</div><h2>Publications du mois</h2></div></div>
-   <div class="gmain">${gauge(mPub,monthPubs.length,{size:178,stroke:14,tone:'light',dark:true,label:'publiées'})}
-    <div class="gl">${['prevu','production','attente','valide','publie'].map(k=>{const n=mcs.filter(c=>gstat(c)===k).length;return `<div class="gl-row"><i class="sdot s-${k}" style="${k==='valide'?'background:#fff':''}"></i>${GS[k]}<b>${n}</b></div>`}).join('')}</div></div></section>
+ const gpanel=`<div class="gpanel one">
   <div style="display:grid;gap:16px;min-width:0;align-content:start"><section class="card"><div class="card-h"><div><div class="eyebrow">Jauges du mois</div><h2>Validation, échanges, collaborations</h2></div></div>
    <div class="gtrio">
     <div class="gtile">${gauge(mVal,mcs.length,{size:112,stroke:10,tone:'red',label:''})}<div><div class="t">Contenus validés</div><div class="s">${mcs.length-mVal} à faire valider</div></div></div>
@@ -2614,6 +2622,7 @@ document.addEventListener('click',async e=>{
  const ope=t.closest('[data-opene]');
  const act=t.closest('[data-act]');
  const sc=t.closest('[data-scroll]');
+ const cf=t.closest('[data-cfold]');if(cf&&!t.closest('a,button:not([data-cfold]),input,select,label,.seg')){const F=loadFolds();const sec=cf.closest('section');F[cf.dataset.cfold]=!sec.classList.contains('cfolded');saveFolds();applyCardFolds();return}
  const ft=t.closest('.section-title.foldable');if(ft&&!t.closest('a,button')){const F=loadFolds();F[ft.id]=!F[ft.id];if(!F[ft.id])delete F[ft.id];saveFolds();applyFolds();return}
  if(sc){e.preventDefault();{const F=loadFolds();if(F['sec-'+sc.dataset.scroll]){delete F['sec-'+sc.dataset.scroll];saveFolds();applyFolds()}}const el=document.getElementById('sec-'+sc.dataset.scroll);if(el)el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});return}
  // priority: innermost
