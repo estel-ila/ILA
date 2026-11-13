@@ -908,6 +908,19 @@ input[type=password]:focus{outline:0;background-color:#F5F2EE;box-shadow:var(--i
 .pfl.xs{width:15px;height:15px;border-radius:4.5px;margin-right:4px;box-shadow:none}.pfl.sm{width:18px;height:18px;border-radius:6px}
 .pfl.rp{width:20px;height:20px;border-radius:6px;box-shadow:none}
 h3 .pfl,.ql .pfl,dt .pfl,.badge .pfl{margin-right:6px}
+.wpanel{grid-column:span 12}
+.wmonth{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px 22px;align-items:center;margin-bottom:16px}
+.wmk{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}.wmk>div{padding:10px 12px;border-radius:16px;background:rgba(14,14,14,.05);display:grid;gap:2px}.wmk b{font-size:22px;font-weight:800;line-height:1}.wmk span{font-size:11.5px;color:var(--ink-2)}.wmk .redk b{color:var(--red)}
+.wmbar{grid-column:1/-1;width:100%;justify-self:stretch}
+.wbar{display:flex;height:10px;border-radius:99px;overflow:hidden;background:rgba(14,14,14,.08);gap:2px}.wbar i{display:block;min-width:4px}.wbar.empty{opacity:.6}
+.wkgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.wkcard{display:grid;gap:10px;text-align:left;padding:14px;border-radius:20px;border:1px solid rgba(14,14,14,.08);background:rgba(255,255,255,.7);font:inherit;color:var(--ink);cursor:pointer;min-width:0;box-shadow:0 10px 24px -18px rgba(0,0,0,.5);transition:transform .2s}
+.wkcard:hover{transform:translateY(-2px)}.wkcard.cur{border:2px solid var(--red);background:#fff}.wkcard.past{opacity:.85}
+.wkh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.wkh b{font-size:18px;font-weight:800}.wkh span{font-size:12px;color:var(--ink-2)}.wkh .chip{font-size:10px;padding:2px 8px}
+.wkg{display:flex;align-items:center;gap:12px}.wkn{font-size:12.5px;display:grid;gap:2px}.wkn b{font-size:16px}.wkn .late{color:var(--red);font-weight:700}.wkn .ok{color:#1E8A52;font-weight:700}
+.wkl{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11px;color:var(--ink-2)}.wkl i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:0}
+@media (max-width:1100px){.wkgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.wmk{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:560px){.wmonth{grid-template-columns:minmax(0,1fr);justify-items:center}.wmk{grid-template-columns:repeat(2,minmax(0,1fr));width:100%}.wkgrid{gap:8px}.wkcard{padding:11px}.wkg{flex-direction:column;align-items:flex-start;gap:6px}.wkh b{font-size:16px}}
 .delbox{display:grid;gap:10px;padding:14px;border-radius:18px;background:rgba(217,20,14,.08);border:1px solid rgba(217,20,14,.25);margin-top:12px}.delbox .row .btn{width:auto}
 .selbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px);z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;margin-bottom:14px;border-radius:20px;background:rgba(23,12,11,.86);color:#fff;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .selbar .btn.ghost{color:#fff;background:rgba(255,255,255,.12)}
@@ -1658,6 +1671,25 @@ const STEPS=['prevu','production','attente','valide','publie'];
 function progressBar(c){const i=STEPS.indexOf(gstat(c));return `<div class="cprog" aria-label="Avancement : ${GS[gstat(c)]}">${STEPS.map((s,j)=>`<i class="${j<=i?'on':''} ${j===i?'last':''}"></i>`).join('')}</div>`}
 
 /* ---------- Tableau de bord ---------- */
+function monthWeeks(ym){const nd=new Date(+ym.slice(0,4),+ym.slice(5),0).getDate();const d=n=>ym+'-'+String(n).padStart(2,'0');return [[1,7],[8,14],[15,21],[22,nd]].map(([a,b],i)=>({k:'S'+(i+1),from:d(a),to:d(b),a,b}))}
+function pubState(c,x){if(x.status==='publie')return 'publie';const g=gstat(c);return g==='publie'?'valide':g}
+function progressPanel(cs){const sm=ui.dash.sm||TODAY.slice(0,7);const W=monthWeeks(sm);const MS=MOIS[+sm.slice(5)-1];
+ const pubs=[];cs.forEach(c=>(c.platforms||[]).forEach(x=>{if(x.date&&x.date.startsWith(sm))pubs.push({c,x,st:pubState(c,x)})}));
+ const ORD=['publie','valide','attente','production','prevu'];const COL={publie:'#1E8A52',valide:'#0E0E0E',attente:'#D9140E',production:'#E9A23B',prevu:'rgba(14,14,14,.22)'};
+ const stats=list=>{const o={total:list.length,late:list.filter(p=>p.st!=='publie'&&p.x.date<TODAY).length,contents:new Set(list.map(p=>p.c.id)).size};ORD.forEach(k=>o[k]=list.filter(p=>p.st===k).length);o.pct=o.total?Math.round(o.publie/o.total*100):0;return o};
+ const bar=o=>o.total?`<div class="wbar">${ORD.map(k=>o[k]?`<i style="flex:${o[k]};background:${COL[k]}" title="${GS[k]} : ${o[k]}"></i>`:'').join('')}</div>`:'<div class="wbar empty"></div>';
+ const M=stats(pubs);const cur=TODAY.startsWith(sm)?W.find(w=>TODAY>=w.from&&TODAY<=w.to):null;
+ const card=w=>{const l=pubs.filter(p=>p.x.date>=w.from&&p.x.date<=w.to);const o=stats(l);const past=w.to<TODAY,isCur=cur&&cur.k===w.k;
+  return `<button class="wkcard${isCur?' cur':''}${past?' past':''}" data-act="week-cal" data-d="${w.from}"><div class="wkh"><b>${w.k}</b><span>${w.a}–${w.b} ${MOISC[+sm.slice(5)-1]}</span>${isCur?'<span class="chip alert">Cette semaine</span>':''}</div>
+   <div class="wkg">${gauge(o.publie,o.total,{size:86,stroke:8,ticks:false,tone:isCur?'red':'ink',fs:19})}<div class="wkn"><div><b class="tnum">${o.publie}</b>/${o.total} publiées</div><div class="muted">${o.contents} contenu(s)</div>${o.late?`<div class="late">${o.late} en retard</div>`:past&&o.total?'<div class="ok">Semaine bouclée</div>':''}</div></div>
+   ${bar(o)}<div class="wkl">${ORD.filter(k=>o[k]).map(k=>`<span><i style="background:${COL[k]}"></i>${GS[k].replace('En attente de validation','À valider')} ${o[k]}</span>`).join('')||'<span class="muted">Rien de prévu</span>'}</div></button>`};
+ return `<section class="card white wpanel"><div class="card-h"><div><div class="eyebrow">Avancement mensuel et par semaine</div><h2 style="text-transform:capitalize">${fmtMonth(sm)}</h2></div>
+  <div class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn icon sm ghost" data-act="dash-month" data-v="-1" aria-label="Mois précédent">${icon('l')}</button>${sm!==TODAY.slice(0,7)?`<button class="btn sm ghost" data-act="dash-month" data-v="0">Ce mois</button>`:''}<button class="btn icon sm ghost" data-act="dash-month" data-v="1" aria-label="Mois suivant">${icon('r')}</button></div></div>
+  <div class="wmonth"><div class="wmg">${gauge(M.publie,M.total,{size:120,stroke:11,tone:'red',label:'publiées'})}</div>
+   <div class="wmk"><div><b class="tnum">${M.total}</b><span>Publications prévues en ${MS}</span></div><div><b class="tnum">${M.publie}</b><span>Publiées (${M.pct} %)</span></div><div><b class="tnum">${M.valide}</b><span>Validées, à paraître</span></div><div><b class="tnum">${M.attente}</b><span>À valider</span></div><div><b class="tnum">${M.production+M.prevu}</b><span>En production / prévues</span></div><div class="${M.late?'redk':''}"><b class="tnum">${M.late}</b><span>En retard</span></div></div>
+   <div class="wmbar">${bar(M)}</div></div>
+  <div class="wkgrid">${W.map(card).join('')}</div>
+  <div class="muted" style="font-size:11.5px;margin-top:10px">S1 = du 1 au 7 · S2 = du 8 au 14 · S3 = du 15 au 21 · S4 = du 22 à la fin du mois. Une publication = un contenu sur une plateforme. Touchez une semaine pour l'ouvrir dans le calendrier.</div></section>`}
 function pageDashboard(){
  const u=me();const sp=ui.dash.partner&&partner(ui.dash.partner)?ui.dash.partner:'';const SPp=sp?partner(sp):null;const DP=sp?[SPp]:partnersByNext(S.partners);
  let cs=visibleContents();
@@ -1720,6 +1752,7 @@ function pageDashboard(){
   ${kpi('attente','redc',pendingVal.filter(x=>x.days>=2).length+' relance(s) à prévoir')}
   ${kpi('valide','dark',by('valide').length?'Prochaine sortie '+fmtD((by('valide').map(nextPub).filter(Boolean).sort((a,b)=>a.date.localeCompare(b.date))[0]||{}).date):'Rien en attente de sortie')}
 
+  ${progressPanel(cs)}
   ${gpanel}
   <div class="col7">
    ${stpanel}
@@ -2645,6 +2678,8 @@ document.addEventListener('click',async e=>{
   case 'aside-toggle':{const id=ui.modal.draft?ui.modal.draft.id:ui.modal.id;const c=content(id);if(!c)return;setAside([id],!c.aside);if(ui.modal.draft)Object.assign(ui.modal.draft,{aside:c.aside,asideAt:c.asideAt,asideBy:c.asideBy});if(ui.modal.type==='quick')ui.modal=null;commit(c.aside?'Contenu mis de côté · retrouvez-le dans Contenus › De côté':'Contenu remis en circuit');break}
   case 'sel-aside':{const ids=Object.keys(ui.sel.ids);const on=!ui.cf.aside;setAside(ids,on);ui.sel=null;commit(ids.length+(on?' contenu(s) mis de côté':' contenu(s) remis en circuit'));break}
   case 'pub-folder':ui.pubOpen=ui.pubOpen||{};ui.pubOpen[ds.id]=!ui.pubOpen[ds.id];render();break;
+  case 'dash-month':{const v=+ds.v;ui.dash.sm=v===0?TODAY.slice(0,7):addMonths(ui.dash.sm||TODAY.slice(0,7),v);render();break}
+  case 'week-cal':{const d=ds.d;ui.cal.view='semaine';ui.cal.week=weekStart(d);ui.cal.month=d.slice(0,7);if(ui.dash.partner)ui.cal.partner=ui.dash.partner;navigate('calendrier');break}
   case 'qdel-ask':ui.modal.confirmDel=true;renderModalOnly();setTimeout(()=>{const b=document.querySelector('#modal-root .qdel');if(b)b.scrollIntoView({block:'nearest'})},30);break;
   case 'qdel-cancel':ui.modal.confirmDel=false;renderModalOnly();break;
   case 'sel-mode':ui.sel=ui.sel?null:{ids:{},confirm:false};render();break;
