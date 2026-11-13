@@ -945,6 +945,63 @@ section.cfoldable{position:relative}section.cfoldable>.card-h{cursor:pointer;use
 section.cfolded>.card-h .cchev{transform:none}
 section.cfolded>:not(.card-h){display:none!important}
 section.cfolded>.card-h{margin-bottom:0!important}
+/* ILA : plan, temps forts, stories, stats, notifications */
+.bell{position:relative;flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.7);color:var(--ink);cursor:pointer;box-shadow:0 6px 16px -10px rgba(0,0,0,.5)}
+.bell svg{width:20px;height:20px}.bell.has svg{color:var(--red)}
+.bell em{position:absolute;top:-3px;right:-3px;min-width:19px;height:19px;padding:0 5px;border-radius:99px;background:var(--red);color:#fff;font-style:normal;font-size:10.5px;font-weight:800;display:grid;place-items:center;box-shadow:0 0 0 2px #fff}
+.martag{display:inline-flex;align-items:center;gap:4px;max-width:100%;margin:2px 0;padding:2px 8px;border-radius:99px;background:#15131C;color:#F5D76E;font-size:10.5px;font-weight:800;letter-spacing:.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.martag.bank{background:#F5D76E;color:#15131C;margin-left:4px}
+.ev.mar{background:#15131C;color:#F5D76E;padding-left:7px;box-shadow:inset 0 0 0 1px rgba(245,215,110,.35)}
+.ev.mar::before{display:none!important}
+.witem.mar{background:#15131C!important;color:#F5D76E}.witem.mar .kindtag{color:#F5D76E!important}.witem.mar .t{color:#fff}
+.litem.mar{background:#15131C!important;color:#fff}.litem.mar .kindtag{color:#F5D76E}.litem.mar .li-s{color:#D9D3C2;white-space:normal}
+.marchip{display:inline-grid;place-items:center;flex:none;min-width:40px;height:40px;padding:0 6px;border-radius:13px;background:#15131C;color:#F5D76E;font-weight:800;font-size:13px}
+.marstrip{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:12px;padding:12px 14px;border-radius:20px;background:#15131C;color:#F5D76E}
+.marstrip>b{font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-right:6px}
+.marpill{border:1px solid rgba(245,215,110,.35);background:rgba(245,215,110,.08);color:#fff;border-radius:99px;padding:5px 10px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.marpill small{color:#F5D76E;font-weight:600;margin-left:4px}
+.maridea{display:block;margin-top:4px;font-size:12.5px;color:var(--ink-2);white-space:normal}
+.mar-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(14,14,14,.07)}.mar-row .li-b{flex:1;min-width:0}.mar-row .li-t,.mar-row .li-s{white-space:normal}
+.plan-gen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.pgm{display:grid;gap:4px;align-content:start}.pgm>b{font-size:30px;font-weight:800;line-height:1}.pgm .btn{margin-top:6px;width:100%}.pgm .ok{color:#1E8A52;font-weight:700;font-size:13px;margin-top:6px}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.rcard2{display:grid;gap:8px;align-content:start}.rcard2.off{opacity:.55}
+.slots{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:12.5px;font-weight:700}.slots>span{margin-right:4px}
+.tgl{position:relative;flex:none;width:42px;height:25px;border-radius:99px;border:0;background:rgba(14,14,14,.18);cursor:pointer;transition:background .2s}
+.tgl i{position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.3);transition:transform .2s}
+.tgl.on{background:var(--red)}.tgl.on i{transform:translateX(17px)}
+.slotsed{display:grid;gap:8px}.sloted{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;align-items:center}.sloted:not(.on){grid-template-columns:minmax(0,1fr)}
+.sloted .mchip{justify-content:flex-start}.sloted select,.sloted input{height:38px;border-radius:12px;padding:0 8px;min-width:0}
+.genrow{display:grid;gap:4px;padding:10px 0;border-bottom:1px solid rgba(14,14,14,.07)}.genrow b{font-size:13.5px}.gnote{font-size:11.5px;color:#9A5B00;background:#FFF4DE;border-radius:10px;padding:5px 8px}
+.chkrow{display:flex;gap:10px;align-items:flex-start;margin-top:12px;padding:12px;border-radius:16px;background:rgba(14,14,14,.05);cursor:pointer}.chkrow input{width:20px;height:20px;margin-top:2px;accent-color:var(--red);flex:none}
+.kv2{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.stweek{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.stday{min-width:0;border-radius:16px;background:rgba(255,255,255,.6);padding:8px;display:grid;gap:6px;align-content:start;min-height:140px}.stday.today{background:#fff;box-shadow:inset 0 0 0 2px var(--red)}
+.sdh{display:flex;align-items:baseline;gap:5px;font-size:11px;color:var(--ink-2);font-weight:700}.sdh b{font-size:17px;color:var(--ink)}.sdh em{margin-left:auto;font-style:normal;font-size:10.5px;font-weight:800;background:var(--ink);color:#fff;border-radius:99px;padding:1px 7px}
+.sdl{display:grid;gap:6px}
+.stc{display:grid;gap:3px;text-align:left;padding:7px 8px;border-radius:12px;border:0;background:#fff;font:inherit;color:var(--ink);cursor:pointer;box-shadow:inset 3px 0 0 #B9B2AF}
+.stc .tm{font-size:10.5px;font-weight:800;color:var(--ink-2)}.stc .tt{font-size:12px;font-weight:700;line-height:1.25;overflow-wrap:break-word}
+.stc .pfs{display:flex;align-items:center;gap:3px}.stc .pfs em{font-style:normal;font-size:10px;color:var(--ink-2);margin-left:3px}
+.stc.st-prete{box-shadow:inset 3px 0 0 #E9A23B}.stc.st-publiee{box-shadow:inset 3px 0 0 #1E8A52;opacity:.75}
+.stmonth .day{cursor:pointer}.stmonth .dn em{font-style:normal;font-size:10px;font-weight:800;margin-left:auto;background:var(--ink);color:#fff;border-radius:99px;padding:0 6px}
+.stmonth .dn{display:flex;align-items:center}
+.stmini{display:block;font-size:10.5px;font-weight:700;padding:2px 5px;border-radius:6px;background:rgba(14,14,14,.06);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.stmini.st-publiee{background:#E6F4EC;color:#1E8A52}.stmini.st-prete{background:#FFF1D6}
+.statgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.statcard .card-h{align-items:flex-start}.statcard .pfl{width:34px;height:34px;border-radius:11px}
+.srate{display:grid;justify-items:end;text-align:right}.srate b{font-size:22px;font-weight:800}.srate span{font-size:10.5px;color:var(--ink-2)}
+.sgridm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.smf{display:grid;gap:3px;min-width:0}.smf>span{font-size:12px;font-weight:700}.smf>span em{font-style:normal;color:var(--ink-2)}
+.smf input{height:40px;border-radius:12px;padding:0 10px;font-size:15px;font-weight:700;min-width:0;width:100%}
+.smf small{font-size:11px}.smf small .up{color:#1E8A52;font-style:normal;font-weight:800}.smf small .dn{color:var(--red);font-style:normal;font-weight:800}.smf small i{font-style:normal}
+.smf .def{display:none}.smf:focus-within .def{display:block}
+.notif{display:flex;gap:12px;padding:12px;border-radius:18px;background:rgba(14,14,14,.04);margin-bottom:8px}.notif.hot{background:#FFF0EE;box-shadow:inset 3px 0 0 var(--red)}.notif.read{opacity:.55}
+.notif .ni{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:#15131C;color:#F5D76E}.notif .ni svg{width:18px;height:18px}
+.notif .nb{display:grid;gap:2px;min-width:0}.notif .nb b{font-size:14px}.notif .nb>span{font-size:12.5px;color:var(--ink-2)}
+@media (max-width:860px){.plan-gen{grid-template-columns:minmax(0,1fr)}.pgm{grid-template-columns:auto 1fr auto;align-items:center;gap:8px}.pgm .eyebrow{grid-column:1/-1}.pgm>b{font-size:24px}.pgm .btn,.pgm .ok{margin:0;width:auto;grid-column:1/-1}
+ .statgrid{grid-template-columns:minmax(0,1fr)}.stweek{grid-template-columns:minmax(0,1fr)}.stday{grid-template-columns:44px minmax(0,1fr);min-height:0}.sdh{flex-direction:column;align-items:center;gap:0}.sdh em{margin:2px 0 0}.sdl{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+ .topbar .bell{width:38px;height:38px}.stday.pastempty{display:none}.mar-row .lbl{display:none}}
+@media (max-width:420px){.sgridm{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}.smf input{height:38px}.sloted{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.sloted .mchip{grid-column:1/-1}}
+@media (max-width:640px){.pf-foot .btn.sm:not(:has(svg)),.pf-foot .btn.sm:has(.lbl2){width:auto!important;padding:0 12px!important}.pf-foot .btn.sm:has(svg):not(:has(.lbl)) svg{margin:0}}
 .delbox{display:grid;gap:10px;padding:14px;border-radius:18px;background:rgba(217,20,14,.08);border:1px solid rgba(217,20,14,.25);margin-top:12px}.delbox .row .btn{width:auto}
 .selbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px);z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;margin-bottom:14px;border-radius:20px;background:rgba(23,12,11,.86);color:#fff;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .selbar .btn.ghost{color:#fff;background:rgba(255,255,255,.12)}
@@ -1169,6 +1226,9 @@ const IC={
  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
  trash:'<path d="M4.5 7h15M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7M6.5 7l.8 11.3c.1 1 .9 1.7 1.9 1.7h5.6c1 0 1.8-.7 1.9-1.7L17.5 7M10 11v5.5M14 11v5.5"/>',
  aside:'<rect x="3.5" y="4.5" width="17" height="4.5" rx="1.5"/><path d="M5.5 9v8.5a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V9M10 13h4"/>',
+ bell:'<path d="M6 16.5V11a6 6 0 1 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>',
+ star:'<path d="M12 3.5l2.3 5.6 6 .5-4.6 3.9 1.4 5.9L12 16.3l-5.1 3.1 1.4-5.9-4.6-3.9 6-.5z"/>',
+ chart:'<path d="M4 20h16"/><rect x="5.5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="7" width="3" height="11" rx="1"/><rect x="15.5" y="4" width="3" height="14" rx="1"/>',
  copy:'<rect x="8.5" y="8.5" width="11" height="11" rx="2.5"/><path d="M15.5 8.5V6.5a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/>',
  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
  link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
@@ -1303,7 +1363,7 @@ function seed(){
 let S;
 const ui={
  route:'tableau-de-bord',
- cal:{view:innerWidth<720?'liste':'mois',month:TODAY.slice(0,7),week:weekStart(TODAY),partner:'',project:'',kinds:{pub:true,prod:true,val:true,evt:true},platforms:[],statuses:[],more:false,day:null},
+ cal:{view:innerWidth<720?'liste':'mois',month:TODAY.slice(0,7),week:weekStart(TODAY),partner:'',project:'',kinds:{pub:true,prod:true,val:true,evt:true,mar:true},platforms:[],statuses:[],more:false,day:null},
  cf:{partner:'',project:'',buckets:[],owner:'',q:'',aside:false},
  xf:{partner:'',channels:[],open:false},
  rep:{mv:'reglages',lastExported:null,project:'',partner:'ph',month:TODAY.slice(0,7),opts:{chiffres:true,calendrier:true,descriptions:true,comptes:true,collabs:true,liens:true},exclude:{},viewing:null},
@@ -1318,7 +1378,7 @@ function normalizeTasks(c){if(!c.tasks)c.tasks=defaultTasks(c,c.prod==='termine'
 function prodOf(c){const ts=TASKS.map(([k])=>c.tasks&&c.tasks[k]).filter(t=>t&&t.state!=='na');if(!ts.length)return c.prod;if(ts.every(t=>t.state==='fait'))return 'termine';if(ts.some(t=>t.state!=='a_faire'))return 'en_cours';return 'a_preparer'}
 const TASK_SEED={c3:{retouche:'en_cours'},c7:{retouche:'fait',description:'en_cours'},c10:{montage:'en_cours',miniature:'fait',description:'fait'},c12:{montage:'en_cours'},c17:{description:'fait'},c11:{description:'en_cours'}};
 const COLOR_SEED={ph:'#10A37F',rcs:'#2F6BFF',sk:'#7C4DFF',vc:'#00A8C6',an:'#F59E0B'};
-function migrate(D_){
+function migrate(D_){ensureIla(D_);
  (D_.users||[]).forEach(u=>{if(u.role==='equipe'&&u.perms&&u.perms.valider_descriptions===undefined)u.perms.valider_descriptions=(u.id==='yassine')});
  D_.contents.forEach(c=>{if(!c.descReview)c.descReview={};if(!c.descHistory)c.descHistory=[]});
  D_.partners.forEach((p,i)=>{if(!p.color)p.color=COLOR_SEED[p.id]||PCOLORS[i%PCOLORS.length][0];if(!p.goalMode)p.goalMode='total';if(!p.status)p.status='en_cours'});
@@ -1333,7 +1393,7 @@ function load(){
 }
 const CFG=window.SCP_CONFIG;const ONLINE=!!(CFG&&window.supabase);
 let sb=null,ME=null,lastSynced=new Map(),syncTimer=null,syncing=false,syncAgain=false,rtTimer=null;
-function emptyState(){return {version:1,demo:false,_v3:true,currentUser:'estelle',users:[{id:'estelle',name:'Estelle',role:'admin',title:'Administratrice principale'}],partners:[],projects:[],contents:[],events:[],exchanges:[],reports:[]}}
+function emptyState(){return {version:1,demo:false,_v3:true,currentUser:'estelle',users:[{id:'estelle',name:'Estelle',role:'admin',title:'Administratrice principale'}],partners:[],projects:[],contents:[],events:[],exchanges:[],reports:[],stories:[],stats:[],ila:null}}
 function loadAll(){if(ONLINE){S=emptyState();ui.boot='loading';return}load();S=migrate(S)}
 function toRecords(st){const out=[];const add=(id,kind,pid,internal,body)=>out.push({id,kind,partner_id:pid||null,internal:!!internal,body});
  st.users.forEach(u=>add('user:'+u.id,'user',null,true,u));
@@ -1343,6 +1403,7 @@ function toRecords(st){const out=[];const add=(id,kind,pid,internal,body)=>out.p
  st.events.forEach(e=>add('event:'+e.id,'event',e.partnerId,false,e));
  st.exchanges.forEach(x=>add('exchange:'+x.id,'exchange',x.partnerId,x.confidential||x.type==='Note interne',x));
  st.reports.forEach(r=>add('report:'+r.id,'report',r.partnerId,!r.shared,r));
+ if(st.ila)add('ila:config','ila',null,true,st.ila);(st.stories||[]).forEach(x=>add('story:'+x.id,'story',null,true,x));(st.stats||[]).forEach(x=>add('stat:'+x.id,'stat',null,true,x));
  add('meta:app','meta',null,true,{demo:!!st.demo,_v3:true});return out}
 function fromRecords(rows){const st=emptyState();st.users=[];const priv={};rows.forEach(r=>{if(r.kind==='private')priv[r.id]=r.body||{}});
  rows.forEach(r=>{const b=r.body||{};switch(r.kind){
@@ -1351,13 +1412,19 @@ function fromRecords(rows){const st=emptyState();st.users=[];const priv={};rows.
   case 'project':st.projects.push(b);break;
   case 'content':{const pv=priv['cpriv:'+b.id]||{};st.contents.push(Object.assign({},b,{internalNote:pv.internalNote||'',comments:[...(b.comments||[]),...(pv.comments||[])].sort((x,y)=>(x.date||'').localeCompare(y.date||''))}));break}
   case 'event':st.events.push(b);break;case 'exchange':st.exchanges.push(b);break;case 'report':st.reports.push(b);break;
+  case 'ila':st.ila=b;break;case 'story':st.stories.push(b);break;case 'stat':st.stats.push(b);break;
   case 'meta':st.demo=!!b.demo;break}});
  st.partners.sort((a,b)=>a.name.localeCompare(b.name,'fr'));
  if(!st.users.length)st.users=emptyState().users;return st}
 function expectedUser(){return ME?(ME.role==='partenaire'?'partner:'+ME.partner_id:ME.app_user_id):S.currentUser}
 async function reloadAll(){const {data,error}=await sb.from('scp_records').select('id,kind,partner_id,internal,body');if(error)throw error;
  const cu=S.currentUser;S=migrate(fromRecords(data||[]));S.currentUser=(ME&&ME.role==='admin')?(cu||expectedUser()):expectedUser();
- lastSynced=new Map(toRecords(S).map(r=>[r.id,JSON.stringify(r)]));try{localStorage.setItem(STORE_KEY+'-cache',JSON.stringify(S))}catch(e){}}
+ lastSynced=new Map(toRecords(S).map(r=>[r.id,JSON.stringify(r)]));try{localStorage.setItem(STORE_KEY+'-cache',JSON.stringify(S))}catch(e){}
+ try{ilaBootstrap()}catch(e){console.warn(e)}}
+function ilaBootstrap(){if(!canWrite()||!S.ila||S.ila.boot1)return;const ila=ilaId();if(!ila)return;
+ [TODAY.slice(0,7),addMonths(TODAY.slice(0,7),1)].forEach(m=>{const l=planFor(m).filter(x=>!x.past);l.forEach(x=>S.contents.push(makePlanContent(x)));S.ila.generated[m]=TODAY});
+ if(TODAY<'2027-01-07'&&!S.events.some(e=>e.partnerId===ila&&e.date==='2027-01-07')){const e={id:uid('e'),partnerId:ila,title:'Restitution CTF',date:'2027-01-07',type:'Événement',note:'Restitution du programme CTF'};S.events.push(e);S.contents.push(...makeEventContents(e))}
+ S.ila.boot1=TODAY;save()}
 function canWrite(){return ONLINE&&ME&&(ME.role==='admin'||ME.role==='equipe')}
 function scheduleSync(){if(!canWrite())return;clearTimeout(syncTimer);ui.saveState='sync';chip();syncTimer=setTimeout(doSync,450)}
 async function doSync(){syncTimer=null;if(syncing){syncAgain=true;return}syncing=true;
@@ -1512,7 +1579,7 @@ function taskIcons(c){const t=c.tasks||{};return `<div class="tks">${TASKS.map((
 
 /* ---------- Rendu principal ---------- */
 const $app=document.getElementById('app');
-const NAV_TEAM=[['tableau-de-bord','Tableau de bord','home'],['calendrier','Calendrier','cal'],['partenaires','Partenaires','users'],['contenus','Contenus','img'],['echanges','Échanges','chat'],['comptes-rendus','Comptes rendus','doc'],['administration','Utilisateurs et droits','shield']];
+const NAV_TEAM=[['tableau-de-bord','Tableau de bord','home'],['calendrier','Calendrier','cal'],['partenaires','Partenaires','users'],['contenus','Contenus','img'],['echanges','Échanges','chat'],['plan','Plan de com ILA','bolt'],['stories','Stories','film'],['statistiques','Statistiques','chart'],['comptes-rendus','Comptes rendus','doc'],['administration','Utilisateurs et droits','shield']];
 function navItems(){
  if(isPartner()){const u=me(),a=partner(u.partnerId).access;const it=[['partenaire-'+u.partnerId,'Mon espace','home'],['calendrier','Calendrier','cal']];if(a.comptesRendus)it.push(['comptes-rendus','Comptes rendus','doc']);return it}
  return NAV_TEAM.filter(([r])=>r!=='comptes-rendus'||can('comptes_rendus'));
@@ -1521,12 +1588,12 @@ const routeBase=r=>r.startsWith('partenaire-')?'partenaires':r;
 function guardRoute(){
  const r=ui.route;
  if(isPartner()){const own='partenaire-'+me().partnerId;const ok=navItems().some(([k])=>k===r);if(!ok)ui.route=own;return}
- const known=['tableau-de-bord','calendrier','partenaires','contenus','echanges','comptes-rendus','administration'];
+ const known=['tableau-de-bord','calendrier','partenaires','contenus','echanges','plan','stories','statistiques','comptes-rendus','administration'];
  if(r.startsWith('partenaire-')){if(!partner(r.slice(11)))ui.route='partenaires';return}
  if(!known.includes(r))ui.route='tableau-de-bord';
  if(r==='comptes-rendus'&&!can('comptes_rendus'))ui.route='tableau-de-bord';
 }
-const TITLES={'tableau-de-bord':'Tableau de bord','calendrier':'Calendrier','partenaires':'Partenaires','contenus':'Contenus','echanges':'Historique des échanges','comptes-rendus':'Comptes rendus mensuels','administration':'Utilisateurs et droits'};
+const TITLES={'tableau-de-bord':'Tableau de bord','calendrier':'Calendrier','partenaires':'Partenaires','contenus':'Contenus','echanges':'Historique des échanges','comptes-rendus':'Comptes rendus mensuels','plan':'Plan de com ILA','stories':'Stories','statistiques':'Statistiques','administration':'Utilisateurs et droits'};
 
 function render(){
  if(ONLINE&&ui.boot!=='ready'){$app.innerHTML=renderAuth()+`<div id="toast-root"></div>`;return}
@@ -1549,6 +1616,7 @@ function render(){
   <div class="topbar">
    <h1>${esc(title)}</h1>
    ${!ONLINE||(ME&&ME.role==='admin')?`<div class="role"><label for="role-sel">Voir en tant que</label><select id="role-sel">${roleOpts}</select></div>`:''}
+ ${isAdmin()&&!isPartner()?(()=>{const n=notifItems().filter(x=>!x.read).length;return `<button class="bell ${n?'has':''}" data-act="notifs" aria-label="Notifications${n?' : '+n+' à anticiper':''}" title="À anticiper">${icon('bell')}${n?`<em>${n>9?'9+':n}</em>`:''}</button>`})():''}
    <button class="savechip ${ui.saveState==='ok'?'':'off'}" data-act="go-data" title="Où sont enregistrées les données ?"><i></i>${saveTxt}</button>
   </div>
   ${S.demo?`<div class="demo-band"><span class="tag">DÉMO</span><div><b>Données de démonstration.</b> <span class="dl">Partenaires, contenus et échanges sont fictifs. Vos modifications sont enregistrées dans ce navigateur uniquement ; le partage entre Estelle et Yassine nécessite la connexion à une base de données.</span></div>${isAdmin()?'<button class="btn sm" data-act="go-data">Gérer</button>':''}</div>`:''}
@@ -1556,7 +1624,7 @@ function render(){
  </main>
  <nav class="bnav" aria-label="Navigation mobile">
   ${bottom.map(([k,l,i])=>`<button data-go="${k}" class="${isOn(k)?'on':''}">${icon(i)}<span>${l.replace('Tableau de bord','Accueil').replace('Utilisateurs et droits','Droits')}</span></button>`).join('')}
-  ${isPartner()?'':`<button data-act="sheet" class="${['contenus','comptes-rendus','administration'].includes(ui.route)?'on':''}">${icon('more')}<span>Plus</span></button>`}
+  ${isPartner()?'':`<button data-act="sheet" class="${['contenus','plan','stories','statistiques','comptes-rendus','administration'].includes(ui.route)?'on':''}">${icon('more')}<span>Plus</span></button>`}
  </nav>
  ${ui.sheet?`<div class="sheet" data-act="sheet-close"><div class="sheet-in" data-stop>${items.filter(x=>!bottom.includes(x)).map(([k,l,i])=>`<button data-go="${k}">${icon(i)}${l}</button>`).join('')}${!ONLINE||(ME&&ME.role==='admin')?`<label class="fld sheet-role"><span>Voir en tant que</span><select id="role-sel2">${roleOpts}</select></label>`:''}${ONLINE?'<button data-act="logout">'+icon('x')+'Se déconnecter</button>':''}</div></div>`:''}
  ${!isPartner()?`<button class="fab ${ui.fab?'on':''}" data-act="fab" aria-label="Actions rapides" aria-expanded="${!!ui.fab}">${icon('plus')}</button>`:''}
@@ -1574,6 +1642,9 @@ function renderPage(){
  if(r==='contenus')return pageContents();
  if(r==='echanges')return pageExchanges();
  if(r==='comptes-rendus')return pageReports();
+ if(r==='plan')return pagePlan();
+ if(r==='stories')return pageStories();
+ if(r==='statistiques')return pageStats();
  if(r==='administration')return pageAdmin();
  return '';
 }
@@ -1606,7 +1677,7 @@ function contentRow(c,right){
 function contentCard(c){
  const p=partner(c.partnerId);const np=nextPub(c)||firstPub(c);const al=alertsOf(c);
  const sl=ui.sel&&ui.route==='contenus';return `<button class="ccard${sl?' selm':''}${sl&&ui.sel.ids[c.id]?' on':''}" style="--pc:${pcol(c.partnerId)}" data-open="${c.id}">${sl?`<span class="selck">${icon('check')}</span>`:''}<div class="thumb">${`<img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}">`}${!isPartner()&&!sl?`<span class="qbtn" data-quick="${c.id}" role="button" aria-label="Mise à jour rapide" title="Mise à jour rapide">${icon('bolt')}</span>`:''}${al.some(a=>a.lv!=='manquant')?'<span class="dot" title="Retard ou blocage"></span>':''}<span class="badge">${c.aside?'<span class="chip asidechip">De côté</span>':chipS(c)}</span></div>
- <div class="t">${esc(c.title)}</div>
+ <div class="t">${esc(c.title)}</div>${marTag(c)}${c.bank?'<span class="martag bank">Banque</span>':''}
  <div class="m"><span class="pdot" style="--pc:${pcol(c.partnerId)}"></span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p?p.name:'')}${c.projectId&&project(c.projectId)?' › '+esc(project(c.projectId).name):''} · ${esc(c.format)}</span></div>
  ${taskIcons(c)}
  <div class="row" style="gap:6px">${pfBadges(c)}<span class="m tnum">${np?fmtD(np.date)+(np.time?' · '+np.time:''):'Sans date'}</span>${isPartner()?'':`<span style="margin-left:auto">${avatar(c.owner)}</span>`}</div></button>`;
@@ -1636,6 +1707,313 @@ function applyTpos(){const d=ui.modal&&ui.modal.draft;const im=document.querySel
  document.addEventListener('pointerup',end);document.addEventListener('pointercancel',end);
  document.addEventListener('input',e=>{if(e.target.id==='thumb-z'&&ui.modal&&ui.modal.draft){const d=ui.modal.draft;d.thumbPos=Object.assign({x:50,y:50,z:1},d.thumbPos||{});d.thumbPos.z=+e.target.value;applyTpos()}});
 })();
+/* ---------- ILA : plan de com, temps forts, stories, statistiques, notifications ---------- */
+const ilaId=()=>{const p=S.partners.find(isILA);return p?p.id:''};
+const isILAid=id=>!!id&&id===ilaId();
+const DOWL=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+const FREQ={hebdo:'Chaque semaine','2sem':'Toutes les 2 semaines',mois:'Chaque mois','2mois':'Tous les 2 mois'};
+const OCC=['1er','2e','3e','4e'];
+/* Temps forts / marronniers — dates vérifiées le 13 nov. 2026 (sources : Weka, Kanal, icalendrier, Variety, Paris Match, festival de Clermont, L'Étudiant, Parcoursup). cf = date à confirmer */
+const MAR_CATS={ferie:'Jour férié',fete:'Fête',culture:'Culture & image',jeunes:'Vie des jeunes',journee:'Journée mondiale',commerce:'Temps fort commercial'};
+const MARS=[
+ ['2026-11-01','2026-11-30','Mois sans tabac','journee','Un jeune de la promo raconte son défi en story, sans moraliser.'],
+ ['2026-11-20','','Journée internationale des droits de l\'enfant','journee','Archive : enfants et ados en atelier, « ce qu\'ils ont le droit de rêver ».'],
+ ['2026-11-21','','Journée mondiale de la télévision','culture','Coulisses d\'un plateau ILA : le JT, les caméras, les jeunes aux commandes.'],
+ ['2026-11-25','','Journée contre les violences faites aux femmes','journee','Relayer les ressources (3919) avec sobriété, sur fond noir.'],
+ ['2026-11-27','','Black Friday','commerce','Contre-pied : « Ce qui n\'est jamais en solde : votre talent ».'],
+ ['2026-11-30','','Cyber Monday','commerce',''],
+ ['2026-12-01','','Journée mondiale de lutte contre le sida','journee',''],
+ ['2026-12-03','','Journée internationale des personnes handicapées','journee','Mettre en avant l\'accessibilité des ateliers, si pertinent.'],
+ ['2026-12-05','','Journée internationale des bénévoles','journee','Remercier les intervenants et bénévoles d\'ILA.'],
+ ['2026-12-10','','Journée des droits de l\'homme','journee',''],
+ ['2026-12-17','','Parcoursup : ouverture du site d\'information','jeunes','Story « Tu passes le bac ? Voilà ce qu\'on peut faire avec l\'image ».'],
+ ['2026-12-19','2027-01-04','Vacances de Noël (zone C)','jeunes','Rythme plus léger, stories récap et best-of.'],
+ ['2026-12-25','','Noël','ferie','Carte de vœux vidéo des jeunes, montée depuis l\'archive.'],
+ ['2026-12-31','','Saint-Sylvestre : récap de l\'année + showreel','fete','Showreel de l\'année et carrousel « 2026 en chiffres ».'],
+ ['2027-01-01','','Jour de l\'An','ferie','Vœux + « Nos résolutions 2027 ».'],
+ ['2027-01-06','2027-02-02','Soldes d\'hiver','commerce',''],
+ ['2027-01-06','','Épiphanie','fete','Galette avec la promo, en story.'],
+ ['2027-01-11','','Journée mondiale du merci','journee','Dire merci aux partenaires, en carrousel tag.'],
+ ['2027-01-18','2027-03-11','Parcoursup : saisie des vœux','jeunes','Conseils orientation, métiers de l\'image.'],
+ ['2027-01-24','','Journée internationale de l\'éducation','journee','« Ce qu\'on enseigne » spécial : la pédagogie ILA.'],
+ ['2027-01-28','','Journée de la protection des données','journee','Droit à l\'image : ce qu\'on explique aux jeunes.'],
+ ['2027-01-29','2027-02-06','Festival du court métrage de Clermont-Ferrand','culture','Sélection de courts à voir + nos courts métrages.'],
+ ['2027-02-02','','Chandeleur','fete',''],
+ ['2027-02-06','2027-02-22','Vacances d\'hiver (zone C)','jeunes',''],
+ ['2027-02-09','','Safer Internet Day','jeunes','Quiz réseaux sociaux en story.'],
+ ['2027-02-11','','Journée des femmes et des filles de science','journee',''],
+ ['2027-02-13','','Journée mondiale de la radio','culture','Extrait podcast (GEN\'ZONE) ou micro-trottoir.'],
+ ['2027-02-14','','Saint-Valentin','fete','« Notre love story avec le cinéma », sans cliché.'],
+ ['2027-02-25','','Cérémonie des César','culture','Pronostics des jeunes en story, sondage.'],
+ ['2027-03-08','','Journée internationale des droits des femmes','journee','Portraits de participantes et femmes de l\'équipe.'],
+ ['2027-03-14','','Cérémonie des Oscars','culture','Quiz cinéma, réactions le lendemain.'],
+ ['2027-03-20','','Journée internationale du bonheur','journee','Montage de rires et sourires en tournage.'],
+ ['2027-03-20','','Journée de la langue française','journee',''],
+ ['2027-03-21','','Journée contre la discrimination raciale','journee',''],
+ ['2027-03-22','2027-03-27','Semaine de la presse et des médias dans l\'école','culture','Le JT ILA mis en avant. Dates exactes à confirmer par le CLEMI.',1],
+ ['2027-03-27','','Journée mondiale du théâtre','culture',''],
+ ['2027-03-28','','Pâques','ferie',''],
+ ['2027-03-29','','Lundi de Pâques','ferie',''],
+ ['2027-04-01','','Poisson d\'avril','fete','Faux « teaser » humoristique, révélé en story.'],
+ ['2027-04-02','','Journée de sensibilisation à l\'autisme','journee',''],
+ ['2027-04-03','2027-04-19','Vacances de printemps (zone C)','jeunes',''],
+ ['2027-04-07','','Journée mondiale de la santé','journee',''],
+ ['2027-04-21','','Journée de la créativité et de l\'innovation','journee','Coulisses d\'un atelier création.'],
+ ['2027-04-23','','Journée mondiale du livre','culture','Les livres qui ont inspiré nos films.'],
+ ['2027-04-29','','Journée internationale de la danse','culture',''],
+ ['2027-05-01','','Fête du travail','ferie','Les métiers de l\'audiovisuel : un portrait.'],
+ ['2027-05-03','','Journée de la liberté de la presse','culture','Le JT ILA : informer à 18 ans.'],
+ ['2027-05-06','2027-05-10','Pont de l\'Ascension','jeunes',''],
+ ['2027-05-08','','Victoire 1945','ferie',''],
+ ['2027-05-11','2027-05-22','Festival de Cannes','culture','Montée des marches « à la ILA », sondages, pronostics.'],
+ ['2027-05-16','2027-05-17','Pentecôte','ferie',''],
+ ['2027-05-21','','Journée de la diversité culturelle','journee',''],
+ ['2027-05-30','','Fête des mères','fete',''],
+ ['2027-05-31','','Journée mondiale sans tabac','journee',''],
+ ['2027-06-01','','Parcoursup : premières réponses','jeunes','Message de soutien aux terminales.'],
+ ['2027-06-05','','Journée mondiale de l\'environnement','journee',''],
+ ['2027-06-14','','Bac : épreuve de philosophie','jeunes','Story « Bon courage » + sujet du jour en sondage.'],
+ ['2027-06-20','','Fête des pères','fete',''],
+ ['2027-06-21','','Fête de la musique','culture','Playlist de tournage, sons des jeunes.'],
+ ['2027-06-23','2027-07-20','Soldes d\'été','commerce',''],
+ ['2027-06-24','2027-06-28','Brevet des collèges','jeunes','Soutien aux collégiens des ateliers.'],
+ ['2027-06-27','2027-06-30','Fête du cinéma','culture','Nos coups de cœur à 5 €. Dates exactes à confirmer.',1],
+ ['2027-06-30','','Journée mondiale des réseaux sociaux','culture','Les coulisses de notre com, en toute transparence.'],
+ ['2027-07-03','2027-09-01','Vacances d\'été','jeunes','Rythme léger, best-of de l\'année.'],
+ ['2027-07-06','','Résultats du bac','jeunes','Félicitations aux participants bacheliers.'],
+ ['2027-07-14','','Fête nationale','ferie',''],
+ ['2027-07-15','','Journée mondiale des compétences des jeunes','jeunes','Ce que les jeunes savent faire après ILA.'],
+ ['2027-07-30','','Journée internationale de l\'amitié','journee','Duos et bandes de la promo.'],
+ ['2027-08-08','','Journée internationale du chat','journee','Le chat le plus photogénique des tournages.'],
+ ['2027-08-12','','Journée internationale de la jeunesse','jeunes','Manifeste ILA sur la jeunesse.'],
+ ['2027-08-15','','Assomption','ferie',''],
+ ['2027-08-19','','Journée mondiale de la photographie','culture','Les plus belles photos de plateau de l\'archive.'],
+ ['2027-09-02','','Rentrée scolaire (date estimée)','jeunes','Recrutement des nouvelles sessions. Date à confirmer.',1],
+ ['2027-09-18','2027-09-19','Journées européennes du patrimoine','culture',''],
+ ['2027-09-21','','Journée internationale de la paix','journee',''],
+ ['2027-10-01','2027-10-31','Octobre rose','journee',''],
+ ['2027-10-01','','Journée mondiale du sourire','journee','Montage des sourires des jeunes sur les tournages.'],
+ ['2027-10-05','','Journée mondiale des enseignants','journee','Hommage aux formateurs ILA.'],
+ ['2027-10-10','','Journée mondiale de la santé mentale','journee','Parole de jeunes, ressources utiles.'],
+ ['2027-10-27','','Journée du patrimoine audiovisuel','culture','10 ans d\'archive ILA : un extrait ressorti.'],
+ ['2027-10-31','','Halloween','fete','Making-of maquillage effets spéciaux, quiz films d\'horreur.'],
+ ['2027-11-01','','Toussaint','ferie',''],
+ ['2027-11-01','2027-11-30','Mois sans tabac','journee',''],
+ ['2027-11-04','','Journée contre le harcèlement scolaire','jeunes','Court métrage ou témoignage, avec le 3018.'],
+ ['2027-11-11','','Armistice','ferie',''],
+ ['2027-11-20','','Journée internationale des droits de l\'enfant','journee',''],
+ ['2027-11-21','','Journée mondiale de la télévision','culture',''],
+ ['2027-11-25','','Journée contre les violences faites aux femmes','journee',''],
+ ['2027-11-26','','Black Friday','commerce',''],
+ ['2027-11-29','','Cyber Monday','commerce',''],
+ ['2027-12-01','','Journée mondiale de lutte contre le sida','journee',''],
+ ['2027-12-03','','Journée internationale des personnes handicapées','journee',''],
+ ['2027-12-05','','Journée internationale des bénévoles','journee',''],
+ ['2027-12-25','','Noël','ferie',''],
+ ['2027-12-31','','Saint-Sylvestre : récap de l\'année + showreel','fete','Showreel 2027 et carrousel de l\'année.']
+].map(([d,e,n,c,i,cf],k)=>({id:'m'+d.replace(/-/g,'')+'_'+k,d,e:e||'',n,c,i:i||'',cf:!!cf}));
+function allMars(){const I=S.ila||{};const hid=I.marsHidden||{};const add=(I.marsAdded||[]);const seen=new Set();return [...MARS,...add].filter(m=>{const k=m.d+'|'+m.n.toLowerCase();if(seen.has(k))return false;seen.add(k);return !hid[m.id]}).sort((a,b)=>a.d.localeCompare(b.d))}
+const marById=id=>allMars().find(m=>m.id===id)||[...MARS,...((S.ila||{}).marsAdded||[])].find(m=>m.id===id);
+function marsBetween(a,b){return allMars().filter(m=>m.d<=b&&(m.e||m.d)>=a)}
+const marLabel=m=>m.e&&m.e!==m.d?`${fmtD(m.d)} → ${fmtD(m.e)}`:fmtD(m.d);
+const marTag=c=>{const m=c&&c.marId&&marById(c.marId);return m?`<span class="martag" title="Temps fort : ${esc(m.n)}">✦ ${esc(m.n)}</span>`:''};
+
+/* Rendez-vous récurrents ILA (posts) */
+const sl=(platform,day,time)=>({platform,day,time});
+const DEFAULT_RULES=[
+ {id:'r_enseigne',name:'Ce qu\'on enseigne',freq:'hebdo',format:'Reel',slots:[sl('Instagram',1,'18:15'),sl('TikTok',1,'18:15')]},
+ {id:'r_ludique',name:'Ludique et éducatif',freq:'hebdo',format:'Carrousel',slots:[sl('Instagram',7,'21:00'),sl('TikTok',7,'21:30')],note:'Carrousel quiz sur Instagram, version courte une question sur TikTok. À tester contre le samedi soir.'},
+ {id:'r_dumpw',name:'Le dump de la semaine',freq:'hebdo',format:'Carrousel',slots:[sl('Instagram',5,'18:30')]},
+ {id:'r_manifeste',name:'Manifeste',freq:'2sem',phase:0,format:'Post',slots:[sl('Instagram',2,'18:10')]},
+ {id:'r_preuve',name:'Preuve chiffrée',freq:'2sem',phase:0,format:'Carrousel',slots:[sl('Instagram',4,'19:05'),sl('LinkedIn',2,'08:45')]},
+ {id:'r_equipe',name:'L\'équipe',freq:'2sem',phase:1,format:'Photo',slots:[sl('Instagram',4,'19:05')]},
+ {id:'r_bilan',name:'Bilan institutionnel',freq:'2sem',phase:1,format:'Carrousel',slots:[sl('LinkedIn',2,'08:45')]},
+ {id:'r_dumpm',name:'Le dump du mois',freq:'mois',occ:1,format:'Carrousel',slots:[sl('Instagram',6,'12:00')],note:'Récap du mois précédent.'},
+ {id:'r_portrait',name:'Portrait de participant',freq:'mois',occ:2,format:'Reel',slots:[sl('Instagram',3,'18:15'),sl('LinkedIn',3,'12:15')]},
+ {id:'r_territoire',name:'Territoire',freq:'mois',occ:3,format:'Photo',slots:[sl('Instagram',2,'18:10')],note:'Une ville, un fait réel.'},
+ {id:'r_jt',name:'JT ILA',freq:'2mois',occ:3,mpar:1,format:'Vidéo',slots:[sl('YouTube',5,'18:00'),sl('Instagram',5,'18:00'),sl('TikTok',5,'18:30')],note:'Tous les deux mois (décembre, février, avril…).'}
+].map(r=>Object.assign({active:true,phase:0,occ:1,mpar:1,note:''},r));
+const DEFAULT_STORY_RULES=[
+ {id:'s_lun',day:1,time:'12:30',name:'Le programme de la semaine',type:'sondage',platforms:['Instagram'],idea:'Ce qui arrive cette semaine + sondage « Qu\'est-ce que vous attendez le plus ? »'},
+ {id:'s_mar',day:2,time:'17:00',name:'Coulisses',type:'question',platforms:['Instagram','TikTok'],idea:'Un moment de tournage ou d\'atelier + sticker question.'},
+ {id:'s_mer',day:3,time:'14:00',name:'Le quiz',type:'quiz',platforms:['Instagram'],idea:'Quiz cinéma / audiovisuel, pour les collégiens libres le mercredi.'},
+ {id:'s_jeu',day:4,time:'18:00',name:'Portrait de jeune',type:'question',platforms:['Instagram'],idea:'Un parcours en 3 stories puis « Pose-lui ta question ».'},
+ {id:'s_ven',day:5,time:'17:30',name:'Ce que j\'ai appris',type:'video',platforms:['Instagram'],idea:'Un jeune explique en quelques secondes une chose apprise.'},
+ {id:'s_sam',day:6,time:'12:00',name:'Le sondage',type:'sondage',platforms:['Instagram'],idea:'« Ce plan, il coûte 40 € ou 40 000 € ? » ou curseur emoji.'},
+ {id:'s_dim',day:7,time:'19:00',name:'Le récap',type:'recap',platforms:['Instagram','TikTok'],idea:'Le meilleur de la semaine + rappel du rendez-vous du lundi.'}
+].map(r=>Object.assign({active:true},r));
+const CTF_DAILY=[['09:30','Arrivée','video'],['11:00','Atelier du jour','question'],['15:00','Moment fort','video'],['18:00','Ce qu\'on retient aujourd\'hui','recap']];
+const STYPE={sondage:'Sondage',quiz:'Quiz',question:'Question',video:'Vidéo',recap:'Récap',photo:'Photo',lien:'Lien'};
+const SSTAT={a_faire:'À faire',prete:'Prête',publiee:'Publiée',annulee:'Annulée'};
+function ensureIla(D_){if(!D_.ila)D_.ila={};const I=D_.ila;if(!I.rules)I.rules=clone(DEFAULT_RULES);if(!I.storyRules)I.storyRules=clone(DEFAULT_STORY_RULES);if(!I.since)I.since=TODAY;['storyPeriods','marsAdded'].forEach(k=>{if(!I[k])I[k]=[]});['marsHidden','nread','generated'].forEach(k=>{if(!I[k])I[k]={}});if(!D_.stories)D_.stories=[];if(!D_.stats)D_.stats=[];return D_}
+const isoWeek=s=>{const d=D(s);const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const n=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-n);const y0=new Date(Date.UTC(t.getUTCFullYear(),0,1));return Math.ceil(((t-y0)/864e5+1)/7)};
+function ruleOccurrences(r,ym){const first=ym+'-01';const nd=new Date(+ym.slice(0,4),+ym.slice(5),0).getDate();const last=ym+'-'+String(nd).padStart(2,'0');const out=[];if(!r.active||!r.slots.length)return out;
+ if(r.freq==='2mois'&&((+ym.slice(5)-1)%2)!==(r.mpar??1))return out;
+ const anchorDay=r.slots[0].day;let weeks=[];for(let w=weekStart(first);w<=last;w=addDays(w,7))weeks.push(w);
+ if(r.freq==='2sem')weeks=weeks.filter(w=>isoWeek(w)%2===(r.phase||0));
+ if(r.freq==='mois'||r.freq==='2mois'){const ds=[];for(let i=0;i<nd;i++){const d=addDays(first,i);if(dow(d)===anchorDay-1)ds.push(d)}const d=ds[Math.min((r.occ||1)-1,ds.length-1)];weeks=d?[weekStart(d)]:[]}
+ weeks.forEach(w=>{const pls=r.slots.map(s=>({platform:s.platform,date:addDays(w,s.day-1),time:s.time})).filter(p=>p.date>=first&&p.date<=last);if(pls.length)out.push({occ:r.id+'@'+w,week:w,pls})});return out}
+function planFor(ym){const I=S.ila;const ila=ilaId();const exist=new Set(S.contents.filter(c=>c.occ).map(c=>c.occ));const taken=[];S.contents.forEach(c=>(c.platforms||[]).forEach(p=>{if(p.date&&p.time)taken.push({pf:p.platform,d:p.date,t:p.time,ila:c.partnerId===ila,title:c.title})}));
+ const mins=t=>{const [h,m]=(t||'0:0').split(':').map(Number);return h*60+m};const hhmm=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+ const res=[];I.rules.forEach(r=>ruleOccurrences(r,ym).forEach(o=>{if(exist.has(o.occ))return;const notes=[];
+  const pls=o.pls.map(p=>{let d=p.date,t=p.time;for(let k=0;k<4;k++){const hit=taken.find(x=>x.pf===p.platform&&x.d===d&&Math.abs(mins(x.t)-mins(t))<60);if(!hit)break;if(hit.ila){d=addDays(d,1);notes.push(`${p.platform} décalé au ${fmtD(d)} (déjà un post ILA sur ce créneau)`)}else{t=hhmm(Math.min(23*60+30,mins(t)+60));notes.push(`${p.platform} décalé à ${t} (post « ${hit.title} » au même créneau)`)}}taken.push({pf:p.platform,d,t,ila:true,title:r.name});return {platform:p.platform,date:d,time:t}});
+  const d0=pls.map(p=>p.date).sort()[0];res.push({r,occ:o.occ,pls,date:d0,title:r.id==='r_dumpm'?`${r.name} · ${MOIS[(+ym.slice(5)+10)%12]}`:r.id==='r_dumpw'?`Le dump de la semaine du ${D(o.week).getDate()} ${MOISC[D(o.week).getMonth()]}`:`${r.name} · ${D(d0).getDate()} ${MOISC[D(d0).getMonth()]}`,notes,past:d0<TODAY})}));
+ return res.sort((a,b)=>a.date.localeCompare(b.date))}
+function makePlanContent(x){const ila=ilaId();const c=newContentDraft(ila);Object.assign(c,{id:uid('c'),title:x.title,format:x.r.format,rubrique:x.r.name,ruleId:x.r.id,occ:x.occ,brief:x.r.note||'',share:true,_fmt:x.r.format});c.tasks=defaultTasks(c,'todo');c.platforms=x.pls.map(p=>({id:uid('pl'),platform:p.platform,date:p.date,time:p.time,text:'',accounts:[],tags:[],collabs:[],status:'prevu',link:''}));c.history=[{at:nowStamp(),by:me().id,text:'Créé depuis le plan de communication ILA ('+FREQ[x.r.freq].toLowerCase()+')'}];return c}
+function monthPlanned(ym){return S.contents.filter(c=>c.ruleId&&(c.occ||'').length&&(c.platforms||[]).some(p=>p.date&&p.date.startsWith(ym))).length}
+
+/* Événements ILA → Reel + carrousel */
+function eventContents(e){return S.contents.filter(c=>c.eventId===e.id)}
+function makeEventContents(e){const mk=(fmt,title,days,pls)=>{const c=newContentDraft(e.partnerId);Object.assign(c,{id:uid('c'),title,format:fmt,eventId:e.id,share:true,_fmt:fmt,rubrique:'Événement'});c.tasks=defaultTasks(c,'todo');const d=addDays(e.date,days);c.platforms=pls.map(([pf,t])=>({id:uid('pl'),platform:pf,date:d,time:t,text:'',accounts:[],tags:[],collabs:[],status:'prevu',link:''}));c.history=[{at:nowStamp(),by:me().id,text:'Créé automatiquement pour l\'événement « '+e.title+' »'}];return c};
+ return [mk('Reel','Reel · '+e.title,1,[['Instagram','18:30'],['TikTok','18:30']]),mk('Carrousel','Carrousel photo · '+e.title,2,[['Instagram','18:30']])]}
+
+/* Stories */
+function storiesBetween(a,b){const I=S.ila;const stored={};S.stories.forEach(s=>{if(s.occ)stored[s.occ]=s});const out=S.stories.filter(s=>s.date>=a&&s.date<=b&&s.status!=='annulee');
+ for(let d=a;d<=b;d=addDays(d,1)){if(d<(I.since||'0'))continue;I.storyRules.forEach(r=>{if(!r.active||dow(d)!==r.day-1)return;const occ=r.id+'@'+d;if(stored[occ])return;out.push({id:'v_'+occ,virtual:true,occ,ruleId:r.id,date:d,time:r.time,title:r.name,type:r.type,platforms:r.platforms.slice(),status:'a_faire',idea:r.idea})});
+  I.storyPeriods.forEach(pp=>{if(d<pp.from||d>pp.to)return;CTF_DAILY.forEach(([t,n,ty],k)=>{const occ=pp.id+'#'+k+'@'+d;if(stored[occ])return;out.push({id:'v_'+occ,virtual:true,occ,periodId:pp.id,date:d,time:t,title:(pp.name||'CTF')+' · '+n,type:ty,platforms:['Instagram'],status:'a_faire',idea:'Story quotidienne pendant la session.'})})})}
+ return out.sort((x,y)=>(x.date+x.time).localeCompare(y.date+y.time))}
+function materialize(id){if(!id.startsWith('v_'))return S.stories.find(s=>s.id===id);const occ=id.slice(2);const [a,b]=[addDays(TODAY,-400),addDays(TODAY,400)];const v=storiesBetween(occ.split('@')[1],occ.split('@')[1]).find(s=>s.occ===occ);if(!v)return null;const s=Object.assign({},v,{id:uid('st')});delete s.virtual;S.stories.push(s);return s}
+
+/* Statistiques : libellés des interfaces officielles (vérifiés le 13 nov. 2026) */
+const STATS_DEF={
+ Instagram:{src:'Statistiques Instagram (compte professionnel)',m:[['vues','Vues','Nombre de fois où vos contenus ont été lus ou affichés. Les vues ont remplacé les impressions en 2025.'],['comptes_touches','Comptes touchés','Nombre de comptes uniques ayant vu vos contenus au moins une fois.'],['interactions','Interactions','Total des actions sur vos contenus : J\'aime, commentaires, enregistrements, partages et réponses.'],['comptes_interagi','Comptes ayant interagi','Comptes uniques ayant aimé, commenté, enregistré, partagé ou répondu.'],['jaime','J\'aime',''],['commentaires','Commentaires',''],['partages','Partages',''],['enregistrements','Enregistrements',''],['republications','Republications',''],['nouveaux_abonnes','Nouveaux abonnés','Abonnés gagnés sur la période.'],['abonnes','Abonnés (total)','Nombre total en fin de mois.'],['duree_moy_reels','Durée moyenne de visionnage (Reels)','En secondes.'],['reponses_stories','Réponses aux stories',''],['appuis_lien','Appuis sur le lien','Stories et lien du profil.']],rate:v=>v.comptes_touches?['Taux d\'engagement (calculé)',v.interactions/v.comptes_touches*100]:null},
+ TikTok:{src:'TikTok Studio · Statistiques',m:[['vues','Vues de publications','Nombre de fois où vos vidéos ont été lues.'],['vues_profil','Vues du profil',''],['jaime','J\'aime',''],['commentaires','Commentaires',''],['partages','Partages',''],['favoris','Favoris','Enregistrements dans les favoris.'],['temps_moyen','Temps moyen de visionnage','En secondes.'],['completion','Vidéo regardée en entier','En % des vues.'],['spectateurs','Spectateurs','Spectateurs uniques sur la période.'],['nouveaux_abonnes','Nouveaux abonnés',''],['abonnes','Abonnés (total)','']],rate:v=>v.vues?['Taux d\'engagement (calculé)',((v.jaime||0)+(v.commentaires||0)+(v.partages||0))/v.vues*100]:null},
+ YouTube:{src:'YouTube Studio · Statistiques',m:[['vues','Vues',''],['duree','Durée de visionnage','En heures.'],['abonnes_gagnes','Abonnés','Abonnés gagnés moins perdus sur la période.'],['impressions','Impressions','Nombre de fois où vos miniatures ont été présentées.'],['ctr','Taux de clics par impression','En %.'],['duree_moy','Durée moyenne de visionnage','En secondes ou mm:ss.'],['spectateurs','Spectateurs uniques',''],['audience_mensuelle','Audience mensuelle','']]},
+ LinkedIn:{src:'Statistiques de la Page LinkedIn',m:[['impressions','Impressions','Nombre de fois où vos posts ont été vus.'],['membres_touches','Membres touchés','Impressions uniques.'],['clics','Clics','Clics sur le contenu, le nom ou le logo (hors réactions, commentaires, republications).'],['reactions','Réactions',''],['commentaires','Commentaires',''],['republications','Republications',''],['taux_engagement','Taux d\'engagement','Donné par LinkedIn : (clics + réactions + commentaires + republications) ÷ impressions, en %.'],['nouveaux_abonnes','Nouveaux abonnés',''],['abonnes','Abonnés (total)',''],['vues_page','Vues de la Page',''],['visiteurs_uniques','Visiteurs uniques','']]},
+ Newsletter:{src:'Outil d\'emailing',m:[['destinataires','Destinataires',''],['ouvertures','Taux d\'ouverture','En %.'],['clics','Taux de clics','En %.'],['desabonnements','Désabonnements','']]}};
+
+/* Notifications d'Estelle */
+function notifItems(){if(!isAdmin())return [];const I=S.ila;const R=I.nread||{};const out=[];const ila=ilaId();
+ marsBetween(TODAY,addDays(TODAY,14)).forEach(m=>{if(m.c==='ferie'&&!m.i)return;const k='mar:'+m.id;const n=Math.round((D(m.d)-D(TODAY))/864e5);const linked=S.contents.filter(c=>c.marId===m.id).length;out.push({k,lv:n<=3?'hot':'info',icon:'star',when:m.d,t:`✦ ${m.n}`,s:`${n<0?'En cours':n===0?'Aujourd\'hui':n===1?'Demain':'Dans '+n+' jours'} · ${marLabel(m)}${linked?' · '+linked+' contenu(s) prévu(s)':' · rien de prévu'}`,idea:m.i,act:linked?'':`<button class="btn sm" data-act="mar-content" data-id="${m.id}">${icon('plus')}Créer un contenu</button>`})});
+ S.events.filter(e=>e.partnerId===ila).forEach(e=>{const n=Math.round((D(e.date)-D(TODAY))/864e5);if(n>=0&&n<=5)out.push({k:'evp:'+e.id,lv:n<=1?'hot':'info',icon:'cal',when:e.date,t:`Préparer : ${e.title}`,s:`${n===0?'Aujourd\'hui':'Dans '+n+' jour(s)'} · annonce et stories avant l'événement`,act:`<button class="btn sm" data-opene="${e.id}">Ouvrir</button>`});
+  if(n<0&&n>=-3){const cs=eventContents(e).filter(c=>gstat(c)!=='publie');if(cs.length)out.push({k:'eva:'+e.id,lv:'hot',icon:'film',when:e.date,t:`Récap de ${e.title}`,s:`${cs.length} contenu(s) à sortir sous 48 h : ${cs.map(c=>c.format).join(' + ')}`,act:cs.map(c=>`<button class="btn sm" data-open="${c.id}">${esc(c.format)}</button>`).join('')})}});
+ const nm=addMonths(TODAY.slice(0,7),1);if(+TODAY.slice(8)>=18&&!monthPlanned(nm)&&planFor(nm).length)out.push({k:'plan:'+nm,lv:'info',icon:'bolt',when:TODAY,t:`Générer le plan de ${MOIS[+nm.slice(5)-1]}`,s:`${planFor(nm).length} posts récurrents ILA prêts à être créés`,act:`<button class="btn sm" data-act="plan-gen" data-m="${nm}">Voir et générer</button>`});
+ const ws=weekStart(TODAY),we=addDays(ws,6);const wk=S.contents.filter(c=>c.partnerId===ila&&!c.aside&&c.prod!=='termine'&&(c.platforms||[]).some(p=>p.date>=ws&&p.date<=we));if(wk.length)out.push({k:'wk:'+ws+':'+wk.length,lv:'info',icon:'img',when:ws,t:`${wk.length} post(s) ILA à produire cette semaine`,s:wk.slice(0,4).map(c=>c.title).join(' · ')+(wk.length>4?'…':''),act:`<button class="btn sm" data-act="go-ila-week">Voir</button>`});
+ const st=storiesBetween(ws,we).filter(s=>s.status==='a_faire'&&s.date>=TODAY);if(st.length)out.push({k:'st:'+ws+':'+st.length,lv:'info',icon:'film',when:ws,t:`${st.length} stories à préparer d'ici dimanche`,s:'Rendez-vous stories de la semaine',act:`<button class="btn sm" data-go="stories">Ouvrir</button>`});
+ return out.map(x=>Object.assign(x,{read:!!R[x.k]})).sort((a,b)=>(a.read-b.read)||(a.lv==='hot'?-1:1)-(b.lv==='hot'?-1:1)||a.when.localeCompare(b.when))}
+
+/* ---------- Pages ---------- */
+function slotTxt(s){return `${pfLogo(s.platform,'sm')}<span>${DOWL[s.day-1].slice(0,3).toLowerCase()}. ${esc(s.time)}</span>`}
+function pagePlan(){const I=S.ila;const ila=ilaId();if(!ila)return '<div class="empty">Créez d\'abord le partenaire ILA (initiales « ILA »).</div>';
+ const months=[0,1,2].map(i=>addMonths(TODAY.slice(0,7),i));const groups=['hebdo','2sem','mois','2mois'];
+ const evs=S.events.filter(e=>e.partnerId===ila&&e.date>=addDays(TODAY,-7)).sort((a,b)=>a.date.localeCompare(b.date));
+ ui.pl=ui.pl||{m:TODAY.slice(0,7)};const mm=ui.pl.m;const marsM=allMars().filter(m=>m.d.startsWith(mm)||(m.d<mm+'-01'&&(m.e||'')>=mm+'-01'));
+ const bank=S.contents.filter(c=>c.bank&&!c.aside);
+ return `<div class="notice" style="margin-bottom:16px">${icon('info')}<div><b>Le plan de communication d'ILA.</b> Les rendez-vous ci-dessous se répètent tout seuls : chaque mois, générez les posts prévus (titres seulement, à produire ensuite). Ils apparaissent dans le calendrier et le tableau de bord, et vous pouvez tout modifier poste par poste.</div></div>
+ <div class="plan-gen">${months.map(m=>{const n=monthPlanned(m);const todo=planFor(m).filter(x=>!x.past).length;return `<div class="pgm card white"><div class="eyebrow">${MOIS[+m.slice(5)-1]} ${m.slice(0,4)}</div><b class="tnum">${n}</b><span class="muted">post(s) du plan créés</span>${todo?`<button class="btn sm primary" data-act="plan-gen" data-m="${m}">${icon('bolt')}Générer ${todo} post(s)</button>`:'<span class="ok">✓ À jour</span>'}</div>`}).join('')}</div>
+ <div class="section-title" id="sec-rdv">Rendez-vous récurrents</div>
+ ${groups.map(g=>{const rs=I.rules.filter(r=>r.freq===g);return rs.length?`<div class="sgroup dark"><span>${FREQ[g]}</span><b>${rs.length}</b></div><div class="rgrid">${rs.map(r=>`<div class="card white rcard2 ${r.active?'':'off'}"><div class="spread"><b>${esc(r.name)}</b><button class="tgl ${r.active?'on':''}" data-act="rule-toggle" data-id="${r.id}" aria-label="Activer"><i></i></button></div><div class="muted" style="font-size:12px">${esc(r.format)} · ${FREQ[r.freq]}${r.freq==='2sem'?' · semaines '+(r.phase?'impaires':'paires'):''}${r.freq==='mois'||r.freq==='2mois'?' · '+OCC[(r.occ||1)-1]+' '+DOWL[r.slots[0].day-1].toLowerCase():''}${r.freq==='2mois'?' · mois '+(r.mpar?'pairs (déc., fév.…)':'impairs (janv., mars…)'):''}</div><div class="slots">${r.slots.map(slotTxt).join('')}</div>${r.note?`<div class="muted" style="font-size:12px">${esc(r.note)}</div>`:''}<div class="row" style="gap:6px"><button class="btn sm ghost" data-act="rule-edit" data-id="${r.id}">Modifier</button></div></div>`).join('')}</div>`:''}).join('')}
+ <button class="btn ghost" data-act="rule-new" style="margin-top:12px">${icon('plus')}Nouveau rendez-vous</button>
+ <div class="section-title" id="sec-evila">Événements ILA</div>
+ <div class="card white"><div class="spread" style="margin-bottom:10px"><span class="muted" style="font-size:13px">Chaque événement ILA crée un Reel et un carrousel photo dans les 48 h (dates et ordre modifiables).</span><button class="btn sm primary" data-act="new-event" data-partner="${ila}">${icon('plus')}Événement</button></div>
+ ${evs.length?evs.map(e=>{const cs=eventContents(e);return `<button class="li" data-opene="${e.id}"><span class="dd" style="--pc:var(--red);width:44px;height:48px"><b>${MOISC[D(e.date).getMonth()].replace('.','')}</b><span>${D(e.date).getDate()}</span></span><div class="li-b"><div class="li-t">${esc(e.title)}</div><div class="li-s">${cs.length?cs.map(c=>`${esc(c.format)} ${c.platforms[0]&&c.platforms[0].date?fmtD(c.platforms[0].date):''}`).join(' · '):'Aucun contenu lié'}</div></div></button>`}).join(''):'<div class="empty">Aucun événement ILA à venir.</div>'}</div>
+ <div class="section-title" id="sec-mar">Temps forts de l'année</div>
+ <div class="card white"><div class="mscroll" style="margin-bottom:12px">${fseg('pl','m',Array.from({length:14},(_,i)=>{const m=addMonths(TODAY.slice(0,7),i);return [m,MOISC[+m.slice(5)-1]+' '+m.slice(2,4)]}))}</div>
+ ${marsM.length?marsM.map(m=>{const cs=S.contents.filter(c=>c.marId===m.id);return `<div class="mar-row"><span class="marchip">✦</span><div class="li-b"><div class="li-t">${esc(m.n)}${m.cf?' <em class="muted" style="font-style:normal;font-size:11px">· à confirmer</em>':''}</div><div class="li-s">${marLabel(m)} · ${MAR_CATS[m.c]||''}${cs.length?` · <b>${cs.length} contenu(s)</b>`:''}</div>${m.i?`<div class="maridea">💡 ${esc(m.i)}</div>`:''}</div><div class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn sm" data-act="mar-content" data-id="${m.id}">${icon('plus')}<span class="lbl">Contenu</span></button><button class="btn sm ghost icon" data-act="mar-hide" data-id="${m.id}" title="Masquer ce temps fort" aria-label="Masquer">${icon('x')}</button></div></div>`}).join(''):'<div class="empty">Aucun temps fort ce mois-ci.</div>'}
+ <div class="row" style="margin-top:12px;gap:8px"><button class="btn sm ghost" data-act="mar-new">${icon('plus')}Ajouter un temps fort</button><button class="btn sm ghost" data-act="mar-update">${icon('dl')}Mettre à jour les jours fériés</button><button class="btn sm ghost" data-act="mar-claude">${icon('copy')}Demander une mise à jour à Claude</button>${Object.keys(I.marsHidden||{}).length?`<button class="btn sm ghost" data-act="mar-unhide">Réafficher les ${Object.keys(I.marsHidden).length} masqué(s)</button>`:''}</div></div>
+ <div class="section-title" id="sec-bank">Banque de contenus prêts</div>
+ <div class="card white"><div class="spread" style="margin-bottom:10px"><span class="muted" style="font-size:13px">Préparez à l'avance (archive, rushes) des contenus rattachés à un temps fort, à sortir le jour J.</span><button class="btn sm primary" data-act="bank-new">${icon('plus')}Contenu en banque</button></div>
+ ${bank.length?`<div class="cgrid">${bank.map(contentCard).join('')}</div>`:'<div class="empty">La banque est vide.</div>'}</div>`}
+
+function pageStories(){const f=ui.stv||(ui.stv={view:innerWidth<720?'semaine':'mois',week:weekStart(TODAY),month:TODAY.slice(0,7)});const I=S.ila;
+ let head,body;
+ const chip=s=>`<button class="stc st-${s.status}" data-story="${s.id}"><span class="tm tnum">${esc(s.time||'')}</span><span class="tt">${esc(s.title)}</span><span class="pfs">${(s.platforms||[]).map(p=>pfLogo(p,'xs')).join('')}<em>${STYPE[s.type]||''}</em></span></button>`;
+ if(f.view==='semaine'){const ws=f.week;head='Semaine du '+fmtD(ws);const its=storiesBetween(ws,addDays(ws,6));
+  body=`<div class="stweek">${[0,1,2,3,4,5,6].map(i=>{const d=addDays(ws,i);const l=its.filter(s=>s.date===d);return `<div class="stday ${d===TODAY?'today':''} ${d<TODAY&&!l.length?'pastempty':''}"><div class="sdh"><span>${DOWL[i].slice(0,3)}</span><b>${D(d).getDate()}</b>${l.length?`<em>${l.filter(s=>s.status!=='a_faire').length}/${l.length}</em>`:''}</div><div class="sdl">${l.map(chip).join('')||'<span class="pde">—</span>'}</div></div>`}).join('')}</div>`}
+ else{const ym=f.month;head=fmtMonth(ym);const st=addDays(ym+'-01',-dow(ym+'-01'));const nd=new Date(+ym.slice(0,4),+ym.slice(5),0).getDate();const cells=Math.ceil((dow(ym+'-01')+nd)/7)*7;const its=storiesBetween(st,addDays(st,cells-1));
+  body=`<div class="scroll-x"><div class="month stmonth">${JOURS.map(j=>`<div class="dow">${j}</div>`).join('')}${Array.from({length:cells},(_,i)=>{const d=addDays(st,i);const l=its.filter(s=>s.date===d);const out=!d.startsWith(ym);return `<div class="day ${out?'out':''} ${d===TODAY?'today':''}" data-stday="${d}"><div class="dn"><span>${D(d).getDate()}</span>${l.length?`<em class="tnum">${l.filter(s=>s.status!=='a_faire').length}/${l.length}</em>`:''}</div><div class="dayitems">${l.slice(0,3).map(s=>`<span class="stmini st-${s.status}">${esc(s.title)}</span>`).join('')}${l.length>3?`<span class="more">+${l.length-3}</span>`:''}</div></div>`}).join('')}</div></div>`}
+ return `<div class="cal-head"><div class="seg">${[['mois','Mois'],['semaine','Semaine']].map(([k,l])=>`<button class="${f.view===k?'on':''}" data-act="stv" data-v="${k}">${l}</button>`).join('')}</div><button class="btn icon ghost" data-act="st-prev" aria-label="Précédent">${icon('l')}</button><button class="btn icon ghost" data-act="st-next" aria-label="Suivant">${icon('r')}</button><h2>${head}</h2><button class="btn sm" data-act="st-today">Aujourd'hui</button><span style="flex:1"></span><button class="btn sm primary" data-act="story-new">${icon('plus')}Story</button></div>
+ <div class="notice" style="margin-bottom:14px">${icon('info')}<div>Calendrier des stories, séparé des posts. Les rendez-vous se répètent chaque semaine ; touchez une story pour la modifier ou changer son statut (À faire → Prête → Publiée).</div></div>
+ ${body}
+ <div class="section-title" id="sec-strdv">Rendez-vous stories</div>
+ <div class="rgrid">${I.storyRules.map(r=>`<div class="card white rcard2 ${r.active?'':'off'}"><div class="spread"><b>${DOWL[r.day-1]} · ${esc(r.name)}</b><button class="tgl ${r.active?'on':''}" data-act="srule-toggle" data-id="${r.id}" aria-label="Activer"><i></i></button></div><div class="slots">${r.platforms.map(p=>pfLogo(p,'sm')).join('')}<span>${esc(r.time)} · ${STYPE[r.type]||''}</span></div><div class="muted" style="font-size:12px">${esc(r.idea||'')}</div><div><button class="btn sm ghost" data-act="srule-edit" data-id="${r.id}">Modifier</button></div></div>`).join('')}</div>
+ <div class="section-title" id="sec-stctf">Sessions CTF : une story par jour</div>
+ <div class="card white"><div class="muted" style="font-size:13px;margin-bottom:10px">Pendant une session, 4 stories par jour sont prévues : ${CTF_DAILY.map(x=>x[0]+' '+x[1]).join(' · ')}.</div>
+ ${I.storyPeriods.map(pp=>`<div class="mar-row"><span class="marchip" style="background:#0E0E0E">CTF</span><div class="li-b"><div class="li-t">${esc(pp.name)}</div><div class="li-s">${fmtD(pp.from)} → ${fmtD(pp.to)}</div></div><button class="btn sm ghost icon" data-act="period-del" data-id="${pp.id}" aria-label="Supprimer">${icon('trash')}</button></div>`).join('')}
+ <form class="form" data-form="period" style="margin-top:10px"><label class="fld"><span>Nom</span><input type="text" name="name" value="Session CTF" required></label><label class="fld"><span>Du</span><input type="date" name="from" required></label><label class="fld"><span>Au</span><input type="date" name="to" required></label><div class="fld" style="align-self:end"><button class="btn primary" type="submit">${icon('plus')}Ajouter la session</button></div></form></div>`}
+
+function pageStats(){ui.stt=ui.stt||{m:addMonths(TODAY.slice(0,7),-1)};const ym=ui.stt.m;const prev=addMonths(ym,-1);const months=Array.from({length:8},(_,i)=>addMonths(TODAY.slice(0,7),i-7));
+ const rec=(m,pf)=>S.stats.find(x=>x.month===m&&x.platform===pf);const fmtN=v=>v==null||v===''?'—':(+v).toLocaleString('fr-FR',{maximumFractionDigits:2});
+ return `<div class="notice" style="margin-bottom:14px">${icon('info')}<div><b>Statistiques mensuelles.</b> Saisissez les chiffres de chaque plateforme pour le mois (libellés identiques aux interfaces officielles). La flèche compare au mois précédent. <b>Connexion automatique :</b> Instagram (compte professionnel relié à une page Facebook) et YouTube sont prévus en étape 2 ; TikTok et LinkedIn demandent une validation de leur part.</div></div>
+ <div class="mscroll" style="margin-bottom:14px">${fseg('stt','m',months.map(m=>[m,MOISC[+m.slice(5)-1]+' '+m.slice(2,4)]))}</div>
+ <div class="statgrid">${Object.entries(STATS_DEF).map(([pf,def])=>{const r=rec(ym,pf)||{values:{}};const p=rec(prev,pf);const v=r.values||{};const rate=def.rate&&def.rate(Object.fromEntries(Object.entries(v).map(([k,x])=>[k,+x||0])));
+  return `<section class="card white statcard"><div class="card-h"><div class="row" style="gap:10px;flex-wrap:nowrap">${pfLogo(pf)}<div><h2>${pf}</h2><div class="muted" style="font-size:11.5px">${esc(def.src)}</div></div></div>${rate&&isFinite(rate[1])?`<div class="srate"><b class="tnum">${rate[1].toFixed(1)} %</b><span>${rate[0]}</span></div>`:''}</div>
+  <div class="sgridm">${def.m.map(([k,l,h])=>{const cur=v[k];const old=p&&p.values?p.values[k]:null;let tr='';if(cur!==undefined&&cur!==''&&old!=null&&old!==''){const dlt=+cur-+old;tr=dlt>0?`<i class="up">↗ +${fmtN(dlt)}</i>`:dlt<0?`<i class="dn">↘ ${fmtN(dlt)}</i>`:'<i>=</i>'}
+   return `<label class="smf" title="${esc(h||l)}"><span>${esc(l)}${h?` <em>ⓘ</em>`:''}</span><input type="number" inputmode="decimal" step="any" data-stat="${pf}|${k}" value="${cur??''}" placeholder="—">${tr?`<small>${tr}</small>`:old!=null&&old!==''?`<small class="muted">mois préc. ${fmtN(old)}</small>`:''}${h?`<small class="muted def">${esc(h)}</small>`:''}</label>`}).join('')}</div></section>`}).join('')}</div>
+ <div class="muted" style="font-size:11.5px;margin-top:12px">Enregistrement automatique à chaque saisie. Libellés vérifiés le 13 novembre 2026 dans l'aide officielle de chaque plateforme ; si une plateforme renomme un indicateur, demandez-moi de mettre à jour la liste.</div>`}
+
+function modalRule(){const d=ui.modal.draft;const isNew=!d._exists;const PF=['Instagram','TikTok','LinkedIn','YouTube','Facebook','Newsletter'];
+ return `<div class="modal ${ui.modalAnim?'enter':''}" data-act="modal-bg"><div class="panel narrow" role="dialog" aria-modal="true" aria-label="Rendez-vous" data-stop>
+ <div class="ph"><span class="xicon r">${icon('bolt')}</span><div style="flex:1;min-width:0"><div class="eyebrow">Plan de communication ILA</div><h2>${isNew?'Nouveau rendez-vous':esc(d.name)}</h2></div><button class="btn icon ghost" data-act="close" aria-label="Fermer">${icon('x')}</button></div>
+ <div class="pb"><div class="form">
+  <label class="fld full"><span>Nom du rendez-vous *</span><input type="text" data-f="name" value="${esc(d.name)}"></label>
+  <div class="fld full"><span>Format</span>${pick('format',FORMATS.map(x=>[x,x]),d.format,{cls:'wrap'})}</div>
+  <div class="fld full"><span>Fréquence</span>${pick('freq',Object.entries(FREQ),d.freq,{rerender:true,cls:'wrap'})}</div>
+  ${d.freq==='2sem'?`<div class="fld full"><span>Semaines</span>${pick('phase',[['0','Semaines paires'],['1','Semaines impaires']],String(d.phase||0))}<small>Deux rendez-vous en alternance : mettez-les sur des semaines différentes.</small></div>`:''}
+  ${d.freq==='mois'||d.freq==='2mois'?`<div class="fld full"><span>Quelle semaine du mois</span>${pick('occ',OCC.map((o,i)=>[String(i+1),o]),String(d.occ||1))}<small>Calculé sur le jour de la première plateforme.</small></div>`:''}
+  ${d.freq==='2mois'?`<div class="fld full"><span>Mois</span>${pick('mpar',[['1','Mois pairs (déc., fév., avr.…)'],['0','Mois impairs (janv., mars, mai…)']],String(d.mpar??1))}</div>`:''}
+  <div class="fld full"><span>Plateformes, jour et heure</span><div class="slotsed">${PF.map(pf=>{const s=d.slots.find(x=>x.platform===pf);return `<div class="sloted ${s?'on':''}"><button type="button" class="mchip ${s?'on':''}" data-act="rule-pf" data-v="${pf}">${pfLogo(pf,'sm')}${pf}</button>${s?`<select data-slot="${pf}|day">${DOWL.map((x,i)=>`<option value="${i+1}" ${s.day===i+1?'selected':''}>${x}</option>`).join('')}</select><input type="time" data-slot="${pf}|time" value="${esc(s.time)}">`:''}</div>`}).join('')}</div></div>
+  <label class="fld full"><span>Note / intention</span><input type="text" data-f="note" value="${esc(d.note||'')}"></label>
+ </div></div>
+ <div class="pf-foot"><button class="btn primary" data-act="rule-save">${icon('check')}Enregistrer</button><button class="btn ghost" data-act="close">Annuler</button><span style="flex:1"></span>${!isNew?'<button class="btn sm ghost" data-act="rule-del" style="color:var(--red)">'+icon('trash')+'<span class="lbl">Supprimer</span></button>':''}</div></div></div>`}
+function modalPlanGen(){const m=ui.modal;const list=planFor(m.month).filter(x=>!x.past);
+ return `<div class="modal ${ui.modalAnim?'enter':''}" data-act="modal-bg"><div class="panel narrow" role="dialog" aria-modal="true" aria-label="Générer le plan" data-stop>
+ <div class="ph"><span class="xicon r">${icon('bolt')}</span><div style="flex:1;min-width:0"><div class="eyebrow">Plan de communication ILA</div><h2>${MOIS[+m.month.slice(5)-1]} ${m.month.slice(0,4)} · ${list.length} post(s)</h2></div><button class="btn icon ghost" data-act="close" aria-label="Fermer">${icon('x')}</button></div>
+ <div class="pb"><div class="muted" style="font-size:13px;margin-bottom:10px">Posts créés en « Prévu », avec titre, plateformes et horaires. Les créneaux déjà pris par un partenaire sont décalés automatiquement.</div>
+ ${list.map(x=>`<div class="genrow"><b>${esc(x.title)}</b><div class="slots">${x.pls.map(p=>`${pfLogo(p.platform,'xs')}<span>${fmtD(p.date)} · ${esc(p.time)}</span>`).join('')}</div>${x.notes.length?`<div class="gnote">${x.notes.map(esc).join('<br>')}</div>`:''}</div>`).join('')||'<div class="empty">Tout est déjà généré pour ce mois.</div>'}</div>
+ <div class="pf-foot">${list.length?`<button class="btn primary" data-act="plan-confirm">${icon('check')}Créer ${list.length} post(s)</button>`:''}<button class="btn ghost" data-act="close">Fermer</button></div></div></div>`}
+function modalStory(){const d=ui.modal.draft;const isNew=!d.id;
+ return `<div class="modal ${ui.modalAnim?'enter':''}" data-act="modal-bg"><div class="panel narrow" role="dialog" aria-modal="true" aria-label="Story" data-stop>
+ <div class="ph"><span class="xicon r">${icon('film')}</span><div style="flex:1;min-width:0"><div class="eyebrow">Story · ${d.date?fmtD(d.date):''}</div><h2>${isNew?'Nouvelle story':esc(d.title)}</h2></div><button class="btn icon ghost" data-act="close" aria-label="Fermer">${icon('x')}</button></div>
+ <div class="pb"><div class="form">
+  <div class="fld full"><span>Statut</span>${pick('status',[['a_faire','À faire'],['prete','Prête'],['publiee','Publiée']],d.status)}</div>
+  <label class="fld full"><span>Titre *</span><input type="text" data-f="title" value="${esc(d.title)}"></label>
+  <label class="fld"><span>Date</span><input type="date" data-f="date" value="${esc(d.date)}"></label>
+  <label class="fld"><span>Heure</span><input type="time" data-f="time" value="${esc(d.time||'')}"></label>
+  <div class="fld full"><span>Type d'interaction</span>${pick('type',Object.entries(STYPE),d.type,{cls:'wrap'})}</div>
+  <div class="fld full"><span>Plateformes</span><div class="mchips">${['Instagram','TikTok','Facebook'].map(p=>`<button type="button" class="mchip ${(d.platforms||[]).includes(p)?'on':''}" data-act="story-pf" data-v="${p}">${pfLogo(p,'sm')}${p}</button>`).join('')}</div></div>
+  <label class="fld full"><span>Idée / contenu</span><textarea data-f="idea" style="min-height:70px">${esc(d.idea||'')}</textarea></label>
+ </div></div>
+ <div class="pf-foot"><button class="btn primary" data-act="story-save">${icon('check')}Enregistrer</button><button class="btn ghost" data-act="close">Annuler</button><span style="flex:1"></span>${!isNew||d.occ?'<button class="btn sm ghost" data-act="story-del" style="color:var(--red)">'+icon('trash')+'<span class="lbl">Supprimer</span></button>':''}</div></div></div>`}
+function modalSRule(){const d=ui.modal.draft;
+ return `<div class="modal ${ui.modalAnim?'enter':''}" data-act="modal-bg"><div class="panel narrow" role="dialog" aria-modal="true" aria-label="Rendez-vous story" data-stop>
+ <div class="ph"><span class="xicon r">${icon('film')}</span><div style="flex:1;min-width:0"><div class="eyebrow">Rendez-vous stories</div><h2>${esc(d.name)}</h2></div><button class="btn icon ghost" data-act="close" aria-label="Fermer">${icon('x')}</button></div>
+ <div class="pb"><div class="form">
+  <label class="fld full"><span>Nom</span><input type="text" data-f="name" value="${esc(d.name)}"></label>
+  <label class="fld"><span>Jour</span><select data-f="day">${DOWL.map((x,i)=>`<option value="${i+1}" ${d.day===i+1?'selected':''}>${x}</option>`).join('')}</select></label>
+  <label class="fld"><span>Heure</span><input type="time" data-f="time" value="${esc(d.time)}"></label>
+  <div class="fld full"><span>Type</span>${pick('type',Object.entries(STYPE),d.type,{cls:'wrap'})}</div>
+  <div class="fld full"><span>Plateformes</span><div class="mchips">${['Instagram','TikTok','Facebook'].map(p=>`<button type="button" class="mchip ${(d.platforms||[]).includes(p)?'on':''}" data-act="story-pf" data-v="${p}">${pfLogo(p,'sm')}${p}</button>`).join('')}</div></div>
+  <label class="fld full"><span>Idée</span><textarea data-f="idea" style="min-height:60px">${esc(d.idea||'')}</textarea></label>
+ </div></div>
+ <div class="pf-foot"><button class="btn primary" data-act="srule-save">${icon('check')}Enregistrer</button><button class="btn ghost" data-act="close">Annuler</button></div></div></div>`}
+function modalMar(){const d=ui.modal.draft;
+ return `<div class="modal ${ui.modalAnim?'enter':''}" data-act="modal-bg"><div class="panel narrow" role="dialog" aria-modal="true" aria-label="Temps fort" data-stop>
+ <div class="ph"><span class="marchip">✦</span><div style="flex:1;min-width:0"><div class="eyebrow">Temps fort</div><h2>Ajouter un temps fort</h2></div><button class="btn icon ghost" data-act="close" aria-label="Fermer">${icon('x')}</button></div>
+ <div class="pb"><div class="form">
+  <label class="fld full"><span>Nom *</span><input type="text" data-f="n" value="${esc(d.n)}" placeholder="Ex. Journée mondiale du cinéma"></label>
+  <label class="fld"><span>Date *</span><input type="date" data-f="d" value="${esc(d.d)}"></label>
+  <label class="fld"><span>Jusqu'au (facultatif)</span><input type="date" data-f="e" value="${esc(d.e)}"></label>
+  <div class="fld full"><span>Catégorie</span>${pick('c',Object.entries(MAR_CATS),d.c,{cls:'wrap'})}</div>
+  <label class="fld full"><span>Idée de contenu</span><input type="text" data-f="i" value="${esc(d.i)}"></label>
+ </div></div>
+ <div class="pf-foot"><button class="btn primary" data-act="mar-save">${icon('check')}Enregistrer</button><button class="btn ghost" data-act="close">Annuler</button></div></div></div>`}
+function modalMarView(){const m=marById(ui.modal.id);if(!m){ui.modal=null;return ''}const cs=S.contents.filter(c=>c.marId===m.id);const n=Math.round((D(m.d)-D(TODAY))/864e5);
+ return `<div class="modal ${ui.modalAnim?'enter':''}" data-act="modal-bg"><div class="panel narrow" role="dialog" aria-modal="true" aria-label="Temps fort" data-stop>
+ <div class="ph"><span class="marchip">✦</span><div style="flex:1;min-width:0"><div class="eyebrow">Temps fort · ${MAR_CATS[m.c]||''}</div><h2>${esc(m.n)}</h2></div><button class="btn icon ghost" data-act="close" aria-label="Fermer">${icon('x')}</button></div>
+ <div class="pb"><div class="kv2"><b>${marLabel(m)}</b><span class="muted">${n>0?'Dans '+n+' jour(s)':n===0?'Aujourd\'hui':(m.e&&m.e>=TODAY?'En cours':'Passé')}${m.cf?' · date à confirmer':''}</span></div>
+ ${m.i?`<div class="box" style="margin-top:12px"><h3>💡 Idée de contenu</h3><p style="margin:0">${esc(m.i)}</p></div>`:''}
+ <div class="box" style="margin-top:12px"><h3>Contenus liés (${cs.length})</h3>${cs.length?cs.map(c=>`<button class="li" data-open="${c.id}">${thumbImg(c,'mini')}<div class="li-b"><div class="li-t">${esc(c.title)}</div><div class="li-s">${c.bank?'Banque · ':''}${GS[gstat(c)]}</div></div></button>`).join(''):'<div class="muted">Rien de prévu pour l\'instant.</div>'}</div></div>
+ <div class="pf-foot"><button class="btn primary" data-act="mar-content" data-id="${m.id}">${icon('plus')}Créer un contenu</button><button class="btn ghost" data-act="close">Fermer</button><span style="flex:1"></span><button class="btn sm ghost" data-act="mar-hide" data-id="${m.id}" aria-label="Masquer" title="Masquer">${icon('x')}<span class="lbl">Masquer</span></button></div></div></div>`}
+function modalNotifs(){const it=notifItems();const unread=it.filter(x=>!x.read);
+ return `<div class="modal ${ui.modalAnim?'enter':''}" data-act="modal-bg"><div class="panel narrow" role="dialog" aria-modal="true" aria-label="Notifications" data-stop>
+ <div class="ph"><span class="xicon r">${icon('bell')}</span><div style="flex:1;min-width:0"><div class="eyebrow">Réservé à Estelle</div><h2>À anticiper · ${unread.length}</h2></div><button class="btn icon ghost" data-act="close" aria-label="Fermer">${icon('x')}</button></div>
+ <div class="pb">${it.length?it.map(x=>`<div class="notif ${x.lv} ${x.read?'read':''}"><span class="ni">${icon(x.icon)}</span><div class="nb"><b>${esc(x.t)}</b><span>${esc(x.s)}</span>${x.idea?`<span class="maridea">💡 ${esc(x.idea)}</span>`:''}<div class="row" style="gap:6px;margin-top:6px">${x.act||''}${x.read?'':`<button class="btn sm ghost" data-act="notif-read" data-k="${esc(x.k)}">Vu</button>`}</div></div></div>`).join(''):'<div class="empty">Rien à anticiper pour le moment.</div>'}</div>
+ <div class="pf-foot">${unread.length?'<button class="btn ghost" data-act="notif-all">Tout marquer comme vu</button>':''}<button class="btn primary" data-act="close">Fermer</button></div></div></div>`}
+
+document.addEventListener('input',e=>{const t=e.target;if(!t.dataset)return;
+ if(t.dataset.stat){const [pf,k]=t.dataset.stat.split('|');const ym=(ui.stt||{}).m;if(!ym)return;let r=S.stats.find(x=>x.month===ym&&x.platform===pf);if(!r){r={id:pf.toLowerCase()+'_'+ym,month:ym,platform:pf,values:{}};S.stats.push(r)}if(t.value==='')delete r.values[k];else r.values[k]=+t.value;r.by=me().id;r.at=nowStamp();clearTimeout(ui._stt);ui._stt=setTimeout(()=>save(),600);return}
+ if(t.dataset.slot&&ui.modal&&ui.modal.type==='rule'){const [pf,k]=t.dataset.slot.split('|');const s=ui.modal.draft.slots.find(x=>x.platform===pf);if(s)s[k]=k==='day'?+t.value:t.value}});
 /* ---------- Tris ---------- */
 const CSORT=[['date','Date de sortie'],['date_desc','Date de sortie (plus lointaine d\'abord)'],['statut','Statut de production'],['partenaire','Partenaire'],['titre','Titre (A → Z)']];
 function lastPubD(c){return (c.platforms||[]).filter(x=>x.date).map(x=>x.date+(x.time||'')).sort().pop()||''}
@@ -2011,9 +2389,11 @@ function pageExchanges(){
 function calItems(){
  const f=ui.cal;const pidLock=isPartner()?me().partnerId:f.partner;
  const out=[];
+ const allIla=!isPartner()&&isILAid(pidLock);
  visibleContents().forEach(c=>{
-  if(pidLock&&c.partnerId!==pidLock)return;
-  if(pidLock&&!projOk(c,f.project))return;
+  if(pidLock&&c.partnerId!==pidLock&&!allIla)return;
+  if(pidLock&&c.partnerId===pidLock&&!projOk(c,f.project))return;
+  if(allIla&&f.project&&c.partnerId!==pidLock)return;
   if(f.statuses.length&&!f.statuses.includes(gstat(c)))return;
   if(f.kinds.pub)(c.platforms||[]).forEach(p=>{if(p.date&&(!f.platforms.length||f.platforms.includes(p.platform)))out.push({k:'pub',date:p.date,time:p.time||'',c,p})});
   if(!isPartner()&&!f.platforms.length){
@@ -2021,17 +2401,20 @@ function calItems(){
    if(f.kinds.val&&c.validationDue)out.push({k:'val',date:c.validationDue,time:'',c});
   }else if(isPartner()&&!f.platforms.length&&f.kinds.val&&c.validationDue&&c.validation!=='valide'){out.push({k:'val',date:c.validationDue,time:'',c})}
  });
- if(f.kinds.evt&&!f.platforms.length&&!f.statuses.length)visibleEvents().forEach(e=>{if(!pidLock||e.partnerId===pidLock)out.push({k:'evt',date:e.date,time:'',e})});
- const ord={evt:0,val:1,prod:2,pub:3};
+ if(f.kinds.evt&&!f.platforms.length&&!f.statuses.length)visibleEvents().forEach(e=>{if(!pidLock||allIla||e.partnerId===pidLock)out.push({k:'evt',date:e.date,time:'',e})});
+ if(!isPartner()&&(!pidLock||allIla)&&f.kinds.mar&&!f.platforms.length&&!f.statuses.length)allMars().forEach(m=>{out.push({k:'mar',date:m.d,time:'',m});if(m.e&&m.e.slice(0,7)>m.d.slice(0,7)){let mo=addMonths(m.d.slice(0,7),1);while(mo<=m.e.slice(0,7)){out.push({k:'mar',date:mo+'-01',time:'',m,cont:true});mo=addMonths(mo,1)}}});
+ const ord={mar:-1,evt:0,val:1,prod:2,pub:3};
  return out.sort((a,b)=>(a.date+(a.time||'00')+ord[a.k]).localeCompare(b.date+(b.time||'00')+ord[b.k]));
 }
 function evChip(it){
+ if(it.k==='mar')return `<button class="ev mar" data-act="mar-view" data-id="${it.m.id}" title="Temps fort : ${esc(it.m.n)} · ${marLabel(it.m)}"><span class="tx">✦ ${esc(it.m.n)}</span></button>`;
  if(it.k==='pub'){const s=gstat(it.c);return `<button class="ev pub ${it.p.status==='publie'?'done':''}" style="--pc:${pcol(it.c.partnerId)}" data-open="${it.c.id}" title="${esc(it.c.title)} · ${esc(it.p.platform)} · ${PUB[it.p.status]}"><img src="${thumbSrc(it.c)}" alt="" style="${imgPos(it.c)}"><span class="tm">${esc(it.time)}</span><span class="tx">${pfLogo(it.p.platform,'xs')}${esc(it.c.title)}</span><span class="sd s-${s}"></span></button>`}
  if(it.k==='prod')return `<button class="ev prod" style="--pc:${pcol(it.c.partnerId)}" data-open="${it.c.id}" title="Remise : ${esc(it.c.title)}"><span class="tx">Remise · ${esc(it.c.title)}</span></button>`;
  if(it.k==='val')return `<button class="ev val" style="--pc:${pcol(it.c.partnerId)}" data-open="${it.c.id}" title="Validation : ${esc(it.c.title)}"><span class="tx">Validation · ${esc(it.c.title)}</span></button>`;
  return `<button class="ev evt" style="--pc:${pcol(it.e.partnerId)}" data-opene="${it.e.id}" title="${esc(it.e.title)}"><span class="tx">${esc(it.e.title)}</span></button>`;
 }
 function listItem(it){
+ if(it.k==='mar')return `<button class="litem mar" data-act="mar-view" data-id="${it.m.id}"><span class="marchip">✦</span><div class="li-b"><div class="kindtag">Temps fort · ${MAR_CATS[it.m.c]||''}${it.m.e?' · '+marLabel(it.m):''}</div><div class="li-t">${esc(it.m.n)}</div>${it.m.i?`<div class="li-s">💡 ${esc(it.m.i)}</div>`:''}</div></button>`;
  const kl={pub:'Publication',prod:'Remise de production',val:'Échéance de validation',evt:''};
  if(it.k==='evt'){const p=partner(it.e.partnerId);return `<button class="litem evt" data-opene="${it.e.id}"><span class="xicon" style="background:#fff;color:var(--red);width:44px;height:44px">${esc(it.e.type.slice(0,3).toUpperCase())}</span><div class="li-b"><div class="kindtag">${esc(it.e.type)}</div><div class="li-t">${esc(it.e.title)}</div><div class="li-s">${esc(p?p.name:'')}${it.e.note?' · '+esc(it.e.note):''}</div></div></button>`}
  const c=it.c,p=partner(c.partnerId);
@@ -2044,13 +2427,15 @@ function pageCalendar(){
   const ws=f.week;head=`Semaine du ${D(ws).getDate()} ${MOIS[D(ws).getMonth()]}`;
   body=`<div class="weekg">${[0,1,2,3,4,5,6].map(i=>{const d=addDays(ws,i);const its=items.filter(x=>x.date===d);return `<div class="wday ${d===TODAY?'today':''}"><h3>${JOURSL[i]} <span class="muted">${D(d).getDate()}</span></h3><div class="witems">${its.map(it=>{
    if(it.k==='pub')return `<button class="witem" style="--pc:${pcol(it.c.partnerId)}" data-open="${it.c.id}"><div class="thumb"><img src="${thumbSrc(it.c)}" alt="" style="${imgPos(it.c)}"><span class="badge">${pfLogo(it.p.platform)}</span></div><div class="t">${esc(it.c.title)}</div><div class="row" style="gap:6px;justify-content:space-between"><b class="tnum" style="font-size:12px">${esc(it.time)}</b><span class="chip ${it.p.status==='publie'?'s-publie':'s-'+gstat(it.c)}" style="font-size:10.5px;padding:1px 7px">${it.p.status==='publie'?'Publié':GS[gstat(it.c)].replace('En attente de validation','À valider')}</span></div></button>`;
+   if(it.k==='mar')return `<button class="witem mar" data-act="mar-view" data-id="${it.m.id}"><div class="kindtag">✦ Temps fort</div><div class="t">${esc(it.m.n)}</div></button>`;
    if(it.k==='evt')return `<button class="witem evt" data-opene="${it.e.id}"><div class="kindtag">${esc(it.e.type)}</div><div class="t">${esc(it.e.title)}</div></button>`;
    return `<button class="witem ${it.k}" style="--pc:${pcol(it.c.partnerId)}" data-open="${it.c.id}"><div class="kindtag" style="${it.k==='val'?'color:var(--red)':'color:var(--muted)'}">${it.k==='val'?'Validation':'Remise'}</div><div class="t">${esc(it.c.title)}</div></button>`}).join('')||'<span class="muted" style="font-size:12px">—</span>'}</div></div>`}).join('')}</div>`;
  }else{
   const ym=f.month;head=fmtMonth(ym);
   if(f.view==='mois'){
    const first=D(ym+'-01');const start=addDays(ym+'-01',-dow(ym+'-01'));const nd=new Date(first.getFullYear(),first.getMonth()+1,0).getDate();const cells=Math.ceil((dow(ym+'-01')+nd)/7)*7;
-   body=`<div class="scroll-x"><div class="month">${JOURS.map(j=>`<div class="dow">${j}</div>`).join('')}${Array.from({length:cells},(_,i)=>{const d=addDays(start,i);const its=items.filter(x=>x.date===d);const out=!d.startsWith(ym);
+   const ms=!pv&&f.kinds.mar&&(!f.partner||isILAid(f.partner))?marsBetween(ym+'-01',ym+'-31'):[];
+   body=`${ms.length?`<div class="marstrip"><b>✦ Temps forts de ${MOIS[+ym.slice(5)-1]}</b>${ms.map(m=>`<button class="marpill" data-act="mar-view" data-id="${m.id}">${esc(m.n)} <small>${m.e?marLabel(m):fmtD(m.d)}</small></button>`).join('')}</div>`:''}<div class="scroll-x"><div class="month">${JOURS.map(j=>`<div class="dow">${j}</div>`).join('')}${Array.from({length:cells},(_,i)=>{const d=addDays(start,i);const its=items.filter(x=>x.date===d);const out=!d.startsWith(ym);
     return `<div class="day ${out?'out':''} ${d===TODAY?'today':''} ${f.day===d?'sel':''}" data-day="${d}"><div class="dn"><span>${D(d).getDate()}</span></div><div class="dayitems">${its.slice(0,4).map(evChip).join('')}</div>${its.length>4?`<div class="more">+${its.length-4} autre(s)</div>`:''}</div>`}).join('')}</div></div>
    ${f.day?`<div class="card white" style="margin-top:16px"><div class="spread" style="margin-bottom:10px"><h2 style="text-transform:capitalize">${JOURSL[dow(f.day)]} ${D(f.day).getDate()} ${MOIS[D(f.day).getMonth()]}</h2><button class="btn sm ghost icon" data-act="day-close" aria-label="Fermer">${icon('x')}</button></div><div class="litems">${items.filter(x=>x.date===f.day).map(listItem).join('')||'<div class="empty">Rien de prévu ce jour.</div>'}</div></div>`:''}`;
   }else{
@@ -2074,7 +2459,8 @@ function pageCalendar(){
  <div class="fbar">
   <div class="fbar-row">${pv?`<span class="chip lock">${icon('lock')}${esc(partner(me().partnerId).name)}</span>`:pchips('cal','partner')}</div>
   ${isPartner()?'':projChips('cal')}
-  <div class="fbar-row"><div class="mchips">${kchip('pub','Publications','#0E0E0E')}${pv?'':kchip('prod','Production','#CFCAC8')}${kchip('val','Validations','#D9140E')}${kchip('evt','Événements','#D9140E')}</div><span style="flex:1"></span><button type="button" class="btn sm ${f.more||nf?'dark':'ghost'}" data-act="cal-more" aria-expanded="${f.more}">Plateformes et statuts${nf?' · '+nf:''}</button></div>
+  ${!isPartner()&&isILAid(f.partner)?`<div class="notice" style="margin:0">${icon('info')}<div>Calendrier ILA : vos posts + <b>tous les posts des partenaires</b> + les temps forts de l'année.</div></div>`:''}
+  <div class="fbar-row"><div class="mchips">${kchip('pub','Publications','#0E0E0E')}${pv?'':kchip('prod','Production','#CFCAC8')}${kchip('val','Validations','#D9140E')}${kchip('evt','Événements','#D9140E')}${!pv&&(!f.partner||isILAid(f.partner))?kchip('mar','Temps forts','#15131C'):''}</div><span style="flex:1"></span><button type="button" class="btn sm ${f.more||nf?'dark':'ghost'}" data-act="cal-more" aria-expanded="${f.more}">Plateformes et statuts${nf?' · '+nf:''}</button></div>
   ${f.more?`<div class="fbar-row"><span class="flabel">Plateformes</span>${fchips('cal','platforms',PLATFORMS.map(([p,a])=>[p,p,pfLogo(p,'sm')]),true)}</div>
   <div class="fbar-row"><span class="flabel">Statuts</span>${fchips('cal','statuses',Object.keys(GS).map(k=>[k,GS[k],`<i class="sdot s-${k}"></i>`]),true)}</div>`:''}
  </div>
@@ -2271,6 +2657,13 @@ function renderModal(){
  if(m.type==='event')return modalEvent();
  if(m.type==='sent')return modalSent();
  if(m.type==='project')return modalProject();
+ if(m.type==='rule')return modalRule();
+ if(m.type==='plangen')return modalPlanGen();
+ if(m.type==='story')return modalStory();
+ if(m.type==='srule')return modalSRule();
+ if(m.type==='mar')return modalMar();
+ if(m.type==='marview')return modalMarView();
+ if(m.type==='notifs')return modalNotifs();
  if(m.type==='cimport')return modalCImport();
  if(m.type==='quick')return modalQuick();
  return '';
@@ -2304,6 +2697,8 @@ function modalContent(){
      <label class="fld full"><span>Titre du contenu *</span><input type="text" data-f="title" value="${esc(c.title)}" ${dis(canMod)} placeholder="Ex. Portrait — Inès, coureuse" required></label>
      <label class="fld"><span>Partenaire</span>${partnerSelect('f-partner',c.partnerId,{all:false,f:'partnerId',dis:!canMod||!isNew&&!isAdmin()}).replace('<select','<select data-rerender')}</label>
      <label class="fld"><span>Projet</span><select data-f="projectId" ${dis(canMod)}><option value="">Sans projet (directement dans le dossier)</option>${prjs.map(x=>`<option value="${x.id}" ${c.projectId===x.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select></label>
+     <label class="fld"><span>✦ Temps fort (marronnier)</span><select data-f="marId" ${dis(canMod)}><option value="">Aucun</option>${(()=>{const l=marsBetween(addDays(TODAY,-31),addDays(TODAY,400));const cur=c.marId&&marById(c.marId);if(cur&&!l.includes(cur))l.unshift(cur);return l.map(m=>`<option value="${m.id}" ${c.marId===m.id?'selected':''}>${esc(m.n)} · ${fmtD(m.d)}</option>`).join('')})()}</select></label>
+     <div class="fld"><span>Banque de contenus prêts</span>${pick('bank',[['','Non'],['1','Oui, à sortir le moment venu']],c.bank?'1':'',{dis:!canMod})}</div>
      <div class="fld full"><span>Format</span>${pick('format',FORMATS.map(x=>[x,x]),c.format,{dis:!canMod,rerender:true,cls:'wrap'})}</div>
      <div class="fld full"><span>Responsable de production</span>${pick('owner',teamUsers().map(u=>[u.id,u.name,avatar(u.id)]),c.owner,{dis:!canMod})}</div>
     </div></div>
@@ -2471,7 +2866,7 @@ function modalEvent(){
    <label class="fld"><span>Date</span><input type="date" data-f="date" value="${esc(e.date)}" ${ed?'':'disabled'}></label>
    <div class="fld"><span>Type</span>${pick('type',EVTYPES.map(t=>[t,t]),e.type,{dis:!ed})}</div>
    <label class="fld full"><span>Note</span><input type="text" data-f="note" value="${esc(e.note)}" ${ed?'':'disabled'}></label>
-  </div></div>
+  </div>${isILAid(e.partnerId)&&ed?(isNew?`<label class="chkrow"><input type="checkbox" id="ev-auto" checked><span><b>Créer le Reel et le carrousel photo</b><br><small class="muted">Reel le lendemain, carrousel le surlendemain (dans les 48 h). Dates et ordre modifiables ensuite.</small></span></label>`:(()=>{const cs=eventContents(e);return `<div class="box" style="margin-top:12px"><h3>Contenus de l'événement</h3>${cs.length?cs.map(c=>`<button class="li" data-open="${c.id}">${thumbImg(c,'mini')}<div class="li-b"><div class="li-t">${esc(c.title)}</div><div class="li-s">${(c.platforms||[]).map(p=>esc(p.platform)+' '+(p.date?fmtD(p.date):'')+' '+esc(p.time||'')).join(' · ')}</div></div><span class="chip s-${gstat(c)}" style="font-size:10px">${GS[gstat(c)]}</span></button>`).join(''):'<div class="muted">Aucun contenu lié.</div>'}<div class="row" style="gap:6px;margin-top:8px">${cs.length===2?`<button class="btn sm ghost" data-act="ev-swap">Inverser l'ordre Reel / carrousel</button>`:''}${!cs.length?`<button class="btn sm ghost" data-act="ev-gen">${icon('plus')}Créer Reel + carrousel</button>`:''}</div></div>`})()):''}</div>
   <div class="pf-foot">${ed?`<button class="btn primary" data-act="save-event">${icon('check')}Enregistrer</button>`:''}<button class="btn ghost" data-act="close">${ed?'Annuler':'Fermer'}</button><span style="flex:1"></span>${!isNew&&ed&&can('supprimer')?'<button class="btn sm ghost" data-act="del-event">Supprimer</button>':''}</div>
  </div></div>`;
 }
@@ -2623,6 +3018,8 @@ document.addEventListener('click',async e=>{
  const act=t.closest('[data-act]');
  const sc=t.closest('[data-scroll]');
  const cf=t.closest('[data-cfold]');if(cf&&!t.closest('a,button:not([data-cfold]),input,select,label,.seg')){const F=loadFolds();const sec=cf.closest('section');F[cf.dataset.cfold]=!sec.classList.contains('cfolded');saveFolds();applyCardFolds();return}
+ const stc=t.closest('[data-story]');if(stc){const all=storiesBetween(addDays(TODAY,-400),addDays(TODAY,400));const s=all.find(x=>x.id===stc.dataset.story)||S.stories.find(x=>x.id===stc.dataset.story);if(s){ui.modalAnim=true;ui.modal={type:'story',draft:clone(s)};renderModalOnly()}return}
+ const sd=t.closest('[data-stday]');if(sd){ui.stv.view='semaine';ui.stv.week=weekStart(sd.dataset.stday);render();return}
  const ft=t.closest('.section-title.foldable');if(ft&&!t.closest('a,button')){const F=loadFolds();F[ft.id]=!F[ft.id];if(!F[ft.id])delete F[ft.id];saveFolds();applyFolds();return}
  if(sc){e.preventDefault();{const F=loadFolds();if(F['sec-'+sc.dataset.scroll]){delete F['sec-'+sc.dataset.scroll];saveFolds();applyFolds()}}const el=document.getElementById('sec-'+sc.dataset.scroll);if(el)el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});return}
  // priority: innermost
@@ -2719,6 +3116,38 @@ document.addEventListener('click',async e=>{
   case 'prod-week':{const v=+ds.v;ui.dash.pw=v===0?weekStart(TODAY):addDays(ui.dash.pw||weekStart(TODAY),v);render();break}
   case 'dash-month':{const v=+ds.v;ui.dash.sm=v===0?TODAY.slice(0,7):addMonths(ui.dash.sm||TODAY.slice(0,7),v);render();break}
   case 'week-cal':{const d=ds.d;ui.cal.view='semaine';ui.cal.week=weekStart(d);ui.cal.month=d.slice(0,7);if(ui.dash.partner)ui.cal.partner=ui.dash.partner;navigate('calendrier');break}
+  case 'notifs':ui.modalAnim=true;ui.modal={type:'notifs'};renderModalOnly();break;
+  case 'notif-read':S.ila.nread[ds.k]=TODAY;save();renderModalOnly();render();break;
+  case 'notif-all':notifItems().forEach(x=>S.ila.nread[x.k]=TODAY);save();ui.modal=null;render();break;
+  case 'plan-gen':ui.modalAnim=true;ui.modal={type:'plangen',month:ds.m};renderModalOnly();break;
+  case 'plan-confirm':{const l=planFor(ui.modal.month).filter(x=>!x.past);l.forEach(x=>S.contents.push(makePlanContent(x)));S.ila.generated[ui.modal.month]=TODAY;ui.modal=null;commit(l.length+' post(s) ILA ajoutés au calendrier');break}
+  case 'rule-new':ui.modalAnim=true;ui.modal={type:'rule',draft:{id:uid('r'),name:'',freq:'hebdo',format:'Post',slots:[{platform:'Instagram',day:1,time:'18:00'}],active:true,phase:0,occ:1,mpar:1,note:''}};renderModalOnly();break;
+  case 'rule-edit':{const r=S.ila.rules.find(x=>x.id===ds.id);if(!r)return;ui.modalAnim=true;ui.modal={type:'rule',draft:Object.assign(clone(r),{_exists:true})};renderModalOnly();break}
+  case 'rule-toggle':{const r=S.ila.rules.find(x=>x.id===ds.id);r.active=!r.active;commit(r.active?'Rendez-vous activé':'Rendez-vous en pause');break}
+  case 'rule-pf':{syncDraft();const d=ui.modal.draft;const i=d.slots.findIndex(x=>x.platform===ds.v);if(i>=0)d.slots.splice(i,1);else d.slots.push({platform:ds.v,day:(d.slots[0]||{}).day||1,time:(d.slots[0]||{}).time||'18:00'});renderModalOnly();break}
+  case 'rule-save':{syncDraft();const d=ui.modal.draft;if(!d.name.trim()||!d.slots.length){toast('Nom et au moins une plateforme obligatoires.',true);return}['phase','occ','mpar'].forEach(k=>d[k]=+d[k]||0);if(!d.occ)d.occ=1;const ex=d._exists;delete d._exists;const i=S.ila.rules.findIndex(x=>x.id===d.id);if(i>=0)S.ila.rules[i]=d;else S.ila.rules.push(d);ui.modal=null;commit(ex?'Rendez-vous modifié · les prochains mois générés suivront':'Rendez-vous ajouté au plan');break}
+  case 'rule-del':S.ila.rules=S.ila.rules.filter(x=>x.id!==ui.modal.draft.id);ui.modal=null;commit('Rendez-vous supprimé · les posts déjà créés restent');break;
+  case 'mar-view':ui.modalAnim=true;ui.modal={type:'marview',id:ds.id};renderModalOnly();break;
+  case 'mar-content':{const m=marById(ds.id);const ila=ilaId();if(!m||!ila)return;const d=newContentDraft(ila);d.title=m.n;d.marId=m.id;d.brief=m.i||'';const dd=m.d<TODAY?TODAY:m.d;d.platforms=[{id:uid('pl'),platform:'Instagram',date:dd,time:'18:00',text:'',accounts:[],tags:[],collabs:[],status:'prevu',link:''}];ui.modalAnim=true;ui.modal={type:'content',draft:d,tab:'fiche'};renderModalOnly();break}
+  case 'bank-new':{const ila=ilaId();const d=newContentDraft(ila);d.bank=true;d.title='';ui.modalAnim=true;ui.modal={type:'content',draft:d,tab:'fiche'};renderModalOnly();break}
+  case 'mar-hide':S.ila.marsHidden[ds.id]=true;if(ui.modal&&ui.modal.type==='marview')ui.modal=null;commit('Temps fort masqué');break;
+  case 'mar-unhide':S.ila.marsHidden={};commit('Temps forts réaffichés');break;
+  case 'mar-new':ui.modalAnim=true;ui.modal={type:'mar',draft:{n:'',d:TODAY,e:'',c:'journee',i:''}};renderModalOnly();break;
+  case 'mar-save':{syncDraft();const d=ui.modal.draft;if(!d.n.trim()||!d.d){toast('Nom et date obligatoires.',true);return}S.ila.marsAdded.push({id:uid('mx'),d:d.d,e:d.e||'',n:d.n.trim(),c:d.c,i:d.i||'',cf:false});ui.modal=null;commit('Temps fort ajouté au calendrier ILA');break}
+  case 'mar-update':{const ys=[+TODAY.slice(0,4),+TODAY.slice(0,4)+1];let n=0;try{for(const y of ys){const r=await fetch('https://calendrier.api.gouv.fr/jours-feries/metropole/'+y+'.json');if(!r.ok)throw 0;const j=await r.json();Object.entries(j).forEach(([d,name])=>{if(allMars().some(m=>m.d===d&&m.c==='ferie')||S.ila.marsAdded.some(m=>m.d===d&&m.c==='ferie'))return;S.ila.marsAdded.push({id:'f'+d.replace(/-/g,''),d,e:'',n:name,c:'ferie',i:'',cf:false});n++})}commit(n?n+' jour(s) férié(s) ajouté(s) depuis calendrier.api.gouv.fr':'Jours fériés déjà à jour (source : calendrier.api.gouv.fr)')}catch(err){toast('Mise à jour impossible pour le moment (pas de connexion à calendrier.api.gouv.fr).',true)}break}
+  case 'mar-claude':{const cf=allMars().filter(m=>m.cf).map(m=>'- '+m.n+' ('+m.d+')').join('\n');copyText(`Claude, mets à jour les temps forts (marronniers) de l'application Suivi Com pour ILA.\n1. Vérifie sur internet les dates encore « à confirmer » :\n${cf}\n2. Ajoute les temps forts de l'année ${+TODAY.slice(0,4)+1} qui concernent ILA (jeunesse, cinéma, audiovisuel, médias, éducation, engagement), avec une idée de contenu pour chacun.\n3. Retire ce qui n'a plus de sens.`,act);break}
+  case 'go-ila-week':ui.modal=null;ui.cal.partner=ilaId();ui.cal.view='semaine';ui.cal.week=weekStart(TODAY);navigate('calendrier');break;
+  case 'stv':ui.stv.view=ds.v;render();break;
+  case 'st-prev':case 'st-next':{const k=a==='st-next'?1:-1;const v=ui.stv;if(v.view==='semaine')v.week=addDays(v.week,7*k);else v.month=addMonths(v.month,k);render();break}
+  case 'st-today':ui.stv.week=weekStart(TODAY);ui.stv.month=TODAY.slice(0,7);render();break;
+  case 'story-new':ui.modalAnim=true;ui.modal={type:'story',draft:{id:'',title:'',date:TODAY,time:'18:00',type:'sondage',platforms:['Instagram'],status:'a_faire',idea:''}};renderModalOnly();break;
+  case 'story-pf':{syncDraft();const d=ui.modal.draft;d.platforms=d.platforms||[];const i=d.platforms.indexOf(ds.v);i>=0?d.platforms.splice(i,1):d.platforms.push(ds.v);renderModalOnly();break}
+  case 'story-save':{syncDraft();const d=ui.modal.draft;if(ui.modal.type==='srule'){break}if(!d.title.trim()||!d.date){toast('Titre et date obligatoires.',true);return}if(d.id&&!d.id.startsWith('v_')){const i=S.stories.findIndex(x=>x.id===d.id);S.stories[i]=d}else{const x=Object.assign({},d,{id:uid('st')});delete x.virtual;S.stories.push(x)}ui.modal=null;commit('Story enregistrée');break}
+  case 'story-del':{const d=ui.modal.draft;if(d.occ){const ex=S.stories.find(x=>x.occ===d.occ);if(ex)ex.status='annulee';else S.stories.push(Object.assign({},d,{id:uid('st'),status:'annulee',virtual:undefined}))}else S.stories=S.stories.filter(x=>x.id!==d.id);ui.modal=null;commit('Story retirée');break}
+  case 'srule-toggle':{const r=S.ila.storyRules.find(x=>x.id===ds.id);r.active=!r.active;commit(r.active?'Rendez-vous story activé':'Rendez-vous story en pause');break}
+  case 'srule-edit':{const r=S.ila.storyRules.find(x=>x.id===ds.id);ui.modalAnim=true;ui.modal={type:'srule',draft:clone(r)};renderModalOnly();break}
+  case 'srule-save':{syncDraft();const d=ui.modal.draft;d.day=+d.day||1;const i=S.ila.storyRules.findIndex(x=>x.id===d.id);S.ila.storyRules[i]=d;ui.modal=null;commit('Rendez-vous story modifié');break}
+  case 'period-del':S.ila.storyPeriods=S.ila.storyPeriods.filter(x=>x.id!==ds.id);commit('Session retirée');break;
   case 'qdel-ask':ui.modal.confirmDel=true;renderModalOnly();setTimeout(()=>{const b=document.querySelector('#modal-root .qdel');if(b)b.scrollIntoView({block:'nearest'})},30);break;
   case 'qdel-cancel':ui.modal.confirmDel=false;renderModalOnly();break;
   case 'sel-mode':ui.sel=ui.sel?null:{ids:{},confirm:false};render();break;
@@ -2751,8 +3180,10 @@ document.addEventListener('click',async e=>{
   case 'cal-today':ui.cal.month=TODAY.slice(0,7);ui.cal.week=weekStart(TODAY);ui.cal.day=TODAY;render();break;
   case 'cal-kind':ui.cal.kinds[ds.k]=!ui.cal.kinds[ds.k];render();break;
   case 'day-close':ui.cal.day=null;render();break;
-  case 'new-event':if(ui.fab){ui.fab=false;render()}if(!S.partners.length){toast('Créez d\'abord un partenaire.',true);return}ui.modalAnim=true;ui.modal={type:'event',draft:{id:'',partnerId:ui.cal.partner||S.partners[0].id,title:'',date:ui.cal.day||TODAY,type:'Événement',note:''}};renderModalOnly();break;
-  case 'save-event':{syncDraft();const d=ui.modal.draft;if(!d.title.trim()||!d.date){toast('Titre et date obligatoires.',true);return}if(!d.id){d.id=uid('e');S.events.push(d)}else{const i=S.events.findIndex(x=>x.id===d.id);S.events[i]=d}ui.modal=null;commit('Événement enregistré');break}
+  case 'new-event':if(ui.fab){ui.fab=false;render()}if(!S.partners.length){toast('Créez d\'abord un partenaire.',true);return}ui.modalAnim=true;ui.modal={type:'event',draft:{id:'',partnerId:ds.partner||ui.cal.partner||ilaId()||S.partners[0].id,title:'',date:ui.cal.day||TODAY,type:'Événement',note:''}};renderModalOnly();break;
+  case 'save-event':{const auto=document.getElementById('ev-auto');const gen=auto&&auto.checked;syncDraft();const d=ui.modal.draft;if(!d.title.trim()||!d.date){toast('Titre et date obligatoires.',true);return}let msg='Événement enregistré';if(!d.id){d.id=uid('e');S.events.push(d);if(gen&&isILAid(d.partnerId)){S.contents.push(...makeEventContents(d));msg='Événement enregistré · Reel et carrousel ajoutés au calendrier'}}else{const i=S.events.findIndex(x=>x.id===d.id);S.events[i]=d}ui.modal=null;commit(msg);break}
+  case 'ev-gen':{const e=S.events.find(x=>x.id===ui.modal.draft.id);if(!e)return;S.contents.push(...makeEventContents(e));renderModalOnly();commit('Reel et carrousel ajoutés');break}
+  case 'ev-swap':{const e=S.events.find(x=>x.id===ui.modal.draft.id);const cs=eventContents(e);if(cs.length!==2)return;const a=cs[0].platforms.map(p=>p.date),b=cs[1].platforms.map(p=>p.date);const da=a[0],db=b[0];cs[0].platforms.forEach(p=>p.date=db);cs[1].platforms.forEach(p=>p.date=da);cs.forEach(c=>c.history.push({at:nowStamp(),by:me().id,text:'Ordre Reel / carrousel inversé'}));commit('Ordre inversé');renderModalOnly();break}
   case 'del-event':S.events=S.events.filter(x=>x.id!==ui.modal.draft.id);ui.modal=null;commit('Événement supprimé');break;
   case 'export-pdf':exportPDF();break;
   case 'save-report':{const r=ui.rep;S.reports.push({id:uid('r'),partnerId:r.partner,month:r.month,opts:Object.assign(clone(r.opts),{project:r.project||''}),exclude:Object.keys(r.exclude).filter(k=>r.exclude[k]),createdAt:nowStamp(),by:me().id,shared:false,sentAt:'',sentChannel:'',sentTo:'',sentBy:''});commit('Compte rendu enregistré (interne, non envoyé)');break}
@@ -2794,6 +3225,7 @@ document.addEventListener('input',e=>{const t=e.target;if(t.id==='ci-q'&&ui.moda
 document.addEventListener('input',e=>{const t=e.target;if(t.id==='cf-q'){ui.cf.q=t.value;clearTimeout(t._d);t._d=setTimeout(()=>{const pos=t.selectionStart;render();const n=document.getElementById('cf-q');if(n){n.focus();n.setSelectionRange(pos,pos)}},220)}});
 document.addEventListener('submit',async e=>{
  const f=e.target;e.preventDefault();
+ if(f.dataset.form==='period'){const fd=new FormData(f);const from=String(fd.get('from')||''),to=String(fd.get('to')||'');if(!from||!to||to<from){toast('Vérifiez les dates de la session.',true);return}S.ila.storyPeriods.push({id:uid('pp'),name:String(fd.get('name')||'Session CTF'),from,to});commit('Session ajoutée · 4 stories par jour prévues');return}
  if(f.dataset.form==='auth'){const fd=new FormData(f);const email=String(fd.get('email')||'').trim().toLowerCase();const pw=String(fd.get('password')||'');ui.authEmail=email;ui.authErr='';ui.authOk='';ui.authBusy=true;render();const m=ui.authMode||'login';
   try{if(m==='login'){const {data,error}=await sb.auth.signInWithPassword({email,password:pw});if(error)throw error;ui.authBusy=false;await afterLogin(data.session);return}
    if(m==='signup'){const {data,error}=await sb.auth.signUp({email,password:pw,options:{emailRedirectTo:location.origin}});if(error)throw error;if(data.session){ui.authBusy=false;await afterLogin(data.session);return}ui.authOk='Compte créé. Si un email de confirmation arrive, cliquez sur le lien puis revenez vous connecter ici.';ui.authMode='login'}
