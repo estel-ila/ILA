@@ -921,6 +921,22 @@ h3 .pfl,.ql .pfl,dt .pfl,.badge .pfl{margin-right:6px}
 .wkl{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11px;color:var(--ink-2)}.wkl i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:0}
 @media (max-width:1100px){.wkgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.wmk{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:560px){.wmonth{grid-template-columns:minmax(0,1fr);justify-items:center}.wmk{grid-template-columns:repeat(2,minmax(0,1fr));width:100%}.wkgrid{gap:8px}.wkcard{padding:11px}.wkg{flex-direction:column;align-items:flex-start;gap:6px}.wkh b{font-size:16px}}
+.prodcal{grid-column:span 12}.prodcal .pgts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.pgt{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.6);min-width:0}
+.pgtb{display:grid;gap:4px;min-width:0;flex:1}.pgtb b{font-size:13px}.pgtb span{font-size:11px}
+.pgbar{height:6px;border-radius:9px;background:rgba(14,14,14,.1);overflow:hidden}.pgbar i{display:block;height:100%;background:var(--ink);border-radius:9px}
+.pgw{font-size:12px;font-weight:800;padding:3px 8px;border-radius:99px;background:#E6F4EC;color:#1E8A52}
+.pweek{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.pday{min-width:0;border-radius:16px;background:rgba(255,255,255,.55);padding:8px;display:grid;align-content:start;gap:6px;min-height:120px}
+.pday.today{background:#fff;box-shadow:inset 0 0 0 2px var(--red)}.pday.fut{opacity:.55}
+.pdh{display:flex;align-items:baseline;gap:5px;font-size:11px;color:var(--ink-2);font-weight:700}.pdh b{font-size:17px;color:var(--ink)}.pdh em{margin-left:auto;font-style:normal;font-size:10.5px;font-weight:800;background:var(--ink);color:#fff;border-radius:99px;padding:1px 7px}
+.pdl{display:grid;gap:6px}.pde{font-size:12px;color:var(--ink-2);opacity:.6}
+.pdi{display:grid;grid-template-columns:auto minmax(0,1fr);gap:7px;align-items:start;text-align:left;padding:6px;border-radius:12px;border:0;background:rgba(255,255,255,.9);box-shadow:inset 3px 0 0 var(--pc);font:inherit;color:var(--ink);cursor:pointer}
+.pdt{display:block;width:26px}.pdt .thumb{width:26px;border-radius:6px;box-shadow:none}
+.pdx{display:grid;gap:4px;min-width:0}.pdx b{font-size:11.5px;line-height:1.22;font-weight:700;overflow-wrap:break-word;hyphens:auto}
+.pdk{display:flex;gap:3px;flex-wrap:wrap}.pdk .tk{width:19px;height:19px;border-radius:6px}.pdk .tk svg{width:11px;height:11px}
+@media (max-width:1100px){.prodcal .pgts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.pweek{grid-template-columns:minmax(0,1fr)}.pday{grid-template-columns:44px minmax(0,1fr);min-height:0;align-items:start}.pdh{flex-direction:column;align-items:center;gap:0}.pdh em{margin:2px 0 0}.pdl{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.pday.fut{display:none}.prodcal .pgts{grid-template-columns:minmax(0,1fr)}}
 .delbox{display:grid;gap:10px;padding:14px;border-radius:18px;background:rgba(217,20,14,.08);border:1px solid rgba(217,20,14,.25);margin-top:12px}.delbox .row .btn{width:auto}
 .selbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px);z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;margin-bottom:14px;border-radius:20px;background:rgba(23,12,11,.86);color:#fff;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .selbar .btn.ghost{color:#fff;background:rgba(255,255,255,.12)}
@@ -1690,6 +1706,19 @@ function progressPanel(cs){const sm=ui.dash.sm||TODAY.slice(0,7);const W=monthWe
    <div class="wmbar">${bar(M)}</div></div>
   <div class="wkgrid">${W.map(card).join('')}</div>
   <div class="muted" style="font-size:11.5px;margin-top:10px">S1 = du 1 au 7 · S2 = du 8 au 14 · S3 = du 15 au 21 · S4 = du 22 à la fin du mois. Une publication = un contenu sur une plateforme. Touchez une semaine pour l'ouvrir dans le calendrier.</div></section>`}
+function stampTasks(o,d){TASKS.forEach(([k])=>{const t=d.tasks&&d.tasks[k];if(!t)return;const was=o&&o.tasks&&o.tasks[k];if(t.state==='fait'){if(!(was&&was.state==='fait')){t.doneAt=TODAY;t.doneBy=me().id}else if(was&&was.doneAt&&!t.doneAt){t.doneAt=was.doneAt;t.doneBy=was.doneBy}}else{delete t.doneAt;delete t.doneBy}})}
+function taskDoneDate(c,k){const t=c.tasks&&c.tasks[k];if(!t||t.state!=='fait')return '';if(t.doneAt)return t.doneAt;const lab=(TASKS.find(x=>x[0]===k)||[])[1];const h=(c.history||[]).filter(e=>e.text&&lab&&e.text.startsWith(lab+' :')&&/fait$/i.test(e.text)).pop();return h?String(h.at).slice(0,10):''}
+function prodPanel(cs){const wk=ui.dash.pw||weekStart(TODAY);const days=Array.from({length:7},(_,i)=>addDays(wk,i));const we=days[6];
+ const done=[];let undated=0;cs.forEach(c=>TASKS.forEach(([k,l])=>{const t=c.tasks&&c.tasks[k];if(!t||t.state!=='fait')return;const d=taskDoneDate(c,k);if(!d){undated++;return}if(d>=wk&&d<=we)done.push({c,k,l,d,by:t.doneBy})}));
+ const active=cs.filter(c=>gstat(c)!=='publie');
+ const gauges=TASKS.map(([k,l])=>{const ap=active.filter(c=>c.tasks&&c.tasks[k]&&c.tasks[k].state!=='na');const ok=ap.filter(c=>c.tasks[k].state==='fait').length;const wkN=done.filter(x=>x.k===k).length;return `<div class="pgt"><span class="tk ${ap.length&&ok===ap.length?'fait':'en_cours'}">${icon(TICON[k])}</span><div class="pgtb"><b>${l}</b><div class="pgbar"><i style="width:${ap.length?Math.round(ok/ap.length*100):0}%"></i></div><span class="muted tnum">${ok}/${ap.length} faits · ${ap.length-ok} à faire</span></div><span class="pgw tnum" title="Faits cette semaine">+${wkN}</span></div>`}).join('');
+ const JL=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+ const col=(d,i)=>{const raw=done.filter(x=>x.d===d);const it=[];raw.forEach(x=>{let g=it.find(y=>y.c===x.c);if(!g){g={c:x.c,ks:[]};it.push(g)}g.ks.push(x)});const isT=d===TODAY;return `<div class="pday${isT?' today':''}${d>TODAY?' fut':''}"><div class="pdh"><span>${JL[i]}</span><b>${D(d).getDate()}</b>${raw.length?`<em class="tnum" title="sous-tâches terminées">${raw.length}</em>`:''}</div><div class="pdl">${it.map(g=>`<button class="pdi" data-open="${g.c.id}" style="--pc:${pcol(g.c.partnerId)}" title="${esc(g.c.title)} · ${esc((partner(g.c.partnerId)||{}).name||'')} — ${g.ks.map(x=>x.l).join(', ')}"><span class="pdt">${thumbImg(g.c,'mini')}</span><span class="pdx"><b>${esc(g.c.title)}</b><span class="pdk">${g.ks.map(x=>`<span class="tk fait" title="${esc(x.l)}">${icon(TICON[x.k])}</span>`).join('')}</span></span></button>`).join('')||'<span class="pde">—</span>'}</div></div>`};
+ return `<section class="card prodcal"><div class="card-h"><div><div class="eyebrow">Production</div><h2>Ce qui a été produit · semaine du ${fmtD(wk)}</h2></div>
+  <div class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn icon sm ghost" data-act="prod-week" data-v="-7" aria-label="Semaine précédente">${icon('l')}</button>${wk!==weekStart(TODAY)?`<button class="btn sm ghost" data-act="prod-week" data-v="0">Cette semaine</button>`:''}<button class="btn icon sm ghost" data-act="prod-week" data-v="7" aria-label="Semaine suivante">${icon('r')}</button></div></div>
+  <div class="pgts">${gauges}</div>
+  <div class="pweek">${days.map(col).join('')}</div>
+  <div class="muted" style="font-size:11.5px;margin-top:10px"><b class="tnum">${done.length}</b> sous-tâche(s) terminée(s) cette semaine. Une sous-tâche apparaît le jour où elle passe à « Fait ».${undated?` ${undated} sous-tâche(s) faite(s) avant ce suivi n'ont pas de date.`:''}</div></section>`}
 function pageDashboard(){
  const u=me();const sp=ui.dash.partner&&partner(ui.dash.partner)?ui.dash.partner:'';const SPp=sp?partner(sp):null;const DP=sp?[SPp]:partnersByNext(S.partners);
  let cs=visibleContents();
@@ -1753,9 +1782,9 @@ function pageDashboard(){
   ${kpi('valide','dark',by('valide').length?'Prochaine sortie '+fmtD((by('valide').map(nextPub).filter(Boolean).sort((a,b)=>a.date.localeCompare(b.date))[0]||{}).date):'Rien en attente de sortie')}
 
   ${progressPanel(cs)}
+  ${prodPanel(cs)}
   ${gpanel}
   <div class="col7">
-   ${stpanel}
    <section class="card dark">
     <div class="card-h"><div><div class="eyebrow">Publications prévues</div><h2>Cette semaine : ${weekPubs.length} publication${weekPubs.length>1?'s':''}</h2></div><span class="muted tnum">${monthPubs.length} sur le mois · ${monthPubs.filter(x=>x.p.status==='publie').length} publiée(s)</span></div>
     ${weekContents.length?`<div class="weekstrip">${weekContents.map(({c,p})=>`<button class="wcard" data-open="${c.id}"><div class="thumb"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}"><span class="badge">${c.aside?'<span class="chip asidechip">De côté</span>':chipS(c)}</span></div><div class="t">${esc(c.title)}</div><div class="m tnum">${fmtD(p.date)} · ${esc(p.time||'—')} · ${(c.platforms||[]).filter(x=>x.date>=wk&&x.date<=we).map(x=>pfLogo(x.platform,'xs')).join('')}</div></button>`).join('')}</div>`:'<div class="empty" style="border-color:#333;color:#A9A3A1">Aucune publication cette semaine.</div>'}
@@ -2561,7 +2590,7 @@ function saveContent(silentMsg){
  d.platforms.forEach(p=>p.collabs=(p.collabs||[]).filter(k=>k.account.trim()));
  d.media=d.media.filter(x=>x.url||x.label);
  if(d.projectId&&project(d.projectId)?.partnerId!==d.partnerId)d.projectId='';
- normalizeTasks(d);{const o0=d.id?content(d.id):null;trackDescs(o0,d);syncDescTask(d)}const pb4=d.prod;d.prod=prodOf(d);
+ normalizeTasks(d);{const o0=d.id?content(d.id):null;trackDescs(o0,d);syncDescTask(d);stampTasks(o0,d)}const pb4=d.prod;d.prod=prodOf(d);
  if(!d.id){d.id=uid('c');logDiff(null,d);S.contents.push(d)}
  else{const i=S.contents.findIndex(c=>c.id===d.id);logDiff(S.contents[i],d);S.contents[i]=d}
  ui.modal.draft=clone(d);
@@ -2626,8 +2655,8 @@ document.addEventListener('click',async e=>{
   case 'unsend':{const r=S.reports.find(x=>x.id===ds.id);if(!r)return;r.sentAt='';r.sentChannel='';r.sentTo='';commit('Envoi retiré du suivi');break}
   case 'prep-recap':ui.rep.partner=ds.partner;ui.rep.month=ds.month;ui.rep.exclude={};ui.rep.mv='reglages';navigate('comptes-rendus');break;
   case 'rep-mv':ui.rep.mv=ds.v;render();setTimeout(fitPages,30);break;
-  case 'task-done':{const c=content(ds.id);if(!c||!c.tasks||!c.tasks[ds.t])return;c.tasks[ds.t].state='fait';const before=c.prod;c.prod=prodOf(c);const lab=TASKS.find(x=>x[0]===ds.t)[1];c.history.push({at:nowStamp(),by:me().id,text:`${lab} : fait`});if(before!==c.prod)c.history.push({at:nowStamp(),by:me().id,text:`Production : ${PROD[before]} → ${PROD[c.prod]}`});commit(`${lab} faite · « ${c.title} »`);break}
-  case 'qtask':{const c=content(ui.modal.id);const t=c.tasks[ds.t];if(t.state===ds.v)return;const lab=TASKS.find(x=>x[0]===ds.t)[1];const b=c.prod;t.state=ds.v;c.prod=prodOf(c);c.history.push({at:nowStamp(),by:me().id,text:`${lab} : ${TSTATE[ds.v]}`});if(b!==c.prod)c.history.push({at:nowStamp(),by:me().id,text:`Production : ${PROD[b]} → ${PROD[c.prod]}`});commit(`${lab} : ${TSTATE[ds.v].toLowerCase()}`);break}
+  case 'task-done':{const c=content(ds.id);if(!c||!c.tasks||!c.tasks[ds.t])return;c.tasks[ds.t].state='fait';c.tasks[ds.t].doneAt=TODAY;c.tasks[ds.t].doneBy=me().id;const before=c.prod;c.prod=prodOf(c);const lab=TASKS.find(x=>x[0]===ds.t)[1];c.history.push({at:nowStamp(),by:me().id,text:`${lab} : fait`});if(before!==c.prod)c.history.push({at:nowStamp(),by:me().id,text:`Production : ${PROD[before]} → ${PROD[c.prod]}`});commit(`${lab} faite · « ${c.title} »`);break}
+  case 'qtask':{const c=content(ui.modal.id);const t=c.tasks[ds.t];if(t.state===ds.v)return;const lab=TASKS.find(x=>x[0]===ds.t)[1];const b=c.prod;t.state=ds.v;if(ds.v==='fait'){t.doneAt=TODAY;t.doneBy=me().id}else{delete t.doneAt;delete t.doneBy}c.prod=prodOf(c);c.history.push({at:nowStamp(),by:me().id,text:`${lab} : ${TSTATE[ds.v]}`});if(b!==c.prod)c.history.push({at:nowStamp(),by:me().id,text:`Production : ${PROD[b]} → ${PROD[c.prod]}`});commit(`${lab} : ${TSTATE[ds.v].toLowerCase()}`);break}
   case 'qval':{const c=content(ui.modal.id);if(c.validation===ds.v)return;const b=c.validation;c.validation=ds.v;if(ds.v==='en_attente')c.validationRequestedAt=TODAY;if(ds.v==='valide')c.comments.push({id:uid('k'),author:me().id,date:nowStamp(),text:'Contenu validé.',kind:'validation'});c.history.push({at:nowStamp(),by:me().id,text:`Validation : ${VAL[b]} → ${VAL[ds.v]}`});commit(`Validation : ${VAL[ds.v].toLowerCase()}`);break}
   case 'qpub':{const c=content(ui.modal.id);const x=c.platforms[+ds.i];if(x.status===ds.v)return;const b=x.status;x.status=ds.v;c.history.push({at:nowStamp(),by:me().id,text:`${x.platform} : ${PUB[b]} → ${PUB[ds.v]}`});commit(`${x.platform} : ${PUB[ds.v].toLowerCase()}`);break}
   case 'qcol':{const c=content(ui.modal.id);const k=c.platforms[+ds.i].collabs[+ds.j];if(k.status===ds.v)return;const b=k.status;k.status=ds.v;c.history.push({at:nowStamp(),by:me().id,text:`Collaboration ${k.account} : ${COLLAB[b]} → ${COLLAB[ds.v]}`});commit(`Collaboration ${k.account} : ${COLLAB[ds.v].toLowerCase()}`);break}
@@ -2678,6 +2707,7 @@ document.addEventListener('click',async e=>{
   case 'aside-toggle':{const id=ui.modal.draft?ui.modal.draft.id:ui.modal.id;const c=content(id);if(!c)return;setAside([id],!c.aside);if(ui.modal.draft)Object.assign(ui.modal.draft,{aside:c.aside,asideAt:c.asideAt,asideBy:c.asideBy});if(ui.modal.type==='quick')ui.modal=null;commit(c.aside?'Contenu mis de côté · retrouvez-le dans Contenus › De côté':'Contenu remis en circuit');break}
   case 'sel-aside':{const ids=Object.keys(ui.sel.ids);const on=!ui.cf.aside;setAside(ids,on);ui.sel=null;commit(ids.length+(on?' contenu(s) mis de côté':' contenu(s) remis en circuit'));break}
   case 'pub-folder':ui.pubOpen=ui.pubOpen||{};ui.pubOpen[ds.id]=!ui.pubOpen[ds.id];render();break;
+  case 'prod-week':{const v=+ds.v;ui.dash.pw=v===0?weekStart(TODAY):addDays(ui.dash.pw||weekStart(TODAY),v);render();break}
   case 'dash-month':{const v=+ds.v;ui.dash.sm=v===0?TODAY.slice(0,7):addMonths(ui.dash.sm||TODAY.slice(0,7),v);render();break}
   case 'week-cal':{const d=ds.d;ui.cal.view='semaine';ui.cal.week=weekStart(d);ui.cal.month=d.slice(0,7);if(ui.dash.partner)ui.cal.partner=ui.dash.partner;navigate('calendrier');break}
   case 'qdel-ask':ui.modal.confirmDel=true;renderModalOnly();setTimeout(()=>{const b=document.querySelector('#modal-root .qdel');if(b)b.scrollIntoView({block:'nearest'})},30);break;
