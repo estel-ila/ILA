@@ -1197,6 +1197,9 @@ section.cfolded>.card-h{margin-bottom:0!important}
 .rc-com{font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8A8381;margin-bottom:3px}
 .rc-tx{-webkit-mask-image:linear-gradient(#000 calc(100% - 14px),transparent);mask-image:linear-gradient(#000 calc(100% - 14px),transparent);line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;text-align:justify;text-align-last:left;color:#1E1C1B;flex:1;min-height:0;overflow:hidden}.rc-tx em{color:#8A8381}
 .rc-meta{margin-top:8px;font-size:9px;background:#fff;border-radius:10px;padding:4px 9px 6px}.rc-meta .rp-l:first-child{border-top:0;margin-top:0}
+#cadence-slot{border-radius:22px;background:#050505}#cadence-host{position:absolute;z-index:5;border-radius:22px;overflow:hidden;background:#050505;box-shadow:0 10px 30px rgba(0,0,0,.18)}#cadence-host iframe{width:100%;height:100%;border:0;display:block}
+.cad-top{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+@media (max-width:860px){#cadence-slot,#cadence-host{border-radius:16px}}
 </style>
 
 <div class="ambient" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i><i class="a4"></i></div>
@@ -1302,7 +1305,7 @@ const IC={
  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
  trash:'<path d="M4.5 7h15M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7M6.5 7l.8 11.3c.1 1 .9 1.7 1.9 1.7h5.6c1 0 1.8-.7 1.9-1.7L17.5 7M10 11v5.5M14 11v5.5"/>',
  aside:'<rect x="3.5" y="4.5" width="17" height="4.5" rx="1.5"/><path d="M5.5 9v8.5a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V9M10 13h4"/>',
- bell:'<path d="M6 16.5V11a6 6 0 1 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>',
+ clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',bell:'<path d="M6 16.5V11a6 6 0 1 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>',
  star:'<path d="M12 3.5l2.3 5.6 6 .5-4.6 3.9 1.4 5.9L12 16.3l-5.1 3.1 1.4-5.9-4.6-3.9 6-.5z"/>',
  chart:'<path d="M4 20h16"/><rect x="5.5" y="11" width="3" height="7" rx="1"/><rect x="10.5" y="7" width="3" height="11" rx="1"/><rect x="15.5" y="4" width="3" height="14" rx="1"/>',
  copy:'<rect x="8.5" y="8.5" width="11" height="11" rx="2.5"/><path d="M15.5 8.5V6.5a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/>',
@@ -1683,7 +1686,7 @@ function taskIcons(c){const t=c.tasks||{};return `<div class="tks">${TASKS.map((
 
 /* ---------- Rendu principal ---------- */
 const $app=document.getElementById('app');
-const NAV_TEAM=[['tableau-de-bord','Tableau de bord','home'],['calendrier','Calendrier','cal'],['partenaires','Partenaires','users'],['contenus','Contenus','img'],['echanges','Échanges','chat'],['plan','Plan de com ILA','bolt'],['stories','Stories','film'],['statistiques','Statistiques','chart'],['comptes-rendus','Comptes rendus','doc'],['administration','Utilisateurs et droits','shield']];
+const NAV_TEAM=[['tableau-de-bord','Tableau de bord','home'],['calendrier','Calendrier','cal'],['partenaires','Partenaires','users'],['contenus','Contenus','img'],['echanges','Échanges','chat'],['plan','Plan de com ILA','bolt'],['stories','Stories','film'],['statistiques','Statistiques','chart'],['cadence','Cadence ILA','clock'],['comptes-rendus','Comptes rendus','doc'],['administration','Utilisateurs et droits','shield']];
 function navItems(){
  if(isPartner()){const u=me(),a=partner(u.partnerId).access;const it=[['partenaire-'+u.partnerId,'Mon espace','home'],['calendrier','Calendrier','cal']];if(a.comptesRendus)it.push(['comptes-rendus','Comptes rendus','doc']);return it}
  return NAV_TEAM.filter(([r])=>r!=='comptes-rendus'||can('comptes_rendus'));
@@ -1692,13 +1695,13 @@ const routeBase=r=>r.startsWith('partenaire-')||r.startsWith('dispositif-')?'par
 function guardRoute(){
  const r=ui.route;
  if(isPartner()){const own='partenaire-'+me().partnerId;const ok=navItems().some(([k])=>k===r);if(!ok)ui.route=own;return}
- const known=['tableau-de-bord','calendrier','partenaires','contenus','echanges','plan','stories','statistiques','comptes-rendus','administration'];
+ const known=['tableau-de-bord','calendrier','partenaires','contenus','echanges','plan','stories','statistiques','cadence','comptes-rendus','administration'];
  if(r.startsWith('partenaire-')){if(!partner(r.slice(11)))ui.route='partenaires';return}
  if(r.startsWith('dispositif-')){if(!dispositif(r.slice(11)))ui.route='partenaires';return}
  if(!known.includes(r))ui.route='tableau-de-bord';
  if(r==='comptes-rendus'&&!can('comptes_rendus'))ui.route='tableau-de-bord';
 }
-const TITLES={'tableau-de-bord':'Tableau de bord','calendrier':'Calendrier','partenaires':'Partenaires','contenus':'Contenus','echanges':'Historique des échanges','comptes-rendus':'Comptes rendus mensuels','plan':'Plan de com ILA','stories':'Stories','statistiques':'Statistiques','administration':'Utilisateurs et droits'};
+const TITLES={'tableau-de-bord':'Tableau de bord','calendrier':'Calendrier','partenaires':'Partenaires','contenus':'Contenus','echanges':'Historique des échanges','comptes-rendus':'Comptes rendus mensuels','plan':'Plan de com ILA','stories':'Stories','statistiques':'Statistiques','cadence':'Cadence · quand publier','administration':'Utilisateurs et droits'};
 
 function render(){
  if(ONLINE&&ui.boot!=='ready'){$app.innerHTML=renderAuth()+`<div id="toast-root"></div>`;return}
@@ -1730,7 +1733,7 @@ function render(){
  </main>
  <nav class="bnav" aria-label="Navigation mobile">
   ${bottom.map(([k,l,i])=>`<button data-go="${k}" class="${isOn(k)?'on':''}">${icon(i)}<span>${l.replace('Tableau de bord','Accueil').replace('Utilisateurs et droits','Droits')}</span></button>`).join('')}
-  ${isPartner()?'':`<button data-act="sheet" class="${['contenus','plan','stories','statistiques','comptes-rendus','administration'].includes(ui.route)?'on':''}">${icon('more')}<span>Plus</span></button>`}
+  ${isPartner()?'':`<button data-act="sheet" class="${['contenus','plan','stories','statistiques','cadence','comptes-rendus','administration'].includes(ui.route)?'on':''}">${icon('more')}<span>Plus</span></button>`}
  </nav>
  ${ui.sheet?`<div class="sheet" data-act="sheet-close"><div class="sheet-in" data-stop>${items.filter(x=>!bottom.includes(x)).map(([k,l,i])=>`<button data-go="${k}">${icon(i)}${l}</button>`).join('')}${!ONLINE||(ME&&ME.role==='admin')?`<label class="fld sheet-role"><span>Voir en tant que</span><select id="role-sel2">${roleOpts}</select></label>`:''}${ONLINE?'<button data-act="logout">'+icon('x')+'Se déconnecter</button>':''}</div></div>`:''}
  ${!isPartner()?`<button class="fab ${ui.fab?'on':''}" data-act="fab" aria-label="Actions rapides" aria-expanded="${!!ui.fab}">${icon('plus')}</button>`:''}
@@ -1739,6 +1742,20 @@ function render(){
  <div id="toast-root">${ui.toast?`<div class="toast ${ui.toast.err?'err':''}" role="status"><i></i>${esc(ui.toast.msg)}</div>`:''}</div>`;
  afterRender();
 }
+/* ---------- Cadence (application « quand publier », intégrée) ---------- */
+const CADENCE_URL='https://cadence-quand-publier-flame.vercel.app/';
+window.SCP_getToken=async(force)=>{if(!ONLINE||!sb)return null;try{if(force){const {data}=await sb.auth.refreshSession();if(data&&data.session)return data.session}const {data}=await sb.auth.getSession();return data.session||null}catch(e){return null}};
+function pageCadence(){
+ return `<div class="cad-top"><div><div class="eyebrow">Outil intégré</div><p class="muted" style="margin:2px 0 0">Les meilleurs créneaux de publication pour ILA, avec les mêmes données que l'application Cadence.</p></div><div class="row" style="gap:8px"><button class="btn sm" data-act="cad-reload">Recharger</button><a class="btn sm" href="${CADENCE_URL}" target="_blank" rel="noopener">${icon('link')}Ouvrir à part</a></div></div><div id="cadence-slot"></div>`}
+function placeCadence(){
+ let host=document.getElementById('cadence-host');const slot=document.getElementById('cadence-slot');
+ if(!slot){if(host)host.style.display='none';return}
+ if(!host){host=document.createElement('div');host.id='cadence-host';host.innerHTML=`<iframe title="Cadence" src="cadence.html?client=ILA" allow="clipboard-write"></iframe>`;document.body.appendChild(host)}
+ const r=slot.getBoundingClientRect();const mob=matchMedia('(max-width:860px)').matches;
+ const h=Math.max(480,innerHeight-r.top-(mob?96:24));slot.style.height=h+'px';
+ Object.assign(host.style,{display:'block',top:(r.top+scrollY)+'px',left:(r.left+scrollX)+'px',width:r.width+'px',height:h+'px'});
+}
+addEventListener('resize',()=>{if(document.getElementById('cadence-slot'))placeCadence()});
 function renderPage(){
  const r=ui.route;
  if(r==='tableau-de-bord')return pageDashboard();
@@ -1752,6 +1769,7 @@ function renderPage(){
  if(r==='plan')return pagePlan();
  if(r==='stories')return pageStories();
  if(r==='statistiques')return pageStats();
+ if(r==='cadence')return pageCadence();
  if(r==='administration')return pageAdmin();
  return '';
 }
@@ -1764,7 +1782,7 @@ function applyFolds(){const F=loadFolds();document.querySelectorAll('main .secti
 function applyCardFolds(){const F=loadFolds();const mob=matchMedia('(max-width:719px)').matches;const DEF=['Récaps PDF partenaires','Suivi par partenaire','Jauges du mois','Objectifs','Demandes reçues','Communication','Validations en attente'];
  document.querySelectorAll('#app .dash section.card').forEach(sec=>{const h=sec.querySelector(':scope>.card-h');if(!h)return;const eb=(h.querySelector('.eyebrow')||{}).textContent||'';const key='card:'+eb.replace(/\s+/g,' ').trim().replace(/[0-9]+/g,'#').slice(0,40);if(!eb)return;
   let closed=F[key];if(closed===undefined)closed=mob&&DEF.some(d=>eb.trim().startsWith(d));sec.classList.add('cfoldable');sec.classList.toggle('cfolded',!!closed);h.dataset.cfold=key;h.setAttribute('role','button');h.setAttribute('aria-expanded',String(!closed));if(!h.querySelector('.cchev'))h.insertAdjacentHTML('beforeend','<span class="cchev">'+icon('r')+'</span>')})}
-function afterRender(){fitLogos();applyFolds();applyCardFolds();
+function afterRender(){placeCadence();fitLogos();applyFolds();applyCardFolds();
  fitPages();
  document.querySelectorAll('.mscroll').forEach(w=>{const on=w.querySelector('.on');if(on)w.scrollLeft=on.offsetLeft-w.clientWidth/2+on.clientWidth/2});
  if(ui.anim&&!matchMedia('(prefers-reduced-motion:reduce)').matches){document.querySelectorAll('#page [data-count]').forEach(el=>{const to=+el.dataset.count;const sm=el.querySelector('small');const tail=sm?sm.outerHTML:'';const t0=performance.now();const step=t=>{const k=Math.min(1,(t-t0)/600);const e=1-Math.pow(1-k,3);el.innerHTML=Math.round(to*e)+tail;if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
@@ -3333,6 +3351,7 @@ document.addEventListener('click',async e=>{
  switch(a){
   case 'sheet':ui.sheet=!ui.sheet;render();break;
   case 'close':closeModal(!!ds.discard);break;
+  case 'cad-reload':{const f=document.querySelector('#cadence-host iframe');if(f)f.src='cadence.html?client=ILA';break}
   case 'mine':ui.mine=!!ds.v;ui.anim=true;render();break;
   case 'kpi':ui.cf={partner:ui.dash.partner||'',buckets:[ds.k],owner:ui.mine?me().id:'',q:''};navigate('contenus');break;
   case 'go-data':if(ONLINE){toast(ui.saveState==='err'?'Hors ligne : '+(ui.syncErr||'')+' — nouvel essai automatique.':'Données partagées en temps réel dans la base de l\'équipe.',ui.saveState==='err');break}if(isAdmin()){navigate('administration');setTimeout(()=>document.getElementById('sec-data')?.scrollIntoView(),50)}else toast('Données enregistrées dans ce navigateur uniquement. Le partage nécessite la base de données.');break;
