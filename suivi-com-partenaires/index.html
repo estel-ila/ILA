@@ -2777,7 +2777,7 @@ function pageReports(){
   const cur=r.viewing?S.reports.find(x=>x.id===r.viewing):list[0];
   return `<div class="notice" style="margin-bottom:16px">${icon('lock')}<div>Comptes rendus que l'équipe a choisi de partager avec vous.</div></div>
   ${list.length?`<div class="row" style="margin-bottom:16px">${list.map(x=>`<button class="toggle-chip ${cur&&cur.id===x.id?'on':''}" data-act="view-report" data-id="${x.id}" style="text-transform:capitalize">${fmtMonth(x.month)}</button>`).join('')}</div>
-  <div class="pages">${cur?buildReport(cur.partnerId,cur.month,cur.opts,cur.exclude).map((h,i)=>`<div><div class="pagelabel">Page ${i+1}</div><div class="rp-fit">${h}</div></div>`).join(''):''}</div>`:'<div class="empty">Aucun compte rendu partagé pour le moment.</div>'}`;
+  ${cur?`<div class="row" style="margin-bottom:14px"><button class="btn primary" data-act="dl-report" data-id="${cur.id}" ${ui.dlBusy?'disabled':''}>${icon('dl')}${ui.dlBusy?'Préparation du PDF…':'Télécharger le PDF'}</button></div>`:''}<div class="pages">${cur?buildReport(cur.partnerId,cur.month,cur.opts,cur.exclude).map((h,i)=>`<div><div class="pagelabel">Page ${i+1}</div><div class="rp-fit">${h}</div></div>`).join(''):''}</div>`:'<div class="empty">Aucun compte rendu partagé pour le moment.</div>'}`;
  }
  const months=[];for(let i=-6;i<=3;i++)months.push(addMonths(TODAY.slice(0,7),i));
  const cand=reportCandidates(r.partner,r.month);
@@ -2817,7 +2817,7 @@ function pageReports(){
    <p class="muted" style="font-size:12px;margin:10px 0 0">Préparer ou exporter un compte rendu ne l'envoie pas au partenaire.</p>
   </div>
   ${lastExp&&!lastExp.sentAt?`<div class="card redc"><b>PDF exporté.</b><p style="margin:6px 0 12px;font-size:13px">L'avez-vous transmis à ${esc(partner(lastExp.partnerId).name)} ? Notez-le pour garder la trace.</p><button class="btn" data-act="mark-sent" data-id="${lastExp.id}">${icon('send')}Marquer comme envoyé</button></div>`:''}
-  ${saved.length?`<div class="card"><div class="eyebrow" style="margin-bottom:10px">Récaps préparés</div><div class="rcards">${saved.map(x=>{const pp=partner(x.partnerId);if(!pp)return '';return `<div class="rcard"><span class="plogo xs" style="${logoStyle(pp)}">${logoTxt(pp)}</span><div class="rb"><button class="linkbtn" data-act="load-report" data-id="${x.id}" style="text-decoration:none;text-align:left;font-size:13.5px;text-transform:capitalize">${esc(pp.name)} · ${fmtMonth(x.month)}</button><small style="display:block">${x.sentAt?`Envoyé le ${fmtD(x.sentAt)} · ${esc(x.sentChannel)}`:'Pas encore envoyé'}</small></div><div class="row" style="gap:6px">${x.sentAt?`<span class="chip sent">${icon('check')}Envoyé</span>`:can('echanges')?`<button class="btn sm dark" data-act="mark-sent" data-id="${x.id}">Marquer envoyé</button>`:''}${(isAdmin()||can('acces_partenaires'))?`<button class="toggle-chip ${x.shared?'on':''}" data-act="share-report" data-id="${x.id}" style="height:32px" title="Visible dans l'espace partenaire si l'accès est ouvert">${x.shared?'Dans l\'espace':'Interne'}</button>`:''}${x.sentAt&&isAdmin()?`<button class="btn sm icon ghost" data-act="unsend" data-id="${x.id}" aria-label="Annuler l'envoi noté" title="Annuler l'envoi noté">${icon('l')}</button>`:''}${can('supprimer')?`<button class="btn sm icon ghost" data-act="del-report" data-id="${x.id}" aria-label="Supprimer">${icon('x')}</button>`:''}</div></div>`}).join('')}</div></div>`:''}
+  ${saved.length?`<div class="card"><div class="eyebrow" style="margin-bottom:10px">Récaps préparés</div><div class="rcards">${saved.map(x=>{const pp=partner(x.partnerId);if(!pp)return '';return `<div class="rcard"><span class="plogo xs" style="${logoStyle(pp)}">${logoTxt(pp)}</span><div class="rb"><button class="linkbtn" data-act="load-report" data-id="${x.id}" style="text-decoration:none;text-align:left;font-size:13.5px;text-transform:capitalize">${esc(pp.name)} · ${fmtMonth(x.month)}</button><small style="display:block">${x.sentAt?`Envoyé le ${fmtD(x.sentAt)} · ${esc(x.sentChannel)}`:'Pas encore envoyé'}</small></div><div class="row" style="gap:6px"><button class="btn sm" data-act="dl-report" data-id="${x.id}" ${ui.dlBusy?'disabled':''} title="Télécharger le PDF">${icon('dl')}${ui.dlBusy===x.id?'Préparation…':'PDF'}</button>${x.sentAt?`<span class="chip sent">${icon('check')}Envoyé</span>`:can('echanges')?`<button class="btn sm dark" data-act="mark-sent" data-id="${x.id}">Marquer envoyé</button>`:''}${(isAdmin()||can('acces_partenaires'))?`<button class="toggle-chip ${x.shared?'on':''}" data-act="share-report" data-id="${x.id}" style="height:32px" title="Visible dans l'espace partenaire si l'accès est ouvert">${x.shared?'Dans l\'espace':'Interne'}</button>`:''}${x.sentAt&&isAdmin()?`<button class="btn sm icon ghost" data-act="unsend" data-id="${x.id}" aria-label="Annuler l'envoi noté" title="Annuler l'envoi noté">${icon('l')}</button>`:''}${can('supprimer')?`<button class="btn sm icon ghost" data-act="del-report" data-id="${x.id}" aria-label="Supprimer">${icon('x')}</button>`:''}</div></div>`}).join('')}</div></div>`:''}
  </div>
  <div class="rpreview"><div class="spread" style="margin-bottom:10px"><b>Aperçu · ${pages.length} page${pages.length>1?'s':''} A4</b><span class="muted" style="font-size:12.5px">Mis à jour en direct depuis les fiches</span></div>
   <div class="pages">${pages.map((h,i)=>`<div><div class="pagelabel">Page ${i+1}${i===0?' · synthèse et calendrier':' · détail des publications'}</div><div class="rp-fit">${h}</div></div>`).join('')}</div>
@@ -2830,26 +2830,37 @@ addEventListener('resize',()=>{clearTimeout(fitPages.t);fitPages.t=setTimeout(fi
 
 let DL=null;
 (async()=>{try{if(window.claude&&window.claude.use)DL=await window.claude.use('downloads')}catch(e){DL=null}})();
+async function makePDF(pid,month,opts,exclude){
+ const pages=buildReport(pid,month,opts,exclude||[]);
+ const stage=document.getElementById('pdf-stage');stage.innerHTML=pages.join('');
+ await Promise.all([...stage.querySelectorAll('img')].map(im=>im.complete?0:new Promise(res=>{im.onload=im.onerror=res})));
+ const {jsPDF}=window.jspdf;const pdf=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+ const els=[...stage.querySelectorAll('.rp-page')];
+ try{for(let i=0;i<els.length;i++){const cv=await window.html2canvas(els[i],{scale:2,backgroundColor:'#ffffff',logging:false,useCORS:true});if(i)pdf.addPage();pdf.addImage(cv.toDataURL('image/jpeg',0.92),'JPEG',0,0,210,297)}}
+ finally{stage.innerHTML=''}
+ const p=partner(pid);return {blob:pdf.output('blob'),name:`Compte-rendu_${(p?p.name:'partenaire').replace(/[^\wÀ-ÿ-]+/g,'-')}_${month}.pdf`};
+}
+async function saveBlob(blob,name){
+ if(DL){await DL.save({filename:name,data:blob});return}
+ const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.rel='noopener';document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+function pdfReady(){if(!window.html2canvas||!window.jspdf){toast('Les outils de génération PDF ne sont pas chargés. Rechargez la page.',true);return false}return true}
 async function exportPDF(){
- const r=ui.rep;
- if(!window.html2canvas||!window.jspdf){toast('Les outils de génération PDF ne sont pas chargés. Rechargez la page.',true);return}
- const dl=DL;
- if(!dl){toast('Le téléchargement n\'est pas disponible dans cette vue. Ouvrez l\'application dans claude.ai.',true);return}
+ const r=ui.rep;if(!pdfReady())return;
  ui.busy=true;render();
  try{
-  const pages=buildReport(r.partner,r.month,Object.assign({},r.opts,{project:r.project}),Object.keys(r.exclude).filter(k=>r.exclude[k]));
-  const stage=document.getElementById('pdf-stage');stage.innerHTML=pages.join('');
-  await Promise.all([...stage.querySelectorAll('img')].map(im=>im.complete?0:new Promise(res=>{im.onload=im.onerror=res})));
-  const {jsPDF}=window.jspdf;const pdf=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
-  const els=[...stage.querySelectorAll('.rp-page')];
-  for(let i=0;i<els.length;i++){const cv=await window.html2canvas(els[i],{scale:2,backgroundColor:'#ffffff',logging:false});if(i)pdf.addPage();pdf.addImage(cv.toDataURL('image/jpeg',0.92),'JPEG',0,0,210,297)}
-  stage.innerHTML='';
-  const p=partner(r.partner);const name=`Compte-rendu_${p.name.replace(/[^\wÀ-ÿ-]+/g,'-')}_${r.month}.pdf`;
-  const blob=pdf.output('blob');
+  const {blob,name}=await makePDF(r.partner,r.month,Object.assign({},r.opts,{project:r.project}),Object.keys(r.exclude).filter(k=>r.exclude[k]));
   ui.busy=false;render();
-  try{await dl.save({filename:name,data:blob});let rec=latestReport(r.partner,r.month);if(!rec){rec={id:uid('r'),partnerId:r.partner,month:r.month,opts:clone(r.opts),exclude:Object.keys(r.exclude).filter(k=>r.exclude[k]),createdAt:nowStamp(),by:me().id,shared:false,sentAt:'',sentChannel:'',sentTo:'',sentBy:''};S.reports.push(rec)}ui.rep.lastExported=rec.id;commit('PDF prêt : '+name)}
+  try{await saveBlob(blob,name);let rec=latestReport(r.partner,r.month);if(!rec){rec={id:uid('r'),partnerId:r.partner,month:r.month,opts:Object.assign(clone(r.opts),{project:r.project}),exclude:Object.keys(r.exclude).filter(k=>r.exclude[k]),createdAt:nowStamp(),by:me().id,shared:false,sentAt:'',sentChannel:'',sentTo:'',sentBy:''};S.reports.push(rec)}ui.rep.lastExported=rec.id;commit('PDF téléchargé : '+name)}
   catch(e){toast(e&&e.code==='declined'?'Téléchargement annulé.':'Le PDF n\'a pas pu être enregistré ('+(e&&e.code||'erreur')+').',true)}
  }catch(e){ui.busy=false;render();toast('Erreur pendant la génération du PDF.',true)}
+}
+async function downloadReport(id){
+ const x=S.reports.find(y=>y.id===id);if(!x||!pdfReady())return;
+ ui.dlBusy=id;render();
+ try{const {blob,name}=await makePDF(x.partnerId,x.month,x.opts||{},x.exclude||[]);ui.dlBusy=null;render();await saveBlob(blob,name);toast('PDF téléchargé : '+name)}
+ catch(e){ui.dlBusy=null;render();toast(e&&e.code==='declined'?'Téléchargement annulé.':'Le PDF n\'a pas pu être généré.',true)}
 }
 
 /* ---------- Administration ---------- */
@@ -3454,6 +3465,7 @@ document.addEventListener('click',async e=>{
   case 'ev-swap':{const e=S.events.find(x=>x.id===ui.modal.draft.id);const cs=eventContents(e);if(cs.length!==2)return;const a=cs[0].platforms.map(p=>p.date),b=cs[1].platforms.map(p=>p.date);const da=a[0],db=b[0];cs[0].platforms.forEach(p=>p.date=db);cs[1].platforms.forEach(p=>p.date=da);cs.forEach(c=>c.history.push({at:nowStamp(),by:me().id,text:'Ordre Reel / carrousel inversé'}));commit('Ordre inversé');renderModalOnly();break}
   case 'del-event':S.events=S.events.filter(x=>x.id!==ui.modal.draft.id);ui.modal=null;commit('Événement supprimé');break;
   case 'export-pdf':exportPDF();break;
+  case 'dl-report':if(!ui.dlBusy)downloadReport(ds.id);break;
   case 'save-report':{const r=ui.rep;S.reports.push({id:uid('r'),partnerId:r.partner,month:r.month,opts:Object.assign(clone(r.opts),{project:r.project||''}),exclude:Object.keys(r.exclude).filter(k=>r.exclude[k]),createdAt:nowStamp(),by:me().id,shared:false,sentAt:'',sentChannel:'',sentTo:'',sentBy:''});commit('Compte rendu enregistré (interne, non envoyé)');break}
   case 'load-report':{const x=S.reports.find(y=>y.id===ds.id);if(!x)return;ui.rep.partner=x.partnerId;ui.rep.month=x.month;ui.rep.opts=clone(x.opts);ui.rep.exclude=Object.fromEntries((x.exclude||[]).map(k=>[k,true]));render();break}
   case 'share-report':{const x=S.reports.find(y=>y.id===ds.id);x.shared=!x.shared;const p=partner(x.partnerId);commit(x.shared?(p.access.enabled&&p.access.comptesRendus?'Visible dans l\'espace partenaire · aucun envoi':'Marqué partagé · l\'accès partenaire est fermé, il reste invisible'):'Compte rendu redevenu interne');break}
