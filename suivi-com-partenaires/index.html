@@ -1188,6 +1188,15 @@ section.cfolded>.card-h{margin-bottom:0!important}
 .rp-pfst{display:flex;gap:8px;margin-top:8px}.rp-pfst>div{flex:1;display:flex;align-items:center;gap:6px;background:#F4F2F1;border-radius:10px;padding:7px 10px}.rp-pfst b{font-size:18px;font-weight:800}.rp-pfst span{font-size:9px;font-weight:700;color:#6E6866}
 .rpf-opt{display:flex;gap:10px;align-items:flex-start;padding:12px;border-radius:14px;background:rgba(14,14,14,.06);margin-bottom:14px;cursor:pointer}.rpf-opt input{width:20px;height:20px;accent-color:#D9140E;flex:none;margin-top:1px}.rpf-opt b{display:block;font-size:14px}.rpf-opt em{display:block;font-style:normal;font-size:12px;color:var(--muted,#6E6866);margin-top:2px}
 .rp-desc,.rp-pltx,.rpf-desc{text-align:justify;text-justify:inter-word;text-align-last:left}
+.rc-head{display:flex;gap:18px;align-items:center;margin:14px 0 14px;height:150px}.rc-thumb{width:118px;height:148px;border-radius:14px;overflow:hidden;flex:none;background:#EAE7E5}.rc-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.rc-info{flex:1;min-width:0}.rc-title{font-size:24px;font-weight:800;letter-spacing:-.03em;line-height:1.08;margin:5px 0 2px}.rc-pfs{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:10px;font-weight:700;color:#2A2827}.rc-pfs span{display:flex;align-items:center}
+.rc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rc-card{background:#F4F2F1;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.rc-h{display:flex;align-items:center;gap:7px}.rc-h b{font-size:13px;letter-spacing:-.01em}.rc-h .rp-chip{margin-left:auto}
+.rc-dt{font-size:15px;font-weight:800;letter-spacing:-.02em;margin:8px 0 8px;padding-bottom:8px;border-bottom:1px solid #E1DCDA;display:flex;gap:8px;align-items:baseline}.rc-dt span{color:#D9140E}
+.rc-com{font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8A8381;margin-bottom:3px}
+.rc-tx{-webkit-mask-image:linear-gradient(#000 calc(100% - 14px),transparent);mask-image:linear-gradient(#000 calc(100% - 14px),transparent);line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;text-align:justify;text-align-last:left;color:#1E1C1B;flex:1;min-height:0;overflow:hidden}.rc-tx em{color:#8A8381}
+.rc-meta{margin-top:8px;font-size:9px;background:#fff;border-radius:10px;padding:4px 9px 6px}.rc-meta .rp-l:first-child{border-top:0;margin-top:0}
 </style>
 
 <div class="ambient" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i><i class="a4"></i></div>
@@ -2715,6 +2724,22 @@ function buildReport(pid,ym,opts,exclude){
     const h=30+Math.max(96,26+24+(d?lines(d,98)*14.5+16:0)+mt.n*18);
     blocks.push({h,pf:n,html:`<div class="rpf-row"><div class="rpf-th"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}"></div><div class="rpf-b"><div class="rpf-top"><b>${esc(c.title)}</b><span class="rpf-dt">${dt(x)}</span></div><div class="rp-chips"><span class="rp-chip s-${s}">${GS[s]}</span><span class="rp-chip">${esc(c.format)}</span>${x.status&&x.status!=='prevu'?`<span class="rp-chip ${x.status==='publie'?'s-publie':'s-valide'}">${PUB[x.status]}</span>`:''}</div>${d?`<div class="rpf-desc">${esc(d)}</div>`:''}${mt.m?`<div class="rpf-meta">${mt.m}</div>`:''}</div></div>`})});
    });later.push({title:'Détail plateforme par plateforme',blocks});
+ }else if(opts.descriptions){
+  // Une page par contenu : en-tête + une carte par plateforme (2 par ligne), chacune avec son propre texte
+  const blocks=[];const AV=BUDGET+50;
+  cs.forEach(c=>{const s=gstat(c);const pr=c.projectId?project(c.projectId):null;const pls=rPls(c,pfs,ym);if(!pls.length)return;
+   const headH=176;const hOf=r=>Math.min(390,Math.floor((AV-headH-(r-1)*12)/r));
+   const fit=(x,w,cardH)=>{const t=descOf(c,x);const own=!!(x.text||'').trim();const avH=cardH-74-meta(x).n*19-(own?0:14);let fs=7;for(const f of [10.5,10,9.5,9,8.5,8,7.5,7]){fs=f;if(lines(t,Math.floor(w/(f*0.53)))*f*1.45<=avH)break}return fs};
+   const wide=pls.map(()=>false);const rows=Math.ceil(pls.length/2);const cardH=hOf(rows);
+   const card=(x,i)=>{const t=descOf(c,x);const own=!!(x.text||'').trim();const mt=meta(x);const fs=fit(x,wide[i]?640:300,cardH);
+    return `<div class="rc-card" ${wide[i]?'style="grid-column:1/-1"':''}><div class="rc-h">${pfLogo(x.platform,'rp')}<b>${esc(x.platform)}</b>${x.status&&x.status!=='prevu'?`<span class="rp-chip ${x.status==='publie'?'s-publie':'s-valide'}">${PUB[x.status]}</span>`:`<span class="rp-chip">Prévue</span>`}</div>
+     <div class="rc-dt">${x.date?fmtD(x.date):'Date à définir'}${x.time?`<span>${esc(x.time)}</span>`:''}</div>
+     ${own?'':'<div class="rc-com">Description commune</div>'}<div class="rc-tx" style="font-size:${fs}px">${t?esc(t):'<em>Description à venir.</em>'}</div>
+     ${mt.m?`<div class="rc-meta">${mt.m}</div>`:''}</div>`};
+   const html=`<div class="rc-head"><div class="rc-thumb"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}"></div><div class="rc-info"><div class="rp-kick">${esc(c.format||'Contenu')}${pr?' · '+esc(pr.name):''}</div><div class="rc-title">${esc(c.title)}</div><div class="rp-chips"><span class="rp-chip s-${s}">${GS[s]}</span><span class="rp-chip">${pls.length} plateforme${pls.length>1?'s':''}</span></div><div class="rc-pfs">${pls.map(x=>`<span>${pfLogo(x.platform,'xs')}${x.date?fmtD(x.date):'—'}${x.time?' · '+esc(x.time):''}</span>`).join('')}</div></div></div>
+    <div class="rc-grid" style="grid-template-rows:repeat(${rows},${cardH}px);grid-auto-flow:dense">${pls.map(card).join('')}</div>`;
+   blocks.push({h:BUDGET+1,html})});
+  later.push({title:'Détail des publications',blocks});
  }else{
   const blocks=[];
   cs.forEach(c=>{const s=gstat(c);const pr=c.projectId?project(c.projectId):null;const pls=rPls(c,pfs,ym);
