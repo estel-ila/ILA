@@ -1495,9 +1495,9 @@ function fromRecords(rows){const st=emptyState();st.users=[];const priv={};rows.
  st.partners.sort((a,b)=>a.name.localeCompare(b.name,'fr'));
  if(!st.users.length)st.users=emptyState().users;return st}
 function expectedUser(){return ME?(ME.role==='partenaire'?'partner:'+ME.partner_id:ME.app_user_id):S.currentUser}
-let RECS=null,RT_PENDING=[];
+let RECS=null,RT_PENDING=[];const MYSTAMPS=new Set();
 function idle(fn){(window.requestIdleCallback||((f)=>setTimeout(f,200)))(fn)}
-async function reloadAll(){const {data,error}=await sb.from('scp_records').select('id,kind,partner_id,internal,body');if(error)throw error;
+async function reloadAll(){const {data,error}=await sb.from('scp_records').select('id,kind,partner_id,internal,body,updated_at');if(error)throw error;
  RECS=new Map((data||[]).map(r=>[r.id,r]));applyRecs()}
 function applyRecs(){
  const cu=S.currentUser;S=migrate(fromRecords([...RECS.values()]));S.currentUser=(ME&&ME.role==='admin')?(cu||expectedUser()):expectedUser();
@@ -1512,14 +1512,23 @@ function ilaBootstrap(){if(canWrite()&&dedupePlan())save();if(ILA_BOOTING||!canW
  if(TODAY<'2027-01-07'&&!S.events.some(e=>e.partnerId===ila&&e.date==='2027-01-07')){const e={id:uid('e'),partnerId:ila,title:'Restitution CTF',date:'2027-01-07',type:'Événement',note:'Restitution du programme CTF'};S.events.push(e);S.contents.push(...makeEventContents(e))}
  S.ila.boot1=TODAY;save()}
 function canWrite(){return ONLINE&&ME&&(ME.role==='admin'||ME.role==='equipe')}
-function scheduleSync(){if(!canWrite())return;clearTimeout(syncTimer);ui.saveState='sync';chip();syncTimer=setTimeout(doSync,450)}
+const OUTBOX=STORE_KEY+'-outbox';
+function writeOutbox(){try{const recs=toRecords(S);const up=recs.filter(r=>lastSynced.get(r.id)!==JSON.stringify(r));const now=new Set(recs.map(r=>r.id));const del=[...lastSynced.keys()].filter(id=>!now.has(id));if(up.length||del.length)localStorage.setItem(OUTBOX,JSON.stringify({by:ME&&ME.email,at:Date.now(),up,del}));else localStorage.removeItem(OUTBOX)}catch(e){}}
+function scheduleSync(){if(!canWrite())return;clearTimeout(syncTimer);ui.saveState='sync';chip();writeOutbox();syncTimer=setTimeout(doSync,300)}
+function flushSync(){if(syncTimer){clearTimeout(syncTimer);doSync()}}
+let lastPull=Date.now();
+async function softReload(){if(!ONLINE||!ME||ui.boot!=='ready')return;if(syncing||syncTimer){setTimeout(softReload,1200);return}
+ try{const typing=ui.modal&&['content','exchange','partner','event','sent'].includes(ui.modal.type);await reloadAll();lastPull=Date.now();if(typing){const pg=document.getElementById('page');if(pg){pg.innerHTML=renderPage();afterRender()}}else render()}catch(e){}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushSync();else if(Date.now()-lastPull>15000)softReload()});
+window.addEventListener('pagehide',flushSync);
+window.addEventListener('online',()=>{if(ui.saveState==='err')scheduleSync();softReload()});
 async function doSync(){syncTimer=null;if(syncing){syncAgain=true;return}syncing=true;
- try{const recs=toRecords(S);const now=new Map(recs.map(r=>[r.id,JSON.stringify(r)]));const stamp=new Date().toISOString();
+ try{const recs=toRecords(S);const now=new Map(recs.map(r=>[r.id,JSON.stringify(r)]));const stamp=new Date().toISOString();MYSTAMPS.add(Date.parse(stamp));
   const up=recs.filter(r=>lastSynced.get(r.id)!==now.get(r.id)).map(r=>Object.assign({},r,{updated_at:stamp,updated_by:ME.app_user_id}));
   const del=[...lastSynced.keys()].filter(id=>!now.has(id));
   for(let i=0;i<up.length;i+=150){const {error}=await sb.from('scp_records').upsert(up.slice(i,i+150));if(error)throw error}
   if(del.length){const {error}=await sb.from('scp_records').delete().in('id',del);if(error)throw error}
-  lastSynced=now;if(RECS){up.forEach(r=>RECS.set(r.id,{id:r.id,kind:r.kind,partner_id:r.partner_id,internal:r.internal,body:r.body}));del.forEach(id=>RECS.delete(id))}ui.saveState='ok';ui.savedAt=new Date();ui.syncErr='';const snap=S;idle(()=>{try{localStorage.setItem(STORE_KEY+'-cache',JSON.stringify(snap))}catch(e){}})
+  lastSynced=now;if(!syncAgain&&!syncTimer)writeOutbox();if(RECS){up.forEach(r=>RECS.set(r.id,{id:r.id,kind:r.kind,partner_id:r.partner_id,internal:r.internal,body:r.body,updated_at:stamp}));del.forEach(id=>RECS.delete(id))}ui.saveState='ok';ui.savedAt=new Date();ui.syncErr='';const snap=S;idle(()=>{try{localStorage.setItem(STORE_KEY+'-cache',JSON.stringify(snap))}catch(e){}})
  }catch(e){ui.saveState='err';ui.syncErr=(e&&e.message)||'erreur';toast('Synchronisation impossible : '+ui.syncErr+'. Vos changements restent ici et seront renvoyés.',true);setTimeout(()=>{if(ui.saveState==='err')scheduleSync()},8000)}
  syncing=false;chip();if(syncAgain){syncAgain=false;doSync()}}
 function chip(){const el=document.querySelector('.savechip');if(!el)return;el.classList.toggle('off',ui.saveState!=='ok'&&ui.saveState!=='sync');el.innerHTML='<i></i>'+esc(saveLabel())}
@@ -1537,19 +1546,24 @@ async function afterLogin(session){
  try{
   const {data,error}=await sb.from('scp_members').select('*').eq('email',String(session.user.email).toLowerCase()).maybeSingle();
   if(error||!data){ui.boot='denied';ui.booting=false;render();return}
-  ME=data;S.currentUser=expectedUser();await reloadAll();
+  ME=data;S.currentUser=expectedUser();await reloadAll();lastPull=Date.now();
+  try{const ob=JSON.parse(localStorage.getItem(OUTBOX)||'null');if(ob&&ob.by===ME.email&&Date.now()-ob.at<7*864e5&&(ME.role==='admin'||ME.role==='equipe')){ob.up.forEach(r=>RECS.set(r.id,r));(ob.del||[]).forEach(id=>RECS.delete(id));const keep=lastSynced;applyRecs();lastSynced=keep;scheduleSync();setTimeout(()=>toast('Des modifications non envoyées ont été récupérées et synchronisées.'),800)}else localStorage.removeItem(OUTBOX)}catch(e){}
   if(ME.role==='admin'&&!S.partners.length&&!S.contents.length){try{const r=await fetch('seed.json',{cache:'no-store'});if(r.ok){const sd=await r.json();const cu=S.currentUser;S=migrate(sd);S.currentUser=cu;lastSynced=new Map();await doSync();toast('Vos calendriers ont été importés dans la base partagée.')}}catch(e){}}
   if(ME.role==='partenaire'&&!partner(ME.partner_id)){ui.boot='denied';ui.denyReason='closed';ui.booting=false;render();return}
   if(!partner(ui.rep.partner)&&S.partners.length)ui.rep.partner=S.partners[0].id;
   ui.boot='ready';ui.anim=true;ui.booting=false;render();
-  sb.channel('scp-records').on('postgres_changes',{event:'*',schema:'public',table:'scp_records'},pl=>{const by=(pl.new&&pl.new.updated_by)||'';if(by===ME.app_user_id)return;RT_PENDING.push(pl);clearTimeout(rtTimer);rtTimer=setTimeout(remoteRefresh,500)}).subscribe();
+  subscribeRT();
  }catch(e){ui.boot='error';ui.bootErr=(e&&e.message)||'erreur';ui.booting=false;render()}
+}
+let RTCH=null;
+function subscribeRT(){
+  const ch=sb.channel('scp-records-'+Date.now());RTCH=ch;ch.on('postgres_changes',{event:'*',schema:'public',table:'scp_records'},pl=>{RT_PENDING.push(pl);clearTimeout(rtTimer);rtTimer=setTimeout(remoteRefresh,500)}).subscribe(st=>{if(ch!==RTCH)return;if((st==='CHANNEL_ERROR'||st==='TIMED_OUT'||st==='CLOSED')&&!ui.rtRetry){ui.rtRetry=setTimeout(()=>{ui.rtRetry=null;const old=RTCH;RTCH=null;try{sb.removeChannel(old)}catch(e){}subscribeRT();softReload()},4000)}});
 }
 async function remoteRefresh(){if(syncing||syncTimer){rtTimer=setTimeout(remoteRefresh,900);return}
  const typing=ui.modal&&['content','exchange','partner','event','sent'].includes(ui.modal.type);
  try{const P=RT_PENDING;RT_PENDING=[];
   const ok=RECS&&P.length&&P.every(pl=>pl.eventType==='DELETE'?(pl.old&&pl.old.id):(pl.new&&pl.new.id&&pl.new.body!==undefined&&pl.new.body!==null));
-  if(ok){P.forEach(pl=>{if(pl.eventType==='DELETE')RECS.delete(pl.old.id);else RECS.set(pl.new.id,{id:pl.new.id,kind:pl.new.kind,partner_id:pl.new.partner_id,internal:pl.new.internal,body:pl.new.body})});applyRecs()}
+  if(ok){let ch=0;P.forEach(pl=>{if(pl.eventType==='DELETE'){if(RECS.delete(pl.old.id))ch++}else{const o=RECS.get(pl.new.id);const t=Date.parse(pl.new.updated_at||'')||0;if(MYSTAMPS.has(t))return;if(o&&o.updated_at&&t&&t<=Date.parse(o.updated_at))return;if(o&&canon(o.body)===canon(pl.new.body)){o.updated_at=pl.new.updated_at;return}RECS.set(pl.new.id,{id:pl.new.id,kind:pl.new.kind,partner_id:pl.new.partner_id,internal:pl.new.internal,body:pl.new.body,updated_at:pl.new.updated_at});ch++}});if(!ch)return;applyRecs()}
   else await reloadAll();
   if(ui.modal&&ui.modal.type==='quick'&&!content(ui.modal.id))ui.modal=null;
   if(typing){const pg=document.getElementById('page');if(pg){pg.innerHTML=renderPage();afterRender()}}else render()}catch(e){}}
@@ -3053,7 +3067,7 @@ function modalContent(){
   <div class="pb">${body}</div>
   <div class="pf-foot">
    ${editable?`<button class="btn primary" data-act="save-content">${icon('check')}${isNew?'Créer le contenu':'Enregistrer'}</button>`:''}
-   <button class="btn ghost ${editable?'hide-m':''}" data-act="close">${editable?'Annuler':'Fermer'}</button>
+   <button class="btn ghost ${editable?'hide-m':''}" data-act="close" ${editable?'data-discard="1"':''}>${editable?'Annuler':'Fermer'}</button>
    <span style="flex:1"></span>
    ${!isNew&&!pv&&can('echanges',c.partnerId)?`<button class="btn sm ghost" data-act="new-exchange" data-partner="${c.partnerId}" data-content="${c.id}" title="Consigner un échange" aria-label="Consigner un échange">${icon('chat')}<span class="lbl">Consigner un échange</span></button>`:''}
    ${!isNew&&!pv&&can('contenus_modifier',c.partnerId)?`<button class="btn sm ghost" data-act="aside-toggle" title="${c.aside?'Remettre en circuit':'Mettre de côté'}" aria-label="${c.aside?'Remettre en circuit':'Mettre de côté'}">${icon('aside')}<span class="lbl">${c.aside?'Remettre':'De côté'}</span></button>`:''}
@@ -3089,7 +3103,7 @@ function modalExchange(){
   </div></div>
   ${canSeeInternal()?`<label class="cb" style="margin-top:14px"><input type="checkbox" data-f="confidential" ${x.confidential?'checked':''}>${icon('lock','width="15" height="15"')}Échange confidentiel (jamais visible par le partenaire)</label>`:''}
   </div>
-  <div class="pf-foot"><button class="btn primary" data-act="save-exchange">${icon('check')}Enregistrer</button><button class="btn ghost" data-act="close">Annuler</button><span style="flex:1"></span>${!isNew&&can('supprimer')?(m.confirmDel?'<button class="btn sm primary" data-act="del-exchange">Confirmer la suppression</button>':'<button class="btn sm ghost" data-act="del-ask">Supprimer</button>'):''}</div>
+  <div class="pf-foot"><button class="btn primary" data-act="save-exchange">${icon('check')}Enregistrer</button><button class="btn ghost" data-act="close" data-discard="1">Annuler</button><span style="flex:1"></span>${!isNew&&can('supprimer')?(m.confirmDel?'<button class="btn sm primary" data-act="del-exchange">Confirmer la suppression</button>':'<button class="btn sm ghost" data-act="del-ask">Supprimer</button>'):''}</div>
  </div></div>`;
 }
 function modalPartner(){
@@ -3215,8 +3229,16 @@ function syncDraft(){
   setPath(ui.modal.draft,path,v);
  });
 }
+function canon(o){return JSON.stringify(o,(k,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.keys(v).sort().reduce((a,x)=>(a[x]=v[x],a),{}):v)}
+function closeModal(discard){
+ const m=ui.modal;
+ if(m&&!discard&&m.draft&&m.draft.id&&(m.type==='content'||m.type==='exchange')){
+  const root=document.getElementById('modal-root');const btn=root&&root.querySelector(m.type==='content'?'[data-act=save-content]':'[data-act=save-exchange]');
+  if(btn){syncDraft();const orig=m.base||(m.type==='content'?content(m.draft.id):S.exchanges.find(x=>x.id===m.draft.id));
+   if(orig&&canon(orig)!==canon(m.draft)){if(m.type==='content'){if(saveContent('Modifications enregistrées automatiquement')===false)return}else{btn.click();return}}}}
+ ui.modal=null;renderModalOnly()}
 function openQuick(id){if(isPartner())return openContent(id,true);ui.modalAnim=!ui.modal;ui.modal={type:'quick',id};ui.sheet=false;ui.fab=false;renderModalOnly()}
-function openContent(id,full){const c=content(id);if(!c)return;if(isPartner()&&(c.partnerId!==me().partnerId||!c.share))return;if(!full&&!isPartner()&&matchMedia('(max-width:860px)').matches)return openQuick(id);ui.modalAnim=true;ui.modal={type:'content',draft:clone(c),tab:'fiche'};ui.sheet=false;renderModalOnly()}
+function openContent(id,full){const c=content(id);if(!c)return;if(isPartner()&&(c.partnerId!==me().partnerId||!c.share))return;if(!full&&!isPartner()&&matchMedia('(max-width:860px)').matches)return openQuick(id);ui.modalAnim=true;ui.modal={type:'content',draft:clone(c),base:clone(c),tab:'fiche'};ui.sheet=false;renderModalOnly()}
 function openExchange(id){const x=S.exchanges.find(y=>y.id===id);if(!x)return;if(isPartner()||!can('echanges',x.partnerId)){if(x.contentId)return openContent(x.contentId);ui.route='partenaire-'+x.partnerId;location.hash=ui.route;return}ui.modalAnim=true;ui.modal={type:'exchange',draft:clone(x)};renderModalOnly()}
 function newExchange(o={}){
  const pid=o.partner||ui.xf.partner||S.partners[0].id;const p=partner(pid);
@@ -3249,8 +3271,19 @@ function logDiff(o,n){
  n.history=n.history||[];out.forEach(t=>n.history.push({at,by,text:t}));
  return out.length;
 }
+// Fusion à trois : ce que la fiche n'a pas modifié reprend la version la plus récente (changements faits ailleurs entre-temps)
+function merge3(base,cur,draft){const same=(a,b)=>canon(a)===canon(b);const out={};
+ new Set([...Object.keys(draft),...Object.keys(cur)]).forEach(k=>{const b=base[k],c=cur[k],d=draft[k];
+  if(!(k in draft)){if(!(k in base))out[k]=c;return}
+  if(same(d,b)){out[k]=(k in cur)?c:d;return}
+  if(k==='tasks'&&d&&c&&b&&typeof d==='object'&&!Array.isArray(d)){out[k]={};new Set([...Object.keys(d),...Object.keys(c)]).forEach(t=>{out[k][t]=(t in d&&t in b&&same(d[t],b[t])&&t in c)?c[t]:(t in d?d[t]:c[t])});return}
+  if(k==='platforms'&&Array.isArray(d)&&Array.isArray(c)&&Array.isArray(b)){const bm=Object.fromEntries(b.map(x=>[x.id,x])),cm=Object.fromEntries(c.map(x=>[x.id,x]));
+   out[k]=d.map(x=>{const bx=bm[x.id],cx=cm[x.id];if(!bx||!cx)return x;if(same(x,bx))return cx;const r={};new Set([...Object.keys(x),...Object.keys(cx)]).forEach(f=>{r[f]=(f in x&&f in bx&&same(x[f],bx[f])&&f in cx)?cx[f]:(f in x?x[f]:cx[f])});return r});
+   c.forEach(x=>{if(!bm[x.id]&&!d.some(y=>y.id===x.id))out[k].push(x)});return}
+  if((k==='history'||k==='comments'||k==='descHistory')&&Array.isArray(d)&&Array.isArray(c)&&Array.isArray(b)){const ids=new Set(c.map(x=>canon(x)));out[k]=c.concat(d.slice(b.length).filter(x=>!ids.has(canon(x))));return}
+  out[k]=d});return out}
 function saveContent(silentMsg){
- syncDraft();const d=ui.modal.draft;
+ syncDraft();if(ui.modal.base&&ui.modal.draft.id){const cur=content(ui.modal.draft.id);if(cur&&canon(cur)!==canon(ui.modal.base))ui.modal.draft=merge3(ui.modal.base,cur,ui.modal.draft)}const d=ui.modal.draft;
  if(!d.title.trim()){toast('Ajoutez un titre avant d\'enregistrer.',true);ui.modal.tab='fiche';renderModalOnly();return false}
  d.platforms.forEach(p=>p.collabs=(p.collabs||[]).filter(k=>k.account.trim()));
  d.media=d.media.filter(x=>x.url||x.label);
@@ -3258,7 +3291,7 @@ function saveContent(silentMsg){
  normalizeTasks(d);{const o0=d.id?content(d.id):null;trackDescs(o0,d);syncDescTask(d);stampTasks(o0,d)}const pb4=d.prod;d.prod=prodOf(d);
  if(!d.id){d.id=uid('c');logDiff(null,d);S.contents.push(d)}
  else{const i=S.contents.findIndex(c=>c.id===d.id);logDiff(S.contents[i],d);S.contents[i]=d}
- ui.modal.draft=clone(d);
+ ui.modal.draft=clone(d);ui.modal.base=clone(d);
  commit(silentMsg||'Fiche enregistrée · calendrier, tableau de bord et compte rendu à jour');
  return true;
 }
@@ -3294,12 +3327,12 @@ document.addEventListener('click',async e=>{
  if(inner===go){e.preventDefault();ui.sheet=false;ui.modal=null;navigate(go.dataset.go);return}
  if(inner!==act)return;
  const a=act.dataset.act;const ds=act.dataset;
- if(a==='modal-bg'){if(t===act){ui.modal=null;renderModalOnly()}return}
+ if(a==='modal-bg'){if(t===act)closeModal(false);return}
  if(a==='sheet-close'){if(t===act){ui.sheet=false;render()}return}
  if(a==='fab-close'){if(t===act){ui.fab=false;render()}return}
  switch(a){
   case 'sheet':ui.sheet=!ui.sheet;render();break;
-  case 'close':ui.modal=null;renderModalOnly();break;
+  case 'close':closeModal(!!ds.discard);break;
   case 'mine':ui.mine=!!ds.v;ui.anim=true;render();break;
   case 'kpi':ui.cf={partner:ui.dash.partner||'',buckets:[ds.k],owner:ui.mine?me().id:'',q:''};navigate('contenus');break;
   case 'go-data':if(ONLINE){toast(ui.saveState==='err'?'Hors ligne : '+(ui.syncErr||'')+' — nouvel essai automatique.':'Données partagées en temps réel dans la base de l\'équipe.',ui.saveState==='err');break}if(isAdmin()){navigate('administration');setTimeout(()=>document.getElementById('sec-data')?.scrollIntoView(),50)}else toast('Données enregistrées dans ce navigateur uniquement. Le partage nécessite la base de données.');break;
@@ -3520,7 +3553,7 @@ document.addEventListener('submit',async e=>{
  if(f.dataset.form==='project'){const fd=new FormData(f);const name=(fd.get('name')||'').trim();if(!name)return;S.projects.push({id:uid('pr'),partnerId:f.dataset.partner,name,desc:fd.get('desc')||'',start:fd.get('start')||TODAY,end:fd.get('end')||''});commit('Projet ajouté')}
  if(f.dataset.form==='user'){const fd=new FormData(f);const name=(fd.get('name')||'').trim();if(!name)return;S.users.push({id:uid('u'),name,role:'equipe',title:fd.get('title')||'Équipe',perms:{contenus_creer:false,contenus_modifier:false,production_avancer:false,publication_planifier:false,valider:false,echanges:true,partenaires_gerer:false,comptes_rendus:false,notes_internes:false,acces_partenaires:false,supprimer:false}});commit(name+' ajouté · réglez ses droits ci-dessus')}
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ui.modal){ui.modal=null;renderModalOnly()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ui.modal)closeModal(false)});
 function navigate(r){if(r!=="contenus")ui.sel=null;ui.prjDel=null;ui.route=r;ui.anim=true;if(r==='administration')setTimeout(loadMembers,0);if(location.hash!=='#'+r)location.hash=r;render();window.scrollTo(0,0)}
 addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(h&&h!==ui.route){ui.route=h;ui.anim=true;ui.modal=null;render();window.scrollTo(0,0)}});
 
