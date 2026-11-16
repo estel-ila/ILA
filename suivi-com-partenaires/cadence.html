@@ -230,6 +230,26 @@ main{padding:30px 0 120px}
 .simWrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;padding:4px 16px 8px;background:var(--surface)}
 .simLeg{font-size:.8rem;color:var(--ink-3);margin:13px 2px 0;line-height:1.5}
 
+/* ---------- la veille ---------- */
+.veille{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.vi{border:1px solid var(--bub-b);border-radius:var(--r-m);padding:16px 18px;
+  background:var(--bub),rgba(18,18,20,.34);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);box-shadow:var(--bub-hi);
+  transition:border-color .3s,transform .3s var(--spring)}
+.vi:hover{border-color:rgba(255,120,130,.34);transform:translateY(-2px)}
+.vi header{display:flex;align-items:center;gap:9px;margin-bottom:10px;flex-wrap:wrap}
+.vi header b{font-size:14px;font-weight:600}
+.vi time{margin-left:auto;font-size:11.5px;color:var(--faint);white-space:nowrap}
+.vi .fa{font-size:13.5px;line-height:1.6;color:var(--ink-2);margin:0 0 10px}
+.vi .ef{font-size:13px;line-height:1.55;color:var(--ink-2);margin:0 0 11px;
+  padding:10px 13px;border-radius:var(--r-s);
+  background:rgba(255,45,64,.09);border:1px solid rgba(255,45,64,.26)}
+.vi .ef b{color:#ffc1c6}
+.vi .sr{font-size:11.5px;margin:0;color:var(--faint)}
+.vi .sr a{color:var(--red-ink);text-decoration:underline;text-underline-offset:3px}
+.vi .sr a:hover{color:#fff}
+@media(max-width:860px){.vi{padding:14px 15px}.vi time{margin-left:0;flex-basis:100%}}
+
 /* ---------- réglages repliés ---------- */
 details.fine{border:1px solid var(--line);border-radius:12px;background:var(--surface-2);margin-bottom:26px}
 details.fine>summary{cursor:pointer;padding:15px 18px;font-size:.92rem;font-weight:600;
@@ -813,6 +833,8 @@ html.fx-lite .chip,html.fx-lite .ptile{backdrop-filter:none;-webkit-backdrop-fil
       <div class="fb"><div id="cycleBox"></div>
         <div class="btnrow" style="margin-top:16px">
           <button class="btn ghost sm" id="btnRecalib">Mettre à jour maintenant</button></div></div></details>
+    <details class="fold" open><summary>Quoi de neuf</summary>
+      <div class="fb"><div id="veilleBox"></div></div></details>
     <details class="fold"><summary>Ce que l'outil retient des algorithmes</summary>
       <div class="fb"><div id="algoBox"></div></div></details>
     <details class="fold"><summary>Ajouter une info sur un algorithme</summary>
@@ -1079,7 +1101,7 @@ const PLATFORMS={
     comp:{base:.15,peaks:[[9,.7,.6],[12,.6,.8],[18,.7,.9],[20,.8,1]]},
     lead:0,
     contents:["reel","carrousel","post_image","story","collab_reel","live","chaine_diffusion"],
-    notes:"Les Reels ressortent plusieurs jours. Photos et carrousels se jouent sur les trois premières heures."},
+    notes:"Les Reels se jouent désormais vite : Meta annonce que près de 45 % des Reels recommandés ont moins de 24 h. Photos et carrousels, eux, se jouent sur les trois premières heures."},
   youtube:{label:"YouTube",
     dayW:[.90,.94,.96,1.02,1.10,1.14,1.08],
     hour:{base:10,peaks:[[11,1.6,82],[14,1.6,100],[16,1.5,90],[19,1.6,52]]},
@@ -1236,10 +1258,29 @@ const GOALS={
    mesurée d'une publication sur chaque plateforme et chaque format.
    1 = l'heure décide presque tout, 0 = elle ne change presque rien.
    ========================================================= */
-const TIMING_PLAT={x:.95,tiktok:.85,instagram:.65,linkedin:.6,youtube:.5,facebook:.4};
+/* Révisé le 16 novembre 2026. Deux mouvements, tous deux tirés de la
+   transcription officielle des résultats Meta du 3e trimestre 2026 :
+   — Instagram recommande désormais beaucoup plus frais (près de 45 % des
+     Reels recommandés ont moins de 24 h, en hausse de plus de 11 points en
+     un trimestre). Une publication s'use plus vite, donc l'heure pèse plus.
+   — Facebook a déployé mondialement un système qui fait remonter des
+     publications neuves AVANT qu'elles aient récolté de l'engagement. La
+     vitesse de démarrage cesse d'être un péage, donc l'heure pèse moins.
+   threads et pinterest, ajoutés en octobre, n'avaient aucun poids et
+   retombaient sur la valeur par défaut (.6) : Pinterest, qui est un moteur
+   de recherche où une épingle vit des mois, était traité comme LinkedIn. */
+const TIMING_PLAT={x:.95,tiktok:.85,threads:.8,instagram:.74,linkedin:.6,
+  youtube:.5,facebook:.34,pinterest:.12};
 const TIMING_CONT={
   story:.9,thread:.9,sondage:.75,post_texte:null,
-  reel:.5,reel_fb:.4,short:.4,video_longue:.4,video_tiktok:.85,
+  /* Le Reel passe de .5 à .68 le 16 novembre 2026. La valeur de .5 disait
+     « un Reel ressort pendant plusieurs jours » : la donnée publiée par Meta
+     au 3e trimestre 2026 porte précisément sur les Reels recommandés, dont
+     près de 45 % ont maintenant moins de 24 h. Ce format écrasait la valeur
+     de la plateforme, donc la hausse du poids d'Instagram ne l'atteignait
+     pas. Le Reel Facebook reste bas : là, le système de récupération
+     générative fait remonter les publications sans attendre l'engagement. */
+  reel:.68,reel_fb:.38,short:.4,video_longue:.4,video_tiktok:.85,
   live:1,premiere:1,newsletter:.8,article:.5,carrousel:.5,photo_carousel:.45
 };
 function timingOf(platId,contId){
@@ -1768,26 +1809,61 @@ const segsOf=a=>(a.segments&&a.segments.length?a.segments:[{id:a.segment||"grand
   .filter(s=>SEGMENTS[s.id]);
 
 const DEFAULT_ALGO={
-  version:1,updated:null,
+  version:2,updated:"2026-11-16",
   platforms:{
     linkedin:{signals:[["Commentaires dans l'heure qui suit",34],["Temps passé sur le post",26],["Pertinence pour le réseau proche",22],["Partages avec commentaire",18]],
-      timing:"Un post reste servi 24 à 48 h. L'heure sert surtout à déclencher les premiers commentaires."},
-    instagram:{signals:[["Enregistrements",30],["Partages en message privé",28],["Rétention et replays",24],["Commentaires",18]],
-      timing:"Les Reels ressortent plusieurs jours. Photos et carrousels se jouent sur les trois premières heures."},
-    youtube:{signals:[["Durée de visionnage",36],["Clics sur la miniature",26],["Sessions déclenchées ensuite",22],["Likes",16]],
-      timing:"L'heure prépare l'indexation et les premières impressions, elle ne capte pas l'audience directement."},
+      timing:"Un post reste servi 24 à 48 h. L'heure sert surtout à déclencher les premiers commentaires. Depuis le 12 mars 2026, le fil est classé par un modèle de langage (360Brew) ; LinkedIn n'a rien annoncé d'autre depuis, et les pondérations qui circulent dans les articles ne sont pas de source officielle."},
+    instagram:{signals:[["Rétention et temps de visionnage",30],["Fraîcheur : moins de 24 h",24],["Partages en message privé",24],["Enregistrements",22]],
+      timing:"Meta annonce que près de 45 % des Reels recommandés ont désormais moins de 24 h, soit 11 points de plus en un seul trimestre : une publication s'use vite, l'heure compte davantage qu'avant. Le classement évalue maintenant des séquences de Reels et non chaque Reel isolément."},
+    youtube:{signals:[["Durée de visionnage",34],["Clics sur la miniature",24],["Originalité du montage (Shorts)",22],["Sessions déclenchées ensuite",20]],
+      timing:"L'heure prépare l'indexation et les premières impressions, elle ne capte pas l'audience directement. Depuis le 1er octobre 2026, les recommandations de Shorts favorisent l'original : cela change ce qui est recommandé, pas le moment où il faut publier."},
     x:{signals:[["Réponses",30],["Reposts avec citation",26],["Clics sur le profil",22],["Temps passé sur le post",22]],
       timing:"La demi-vie d'un post se compte en 15 à 30 minutes. L'heure exacte décide de presque tout."},
     tiktok:{signals:[["Taux de complétion",34],["Replays",24],["Partages",22],["Commentaires",20]],
-      timing:"Environ 80 % du résultat se joue sur les 60 premières minutes."},
+      timing:"Environ 80 % du résultat se joue sur les 60 premières minutes. TikTok n'a annoncé aucune modification de son classement en 2026 : rien n'a bougé ici, et c'est délibéré."},
     facebook:{signals:[["Commentaires et réponses",32],["Partages",26],["Temps passé",22],["Réactions",20]],
-      timing:"Un contenu ressort pendant des jours via les fils de commentaires. L'heure y pèse le moins."},
+      timing:"C'est la plateforme où l'heure pèse le moins, et elle vient d'y peser encore moins : Meta a déployé mondialement un système qui fait remonter des publications neuves avant même qu'elles aient de l'engagement, sur environ un quart des vues de fil hors abonnements et la moitié des vues de Reels."},
     threads:{signals:[["Réponses dans la conversation",36],["Reposts",24],["Temps passé sur le fil",22],["Likes",18]],
-      timing:"Le fil se renouvelle vite : l'essentiel se joue dans les deux premières heures."},
+      timing:"Le fil se renouvelle vite : l'essentiel se joue dans les deux premières heures. Threads a dépassé X en utilisateurs actifs mensuels et le temps passé par personne progresse de plus de 20 % sur un an."},
     pinterest:{signals:[["Enregistrements",38],["Clics sortants",26],["Correspondance avec la recherche",24],["Fraîcheur de l'épingle",12]],
       timing:"Une épingle vit des semaines, parfois des mois : c'est la plateforme où l'heure compte le moins."}
   }
 };
+
+/* =========================================================
+   LA VEILLE
+   Ce qui a bougé, à quelle date, chez qui, et ce que ça a changé ici.
+   Une entrée n'est inscrite que si elle vient de la plateforme elle-même
+   ou d'un document qu'elle publie. Les « analyses » d'agences qui ne
+   citent personne n'y entrent pas.
+   ========================================================= */
+const VEILLE=[
+  {date:"2026-10-21",plat:"instagram",src:"Meta — transcription des résultats du 3e trimestre 2026",
+   url:"https://s21.q4cdn.com/399680738/files/content_files/META-Q3-2026-Earnings-Call-Transcript.pdf",
+   fait:"Près de 45 % des Reels recommandés ont moins de 24 h, soit plus de 11 points de hausse en un trimestre. Le modèle classe désormais des séquences de Reels au lieu de les évaluer un par un (+4 % de temps passé).",
+   effet:"Poids de l'heure relevé sur Instagram, de 0,65 à 0,74, et durée de vie du Reel ramenée de 0,50 à 0,68. Le format écrasait la valeur de la plateforme : sans cette seconde correction, la hausse n'aurait pas atteint les Reels, qui sont justement ce que Meta a mesuré."},
+  {date:"2026-10-21",plat:"facebook",src:"Meta — transcription des résultats du 3e trimestre 2026",
+   url:"https://s21.q4cdn.com/399680738/files/content_files/META-Q3-2026-Earnings-Call-Transcript.pdf",
+   fait:"Déploiement mondial d'un système de récupération générative qui fait remonter des publications neuves avant qu'elles aient récolté de l'engagement : environ un quart des vues de fil hors abonnements et la moitié des vues de Reels.",
+   effet:"Poids de l'heure abaissé sur Facebook, de 0,40 à 0,34 : bien démarrer tout de suite y est moins décisif."},
+  {date:"2026-10-21",plat:"threads",src:"Meta — transcription des résultats du 3e trimestre 2026",
+   url:"https://s21.q4cdn.com/399680738/files/content_files/META-Q3-2026-Earnings-Call-Transcript.pdf",
+   fait:"Threads a dépassé X en utilisateurs actifs mensuels, et le temps passé par personne progresse de plus de 20 % sur un an.",
+   effet:"Threads reçoit enfin son propre poids temporel (0,80). Il retombait jusqu'ici sur la valeur par défaut."},
+  {date:"2026-10-01",plat:"youtube",src:"YouTube — Creator Insider, Rene Ritchie",
+   url:"https://www.searchenginejournal.com/youtube-original-shorts-reposted-clips-reach/591774/",
+   fait:"Les recommandations de Shorts favorisent le contenu original et réduisent la portée des chaînes qui republient les extraits d'autrui sans y ajouter de valeur. Un commentaire, une analyse ou une narration comptent ; une voix off qui décrit l'image, une retouche technique ou un gabarit appliqué en série ne comptent pas.",
+   effet:"« Originalité du montage » ajouté aux signaux YouTube. Le poids de l'heure ne bouge pas : cette annonce porte sur ce qui est recommandé, pas sur le moment."},
+  {date:"2026-03-12",plat:"linkedin",src:"LinkedIn — blog d'ingénierie",
+   url:"https://www.socialpilot.co/blog/linkedin-algorithm",
+   fait:"360Brew, un classement par modèle de langage, est déployé dans le fil.",
+   effet:"Mentionné dans la note de timing. Aucun poids modifié : LinkedIn n'a publié aucune pondération, et les chiffres qui circulent dans les articles ne sont attribués à personne."},
+  {date:"2026-11-16",plat:"tiktok",src:"Vérification de la veille",
+   url:"",
+   fait:"TikTok n'a annoncé aucune modification de son classement en 2026. L'explication officielle du fil « Pour toi » n'a pas changé depuis 2020.",
+   effet:"Rien n'a été modifié pour TikTok, et c'est un choix et non un oubli."}
+];
+
 
 /* =========================================================
    11. CONFIGURATION D'UN COMPTE
@@ -1810,11 +1886,23 @@ function withPersonal(f,accountId){
   f.personal=per.total>=4?per:null;
   return f;
 }
+/* La marge de manœuvre autour du créneau.
+   Elle valait 7 % du pic pour tout le monde, ce qui revenait à dire qu'une
+   épingle Pinterest, qui vit des mois, se rate aussi facilement qu'un post
+   sur X, dont la demi-vie est de vingt minutes. La tolérance suit désormais
+   le poids temporel de la plateforme et du format : serrée là où l'heure
+   décide, large là où elle ne décide pas. C'est aussi ce qui rend utile le
+   poids temporel, qui jusqu'ici n'alimentait que la jauge affichée. */
+function toleranceOf(timing){
+  const t=(timing==null?.6:timing);
+  return 0.045+(1-t)*0.17;            // X ≈ 5 %, Pinterest ≈ 20 %
+}
 function usefulWindow(res,f,d,h){
-  const seuil=res.score[d][h]*0.93;let a=h,b=h;
+  const tol=toleranceOf(res.timing);
+  const seuil=res.score[d][h]*(1-tol);let a=h,b=h;
   while(a-1>=f.hmin&&res.score[d][a-1]>=seuil)a--;
   while(b+1<=f.hmax&&res.score[d][b+1]>=seuil)b++;
-  return{a,b,span:(b-a)+1,large:(b-a)>=2};
+  return{a,b,span:(b-a)+1,large:(b-a)>=2,tol};
 }
 
 /* =========================================================
@@ -2208,8 +2296,9 @@ function simTableau(){
       "</tr>").join("")+"</tbody></table></div>"+
     '<p class="simLeg"><b>En rouge</b> : le meilleur jour de la ligne. '+
     'En gris pâle : un jour nettement moins favorable pour ce contenu. '+
-    'La marge est la plage où le score reste à moins de 7 % du pic — '+
-    'publier n\'importe où dedans revient quasiment au même.</p>'+
+    'La marge est la plage où publier revient quasiment au même. Elle se '+
+    'resserre là où l\'heure décide du sort d\'une publication, et s\'élargit '+
+    'là où la plateforme la rattrape toute seule.</p>'+
     '<p class="simLeg">Le meilleur de tous : <b>'+esc(CONTENTS[lignes[0].fmt].label)+" sur "+
     esc(PLATFORMS[lignes[0].plat].label)+", "+DAYS[lignes[0].cases[lignes[0].ibest].d]+" à "+
     pad(lignes[0].cases[lignes[0].ibest].h)+"h"+pad(lignes[0].cases[lignes[0].ibest].m)+
@@ -2696,6 +2785,24 @@ function renderSettings(){
   }else if(fxb)fxb.remove();
 
   const A=State.algo||DEFAULT_ALGO;
+
+  /* Ce qui a bougé chez les plateformes, et ce que ça a changé ici. Chaque
+     ligne porte sa source : sans source vérifiable, pas d'entrée. */
+  const dFr=x=>{const[a3,m,j2]=x.split("-");
+    return j2.replace(/^0/,"")+" "+["janvier","février","mars","avril","mai","juin","juillet",
+      "août","septembre","octobre","novembre","décembre"][+m-1]+" "+a3;};
+  $("#veilleBox").innerHTML='<p class="lead">Ce qui a bougé chez les plateformes, et ce que ça a changé dans le calcul. '+
+    'Une information n\'entre ici que si elle vient de la plateforme elle-même ou d\'un document qu\'elle publie.</p>'+
+    '<div class="kv"><span>Profil des algorithmes</span><span>version '+A.version+
+      (A.updated?", revu le "+dFr(A.updated):"")+"</span></div>"+
+    '<div class="veille">'+VEILLE.map(v=>'<article class="vi">'+
+      '<header>'+pmark(v.plat)+'<b>'+esc(PLATFORMS[v.plat].label)+'</b>'+
+      '<time>'+dFr(v.date)+"</time></header>"+
+      '<p class="fa">'+esc(v.fait)+"</p>"+
+      '<p class="ef"><b>Ici :</b> '+esc(v.effet)+"</p>"+
+      '<p class="sr">'+(v.url?'<a href="'+esc(v.url)+'" target="_blank" rel="noopener">'+esc(v.src)+"</a>"
+        :esc(v.src))+"</p></article>").join("")+"</div>";
+
   $("#algoBox").innerHTML='<p class="lead">Ce que chaque plateforme semble valoriser, et ce que ça change pour l\'heure.</p>'+
     Object.keys(A.platforms).map((k,i)=>{
       const p=A.platforms[k];
@@ -2880,6 +2987,9 @@ function renderHelp(){
   "<li><b>Sprout Social 2026</b> — près de 2 milliards d'interactions sur environ 307 000 profils.</li>"+
   "<li><b>Buffer 2026</b> — plus de 45 millions de publications, pour l'engagement médian affiché à côté de chaque format. Il est donné par plateforme <b>et</b> par format, parce qu'un post texte ne vaut pas la même chose sur LinkedIn (3,18 %) et sur Facebook (4,76 %). Les couples que l'étude ne couvre pas, dont YouTube en entier, le disent au lieu d'afficher un chiffre approché.</li></ul>"+
   "<p><b>Et elles ne disent pas la même chose.</b> Pour Instagram, Metricool place le sommet à 20h-21h ; Sprout Social place les meilleurs créneaux entre 12h et 16h. Sprout mesure l'engagement sur des comptes de marques, Metricool mesure les vues sur un échantillon dix fois plus large. L'outil suit Metricool : c'est un choix, pas une vérité.</p>"+
+  "<h3>Ce que l'outil suit au fil de l'eau</h3>"+
+  "<p>Les grandes études ne sortent qu'une fois l'an. Entre deux, ce sont les annonces des plateformes qui déplacent les lignes, et elles sont consignées dans <b>Réglages &rsaquo; Quoi de neuf</b>, avec leur date et leur source. La règle y est stricte : une information n'est retenue que si elle vient de la plateforme elle-même ou d'un document qu'elle publie. Les articles « algorithme 2026 » qui avancent des pondérations sans les attribuer à personne n'y entrent pas, même nombreux et même concordants.</p>"+
+  "<p>Et quand rien n'a bougé, c'est écrit aussi. TikTok n'a annoncé aucune modification de son classement en 2026 : la fiche TikTok le dit, pour qu'on ne confonde pas une absence de nouvelle avec un oubli.</p>"+
   "<h3>Ce que ça ne fait pas</h3>"+
   "<p>Les courbes de départ sont des moyennes mondiales. Aucune des deux études ne publie de découpage par pays : rien ne garantit qu'une audience française suive la moyenne mesurée. C'est pour ça que noter tes résultats compte plus que tout le reste.</p>"+
   "<p>Et l'heure explique une part réelle mais minoritaire de la performance. Sur la plupart des comptes, le sujet et l'accroche pèsent plus lourd que le créneau.</p>"+
