@@ -1167,6 +1167,26 @@ section.cfolded>.card-h{margin-bottom:0!important}
 .anim>*:nth-child(n+2){animation-delay:0s!important}
 .ccard,.card{transition:none}
 }
+.rp-l span{width:96px;white-space:nowrap;overflow-wrap:normal;hyphens:none}.rp-l>div{flex:1;min-width:0}.rp-page,.rp-page *{hyphens:none!important;-webkit-hyphens:none!important}
+.rp-body{display:flex;flex-direction:column}
+.rp-desc{max-height:none;white-space:pre-wrap}.rp-desc i{display:block;font-style:normal;font-size:8.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#6E6866;margin-bottom:2px}
+.rp-pl.full{width:100%}.rp-pltx{font-size:9.5px;line-height:1.45;white-space:pre-wrap;color:#1E1C1B;margin:4px 0 4px;overflow-wrap:anywhere}.rp-pltx.muted{color:#8A8381;font-style:italic}
+.rp-plh .rp-cs{margin-left:6px}.rp-pthumb.sm{width:56px;height:70px;border-radius:8px}.rp-suite{font-size:9px;font-weight:700;color:#8A8381;text-transform:uppercase;letter-spacing:.06em}
+.rw{margin-top:14px}.rw-t{font-size:12px;font-weight:800;letter-spacing:-.01em;margin-bottom:6px}.rw-empty{font-size:10px;color:#8A8381;padding:8px 10px;background:#F7F5F4;border-radius:8px}
+.rw-days,.rw-row{display:grid;grid-template-columns:62px repeat(7,minmax(0,1fr));border-left:1px solid #E3DFDD}
+.rw-days{border-top:1px solid #E3DFDD}.rw-dh{background:#F4F2F1;padding:4px 6px;border-right:1px solid #E3DFDD;border-bottom:1px solid #E3DFDD;display:flex;gap:4px;align-items:baseline}.rw-dh span{font-size:8.5px;font-weight:800;text-transform:uppercase;color:#6E6866;letter-spacing:.06em}.rw-dh b{font-size:11px}.rw-dh.out{background:#FAF9F8;color:#C9C3C1}.rw-dh.out span{color:#C9C3C1}
+.rw-lane-h{background:#F4F2F1;border-right:1px solid #E3DFDD;border-bottom:1px solid #E3DFDD}
+.rw-lane{border-right:1px solid #E3DFDD;border-bottom:1px solid #E3DFDD;padding:5px;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#4F4947;display:flex;flex-direction:column;gap:3px;align-items:flex-start}
+.rw-cell{border-right:1px solid #E3DFDD;border-bottom:1px solid #E3DFDD;padding:4px;min-width:0;display:flex;flex-direction:column;gap:4px}
+.rw-it{display:flex;gap:4px;min-width:0}.rw-it img{width:30px;height:38px;border-radius:4px;object-fit:cover;flex:none}.rw-it>div{min-width:0}
+.rw-tm{display:flex;align-items:center;font-size:8.5px;font-weight:800;line-height:14px;white-space:nowrap}.rw-tm .pfl.xs{width:12px;height:12px;border-radius:3.5px;margin-right:3px}
+.rw-ti{font-size:8.5px;font-weight:600;line-height:1.2;color:#2A2827;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.rpf-h{display:flex;justify-content:flex-start;text-align:left;align-items:center;gap:8px;margin:16px 0 4px;padding:8px 10px;background:#0E0E0E;color:#fff;border-radius:10px}.rpf-h b{font-size:14px}.rpf-h>span:last-child{margin-left:auto;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#B7B1AF}
+.rpf-row{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid #E3DFDD}.rpf-th{width:72px;height:90px;border-radius:9px;overflow:hidden;flex:none;background:#EAE7E5}.rpf-th img{width:100%;height:100%;object-fit:cover;display:block}
+.rpf-b{flex:1;min-width:0}.rpf-top{display:flex;gap:10px;align-items:baseline}.rpf-top b{font-size:13px;letter-spacing:-.01em;flex:1;min-width:0}.rpf-dt{font-size:10.5px;font-weight:800;white-space:nowrap}
+.rpf-b .rp-chips{margin:4px 0 6px}.rpf-desc{font-size:10px;line-height:1.45;white-space:pre-wrap;background:#F7F5F4;border-radius:8px;padding:7px 9px;overflow-wrap:anywhere}.rpf-meta{margin-top:4px;font-size:9.5px}
+.rp-pfst{display:flex;gap:8px;margin-top:8px}.rp-pfst>div{flex:1;display:flex;align-items:center;gap:6px;background:#F4F2F1;border-radius:10px;padding:7px 10px}.rp-pfst b{font-size:18px;font-weight:800}.rp-pfst span{font-size:9px;font-weight:700;color:#6E6866}
+.rpf-opt{display:flex;gap:10px;align-items:flex-start;padding:12px;border-radius:14px;background:rgba(14,14,14,.06);margin-bottom:14px;cursor:pointer}.rpf-opt input{width:20px;height:20px;accent-color:#D9140E;flex:none;margin-top:1px}.rpf-opt b{display:block;font-size:14px}.rpf-opt em{display:block;font-style:normal;font-size:12px;color:var(--muted,#6E6866);margin-top:2px}
 </style>
 
 <div class="ambient" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i><i class="a4"></i></div>
@@ -1412,7 +1432,7 @@ const ui={
  cal:{view:matchMedia('(max-width:719px)').matches?'liste':'mois',month:TODAY.slice(0,7),week:weekStart(TODAY),partner:'',project:'',kinds:{pub:true,prod:true,val:true,evt:true,mar:true},platforms:[],statuses:[],more:false,day:null},
  cf:{partner:'',project:'',buckets:[],owner:'',q:'',aside:false},
  xf:{partner:'',channels:[],open:false},
- rep:{mv:'reglages',lastExported:null,project:'',partner:'ph',month:TODAY.slice(0,7),opts:{chiffres:true,calendrier:true,descriptions:true,comptes:true,collabs:true,liens:true},exclude:{},viewing:null},
+ rep:{mv:'reglages',lastExported:null,project:'',partner:'ph',month:TODAY.slice(0,7),opts:{chiffres:true,calendrier:true,semaine:true,parPf:false,descriptions:true,comptes:true,collabs:true,liens:true},exclude:{},viewing:null},
  pf:{disp:'',city:'',st:'actifs'}, dash:{partner:'',project:'',recap:addMonths(TODAY.slice(0,7),-1)}, fab:false, modal:null, mine:false, anim:true, modalAnim:false, sheet:false, saveState:'ok', savedAt:null, toast:null, busy:false
 };
 const hexA=(h,a)=>{const n=parseInt(String(h||'#888888').slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`};
@@ -2649,30 +2669,77 @@ function buildReport(pid,ym,opts,exclude){
  const pubsByDay={};cs.forEach(c=>(c.platforms||[]).forEach(x=>{if(x.date&&x.date.startsWith(ym)&&pfOk(x,pfs))(pubsByDay[x.date]=pubsByDay[x.date]||[]).push({c,x})}));
  Object.values(pubsByDay).forEach(l=>l.sort((a,b)=>(a.x.time||'').localeCompare(b.x.time||'')));
  const st={total:cs.length,pub:cs.filter(c=>gstat(c)==='publie').length,att:cs.filter(c=>gstat(c)==='attente').length,val:cs.filter(c=>gstat(c)==='valide').length};
- const calH=opts.chiffres?600:700;const cellH=Math.floor((calH-24)/rows);
+ const calH=opts.chiffres?(opts.parPf?540:600):700;const cellH=Math.floor((calH-24)/rows);
  const p1=()=>`
   <div style="height:7px;margin:-48px -52px 41px;background:${p.color||'#0E0E0E'}"></div><div class="rp-top"><div><div class="rp-kick">Compte rendu de communication${pSub(p)?' · '+esc(pSub(p)):''}</div><div class="rp-title">${esc(p.name)}</div>${opts.project&&project(opts.project)?`<div style="font-size:15px;font-weight:700;margin-top:6px">Projet · ${esc(project(opts.project).name)}</div>`:''}<div class="rp-month">${fmtMonth(ym)}</div>${pfs.length?`<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${pfs.map(x=>`<span class="rp-chip" style="font-weight:800">${esc(x)}</span>`).join('')}</div>`:''}</div><div class="rp-logo" style="${logoStyle(p)};font-size:${logoFs(p,58)}px">${logoTxt(p)}</div></div>
-  ${opts.chiffres?`<div class="rp-stats"><div class="rp-stat k"><b>${st.total}</b><span>Contenus du mois</span></div><div class="rp-stat"><b>${st.pub}</b><span>Publiés</span></div><div class="rp-stat"><b>${st.val}</b><span>Validés, à paraître</span></div><div class="rp-stat"><b>${st.att}</b><span>En attente de validation</span></div><div class="rp-stat"><b>${evs.length}</b><span>Événements</span></div></div>`:''}
+  ${opts.chiffres?`<div class="rp-stats"><div class="rp-stat k"><b>${st.total}</b><span>Contenus du mois</span></div><div class="rp-stat"><b>${st.pub}</b><span>Publiés</span></div><div class="rp-stat"><b>${st.val}</b><span>Validés, à paraître</span></div><div class="rp-stat"><b>${st.att}</b><span>En attente de validation</span></div><div class="rp-stat"><b>${evs.length}</b><span>Événements</span></div></div>${opts.parPf?`<div class="rp-pfst">${PLATFORMS.map(x=>x[0]).map(n=>[n,Object.values(pubsByDay).flat().filter(o=>o.x.platform===n).length]).filter(z=>z[1]).map(([n,k])=>`<div>${pfLogo(n,'rp')}<b>${k}</b><span>${esc(n)}</span></div>`).join('')}</div>`:''}`:''}
   ${opts.calendrier?`<div class="rp-sec">Calendrier du mois</div><div class="rp-cal">${JOURS.map(j=>`<div class="rp-dow">${j}</div>`).join('')}${Array.from({length:cells},(_,i)=>{const d=addDays(start,i);const out=!d.startsWith(ym);const l=(pubsByDay[d]||[]);const e=evs.filter(x=>x.date===d);const maxN=Math.max(1,Math.floor((cellH-20)/23));const all=[...e.map(x=>`<div class="rp-ev e">${esc(x.title)}</div>`),...l.map(({c,x})=>`<div class="rp-ev"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}">${esc(x.time||'')} ${pfLogo(x.platform,'xs')}</div>`)];return `<div class="rp-cell ${out?'out':''}" style="height:${cellH}px"><div class="rp-dn">${D(d).getDate()}</div>${out?'':all.slice(0,maxN).join('')+(all.length>maxN?`<div class="rp-more">+${all.length-maxN}</div>`:'')}</div>`}).join('')}</div>
   <div class="rp-legend"><span>■ Publication : miniature, horaire, plateforme</span><span style="color:#D9140E">■ Événement</span><span>${(pfs.length?PLATFORMS.filter(x=>pfs.includes(x[0])):PLATFORMS.filter(x=>x[0]!=='X')).map(x=>x[1]+' '+x[0]).join(' · ')}</span></div>`:''}
   ${!opts.calendrier?`<div class="rp-sec">Contenus du mois</div>${cs.map(c=>`<div style="display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid #EFECEA"><img src="${thumbSrc(c)}" style="width:28px;height:35px;border-radius:5px;object-fit:cover;${imgPos(c)}"><b style="font-size:12px;flex:1">${esc(c.title)}</b><span class="rp-chip s-${gstat(c)}">${GS[gstat(c)]}</span></div>`).join('')}`:''}`;
- // Pages détaillées
- const detail=[];let cur=[],h=0;const budget=900;
- cs.forEach(c=>{const ph=Math.max(200,96+(opts.descriptions?66:0)+Math.ceil(rPls(c,pfs).length/2)*(48+(opts.comptes?28:0)+(opts.collabs?14:0)+(opts.liens?10:0)));if(h+ph>budget&&cur.length){detail.push(cur);cur=[];h=0}cur.push(c);h+=ph});
- if(cur.length)detail.push(cur);
- const total=1+detail.length;
- pages.push(`<div class="rp-page">${p1()}${foot(1,total)}</div>`);
- detail.forEach((group,gi)=>{
-  pages.push(`<div class="rp-page"><div style="height:7px;margin:-48px -52px 41px;background:${p.color||'#0E0E0E'}"></div><div class="rp-head2"><b>${esc(p.name)} — Détail des publications</b><span>${fmtMonth(ym)}</span></div>
-  ${group.map(c=>{const s=gstat(c);const pr=c.projectId?project(c.projectId):null;
-   const cols=['Plateforme','Date et heure'];if(opts.comptes)cols.push('Publié par','Identifications');if(opts.collabs)cols.push('Collaborations');cols.push('Statut');if(opts.liens)cols.push('Lien');
-   return `<div class="rp-post"><div class="rp-pthumb"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}"></div><div class="rp-pb"><div class="rp-pt">${esc(c.title)}</div>
-   <div class="rp-chips"><span class="rp-chip s-${s}">${GS[s]}</span><span class="rp-chip">${esc(c.format)}</span>${pr?`<span class="rp-chip">${esc(pr.name)}</span>`:''}</div>
-   ${opts.descriptions?(()=>{const own=pfs.length===1?(rPls(c,pfs)[0]||{}).text:'';return `<div class="rp-desc">${esc(own||c.description||'Description à venir.')}</div>`})():''}
-   <div class="rp-pls">${rPls(c,pfs).map(x=>`<div class="rp-pl"><div class="rp-plh">${pfLogo(x.platform,'rp')}<b>${esc(x.platform)}</b><span class="rp-plt">${x.date?fmtD(x.date):'—'}${x.time?' · '+esc(x.time):''}</span><span class="rp-cs ${x.status==='publie'?'c-acceptee':x.status==='programme'?'c-envoyee':''}">${PUB[x.status]}</span></div>${opts.comptes?`<div class="rp-l"><span>Publié par</span>${esc((x.accounts||[]).join(', ')||'—')}</div><div class="rp-l"><span>Identifications</span>${esc((x.tags||[]).join(', ')||'—')}</div>`:''}${opts.collabs&&(x.collabs||[]).length?`<div class="rp-l"><span>Collaborations</span><div>${x.collabs.map(k=>`${esc(k.account)}<span class="rp-cs c-${k.status}">${COLLAB[k.status]}</span>`).join('<br>')}</div></div>`:''}${opts.liens&&x.status==='publie'&&x.link?`<div class="rp-l"><span>Lien</span><a class="rp-link" href="${esc(x.link)}">Voir le post ↗</a></div>`:''}</div>`).join('')}</div>
-   </div></div>`}).join('')}
-  ${foot(gi+2,total)}</div>`);
+ // ---- Pages suivantes : calendrier semaine + détail (par contenu ou plateforme par plateforme)
+ const BUDGET=905;const head2=(t)=>`<div style="height:7px;margin:-48px -52px 41px;background:${p.color||'#0E0E0E'}"></div><div class="rp-head2"><b>${esc(p.name)} — ${t}</b><span>${fmtMonth(ym)}</span></div>`;
+ const lines=(t,cpl)=>String(t||'').split('\n').reduce((n,l)=>n+Math.max(1,Math.ceil(l.length/cpl)),0);
+ const descOf=(c,x)=>(x.text||'').trim()||(c.description||'').trim();
+ const usedPfs=PLATFORMS.map(x=>x[0]).filter(n=>Object.values(pubsByDay).some(l=>l.some(o=>o.x.platform===n)));
+ const later=[];// {title, blocks:[{h,html}]}
+ // Calendrier semaine
+ if(opts.semaine&&cs.length){
+  const weeks=[];let w=addDays(ym1,-dow(ym1));while(w<=ym+'-31'&&w.slice(0,7)<=ym){weeks.push(w);w=addDays(w,7)}
+  const blocks=[];
+  weeks.forEach(ws=>{const days=Array.from({length:7},(_,i)=>addDays(ws,i));const any=days.some(d=>(pubsByDay[d]||[]).length||evs.some(e=>e.date===d));
+   const we=days[6];const lab=`Semaine du ${D(ws).getDate()} ${MOISC[D(ws).getMonth()]} au ${D(we).getDate()} ${MOISC[D(we).getMonth()]}`;
+   const dh=`<div class="rw-days"><div class="rw-lane-h"></div>${days.map(d=>`<div class="rw-dh ${d.startsWith(ym)?'':'out'} ${d===TODAY?'today':''}"><span>${JOURS[dow(d)]}</span><b>${D(d).getDate()}</b></div>`).join('')}</div>`;
+   const evRow=days.some(d=>evs.some(e=>e.date===d))?`<div class="rw-row"><div class="rw-lane">Évén.</div>${days.map(d=>`<div class="rw-cell">${evs.filter(e=>e.date===d).map(e=>`<div class="rp-ev e">${esc(e.title)}</div>`).join('')}</div>`).join('')}</div>`:'';
+   if(!any){blocks.push({h:62,html:`<div class="rw"><div class="rw-t">${lab}</div><div class="rw-empty">Aucune publication cette semaine.</div></div>`});return}
+   const item=(c,x,showPf)=>`<div class="rw-it"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}"><div><div class="rw-tm">${showPf?pfLogo(x.platform,'xs'):''}${esc(x.time||'—')}</div><div class="rw-ti">${esc(c.title)}</div></div></div>`;
+   let rows='',h=58+(evRow?30:0);
+   if(opts.parPf){usedPfs.forEach(n=>{const cells=days.map(d=>(pubsByDay[d]||[]).filter(o=>o.x.platform===n));const m=Math.max(...cells.map(l=>l.length));if(!m)return;h+=Math.max(1,m)*50+8;
+     rows+=`<div class="rw-row"><div class="rw-lane">${pfLogo(n,'rp')}<span>${esc(n)}</span></div>${cells.map(l=>`<div class="rw-cell">${l.map(o=>item(o.c,o.x,false)).join('')}</div>`).join('')}</div>`})}
+   else{const cells=days.map(d=>{const g=[];(pubsByDay[d]||[]).forEach(o=>{let e=g.find(z=>z.c===o.c);if(!e){e={c:o.c,xs:[]};g.push(e)}e.xs.push(o.x)});return g});const m=Math.max(1,...cells.map(l=>l.length));
+     const maxPf=Math.max(1,...cells.flat().map(e=>e.xs.length));h+=m*(56+Math.max(0,maxPf-1)*14)+8;
+     rows=`<div class="rw-row"><div class="rw-lane">Posts</div>${cells.map(l=>`<div class="rw-cell">${l.map(e=>`<div class="rw-it"><img src="${thumbSrc(e.c)}" alt="" style="${imgPos(e.c)}"><div><div class="rw-ti">${esc(e.c.title)}</div>${e.xs.map(x=>`<div class="rw-tm">${pfLogo(x.platform,'xs')}${esc(x.time||'—')}</div>`).join('')}</div></div>`).join('')}</div>`).join('')}</div>`}
+   blocks.push({h,html:`<div class="rw"><div class="rw-t">${lab}</div>${dh}${evRow}${rows}</div>`})});
+  later.push({title:'Calendrier semaine par semaine',blocks});
+ }
+ // Détail
+ const meta=(x)=>{let m='',n=0;if(opts.comptes){m+=`<div class="rp-l"><span>Publié par</span><div>${esc((x.accounts||[]).join(', ')||'—')}</div></div><div class="rp-l"><span>Identifications</span><div>${esc((x.tags||[]).join(', ')||'—')}</div></div>`;n+=2}
+  if(opts.collabs&&(x.collabs||[]).length){m+=`<div class="rp-l"><span>Collaborations</span><div>${x.collabs.map(k=>`${esc(k.account)}<span class="rp-cs c-${k.status}">${COLLAB[k.status]}</span>`).join('<br>')}</div></div>`;n+=x.collabs.length}
+  if(opts.liens&&x.status==='publie'&&x.link){m+=`<div class="rp-l"><span>Lien</span><div><a class="rp-link" href="${esc(x.link)}">Voir le post ↗</a></div></div>`;n++}return {m,n}};
+ const pubChip=x=>`<span class="rp-cs ${x.status==='publie'?'c-acceptee':x.status==='programme'?'c-envoyee':''}">${PUB[x.status]||'Prévue'}</span>`;
+ const dt=x=>`${x.date?fmtD(x.date):'—'}${x.time?' · '+esc(x.time):''}`;
+ if(opts.parPf){
+  const blocks=[];usedPfs.forEach(n=>{const items=[];cs.forEach(c=>rPls(c,pfs,ym).filter(x=>x.platform===n).forEach(x=>items.push({c,x})));items.sort((a,b)=>((a.x.date||'')+(a.x.time||'')).localeCompare((b.x.date||'')+(b.x.time||'')));if(!items.length)return;
+   blocks.push({h:60,keep:true,pf:n,html:`<div class="rpf-h">${pfLogo(n,'rp')}<b>${esc(n)}</b><span>${items.length} publication${items.length>1?'s':''}</span></div>`});
+   items.forEach(({c,x})=>{const s=gstat(c);const d=opts.descriptions?descOf(c,x):'';const mt=meta(x);
+    const h=30+Math.max(96,26+24+(d?lines(d,98)*14.5+16:0)+mt.n*18);
+    blocks.push({h,pf:n,html:`<div class="rpf-row"><div class="rpf-th"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}"></div><div class="rpf-b"><div class="rpf-top"><b>${esc(c.title)}</b><span class="rpf-dt">${dt(x)}</span></div><div class="rp-chips"><span class="rp-chip s-${s}">${GS[s]}</span><span class="rp-chip">${esc(c.format)}</span>${x.status&&x.status!=='prevu'?`<span class="rp-chip ${x.status==='publie'?'s-publie':'s-valide'}">${PUB[x.status]}</span>`:''}</div>${d?`<div class="rpf-desc">${esc(d)}</div>`:''}${mt.m?`<div class="rpf-meta">${mt.m}</div>`:''}</div></div>`})});
+   });later.push({title:'Détail plateforme par plateforme',blocks});
+ }else{
+  const blocks=[];
+  cs.forEach(c=>{const s=gstat(c);const pr=c.projectId?project(c.projectId):null;const pls=rPls(c,pfs,ym);
+   const own=pls.some(x=>(x.text||'').trim());const common=opts.descriptions&&(!own||pls.some(x=>!(x.text||'').trim()))?(c.description||'').trim():'';
+   const one=opts.descriptions&&own;// une colonne quand chaque plateforme a son texte
+   const head=`<div class="rp-pt">${esc(c.title)}</div><div class="rp-chips"><span class="rp-chip s-${s}">${GS[s]}</span><span class="rp-chip">${esc(c.format)}</span>${pr?`<span class="rp-chip">${esc(pr.name)}</span>`:''}</div>${opts.descriptions?`<div class="rp-desc">${common?`<i>Description commune</i>${esc(common)}`:own?'':'Description à venir.'}</div>`:''}`;
+   const hh=56+(opts.descriptions?(common?lines(common,86)*15+20:own?0:22):0);
+   const box=x=>{const t=opts.descriptions?(x.text||'').trim():'';const mt=meta(x);return {h:34+(t?lines(t,one?98:46)*13.8+8:(opts.descriptions&&own?16:0))+mt.n*18,
+    html:`<div class="rp-pl ${one?'full':''}"><div class="rp-plh">${pfLogo(x.platform,'rp')}<b>${esc(x.platform)}</b><span class="rp-plt">${dt(x)}</span>${pubChip(x)}</div>${t?`<div class="rp-pltx">${esc(t)}</div>`:opts.descriptions&&own?`<div class="rp-pltx muted">Reprend la description commune.</div>`:''}${mt.m}</div>`}};
+   const bx=pls.map(box);const rows=[];if(one)bx.forEach(b=>rows.push([b]));else for(let i=0;i<bx.length;i+=2)rows.push(bx.slice(i,i+2));
+   blocks.push({c,head,hh,rows:rows.map(r=>({h:Math.max(...r.map(b=>b.h))+6,html:r.map(b=>b.html).join('')}))})});
+  later.push({title:'Détail des publications',posts:blocks});
+ }
+ // Pagination
+ const pgs=[];
+ later.forEach(sec=>{
+  if(sec.blocks){let cur=[],h=0;sec.blocks.forEach((b,i)=>{const nxt=sec.blocks[i+1];const need=b.h+(b.keep&&nxt?nxt.h:0);if(h+need>BUDGET&&cur.length){pgs.push({title:sec.title,html:cur.join('')});cur=[];h=0;if(b.pf&&!b.keep){cur.push(`<div class="rpf-h">${pfLogo(b.pf,'rp')}<b>${esc(b.pf)}</b><span>suite</span></div>`);h=60}}cur.push(b.html);h+=b.h});if(cur.length)pgs.push({title:sec.title,html:cur.join('')})}
+  else{let cur=[],h=0;const flush=()=>{if(cur.length)pgs.push({title:sec.title,html:cur.join('')});cur=[];h=0};
+   sec.posts.forEach(b=>{let part=[],ph=b.hh,first=true;const emit=()=>{cur.push(`<div class="rp-post"><div class="rp-pthumb ${first?'':'sm'}"><img src="${thumbSrc(b.c)}" alt="" style="${imgPos(b.c)}"></div><div class="rp-pb">${first?b.head:`<div class="rp-pt">${esc(b.c.title)} <span class="rp-suite">suite</span></div>`}<div class="rp-pls">${part.join('')}</div></div></div>`);h+=Math.max(first?170:70,ph)+34;first=false;part=[];ph=40};
+    if(h+Math.max(170,b.hh+(b.rows[0]?b.rows[0].h:0))+34>BUDGET&&cur.length)flush();
+    b.rows.forEach(r=>{if(h+Math.max(first?170:70,ph+r.h)+34>BUDGET&&(part.length||cur.length)){if(part.length)emit();flush()}part.push(r.html);ph+=r.h});
+    emit()});flush()}
  });
+ const total=1+pgs.length;
+ pages.push(`<div class="rp-page">${p1()}${foot(1,total)}</div>`);
+ pgs.forEach((g,i)=>pages.push(`<div class="rp-page">${head2(g.title)}<div class="rp-body">${g.html}</div>${foot(i+2,total)}</div>`));
  if(!cs.length)pages[0]=pages[0].replace('<div class="rp-foot"',`<div style="margin-top:30px;padding:24px;border:1px dashed #CFCAC8;border-radius:14px;font-size:13px;color:#6E6866">Aucun contenu planifié pour ce mois avec la sélection actuelle.</div><div class="rp-foot"`);
  return pages;
 }
@@ -2701,10 +2768,11 @@ function pageReports(){
   </div>
   <div class="card white">
    <div class="eyebrow" style="margin-bottom:10px">2 · Éléments à partager <span style="text-transform:none;letter-spacing:0;font-weight:600">· sélection multiple</span></div>
-   <div class="mchips">${optRow('chiffres','Chiffres clés')}${optRow('calendrier','Calendrier mensuel')}${optRow('descriptions','Descriptions')}${optRow('comptes','Comptes et identifications')}${optRow('collabs','Collaborations')}${optRow('liens','Liens publiés')}</div>
+   <div class="mchips">${optRow('chiffres','Chiffres clés')}${optRow('calendrier','Calendrier mensuel')}${optRow('semaine','Calendrier semaine')}${optRow('descriptions','Descriptions')}${optRow('comptes','Comptes et identifications')}${optRow('collabs','Collaborations')}${optRow('liens','Liens publiés')}</div>
    <div class="notice" style="margin-top:10px">${icon('lock')}<div>Notes internes, commentaires d'équipe et échanges confidentiels sont toujours exclus.</div></div>
   </div>
   <div class="card white">
+   <label class="rpf-opt"><input type="checkbox" data-act="ropt" data-k="parPf" ${r.opts.parPf?'checked':''}><span><b>Plateforme par plateforme</b><em>Le calendrier semaine et le détail sont organisés par plateforme, avec le texte propre à chacune.</em></span></label>
    <div class="eyebrow" style="margin-bottom:10px">3 · Focus plateformes <span style="text-transform:none;letter-spacing:0;font-weight:600">· le calendrier et le détail n'affichent que ces plateformes</span></div>
    ${(()=>{const pfs=r.opts.pfs||[];const used=new Set();S.contents.filter(c=>c.partnerId===r.partner&&!c.aside&&projOk(c,r.project)).forEach(c=>(c.platforms||[]).forEach(x=>{if(x.date&&x.date.startsWith(r.month))used.add(x.platform)}));
     return `<div class="mchips"><button type="button" class="mchip ${!pfs.length?'on':''}" data-act="rpf" data-v="">Toutes${!pfs.length?icon('check'):''}</button>${PLATFORMS.map(([n,a])=>{const on=pfs.includes(n);const u=used.has(n);return `<button type="button" class="mchip ${on?'on':''}" data-act="rpf" data-v="${n}" ${!u&&!on?'style="opacity:.5"':''}>${pfLogo(n,'sm')}${n}${on?icon('check'):''}</button>`}).join('')}</div>
