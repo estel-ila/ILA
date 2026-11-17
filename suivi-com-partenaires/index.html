@@ -2764,7 +2764,7 @@ function reportData(pid,ym,exclude,proj,pfs,sort){
  const evs=S.events.filter(e=>e.partnerId===pid&&inYM(e.date,ym));
  return {p,cs,evs};
 }
-function repContacts(pid){const p=partner(pid);if(!p)return [];const out=(p.contacts||[]).filter(k=>k&&k.name).map(k=>({k,org:''}));const d=p.dispositifId&&(S.dispositifs||[]).find(x=>x.id===p.dispositifId);if(d)(d.contacts||[]).filter(k=>k&&k.name).forEach(k=>out.push({k,org:d.name}));return out}
+function repContacts(pid){const p=partner(pid);if(!p)return [];const out=(p.contacts||[]).filter(k=>k&&k.name).map(k=>({k,org:''}));const d=p.dispositifId&&(S.dispositifs||[]).find(x=>x.id===p.dispositifId);if(d)(d.contacts||[]).filter(k=>k&&k.name).forEach(k=>out.push({k,org:d.name}));const seen=new Map();out.forEach(z=>{const key=z.k.name.trim().toLowerCase();const prev=seen.get(key);if(!prev){seen.set(key,{k:Object.assign({},z.k,{id:z.k.id||('n:'+key)}),org:z.org})}else{if(!prev.k.role&&z.k.role)prev.k.role=z.k.role;if(!prev.k.email&&z.k.email)prev.k.email=z.k.email}});return [...seen.values()]}
 function repTo(pid,ids){const all=repContacts(pid);return (ids||[]).map(id=>all.find(z=>z.k.id===id)).filter(Boolean)}
 function reportCandidates(pid,ym){const pfs=ui.rep.opts.pfs||[];return sortReport(S.contents.filter(c=>c.partnerId===pid&&!c.aside&&projOk(c,ui.rep.project)&&(c.platforms||[]).some(x=>inYM(x.date,ym)&&pfOk(x,pfs))),ui.rep.opts.sort,pfs,ym)}
 function buildReport(pid,ym,opts,exclude){
