@@ -1209,6 +1209,27 @@ section.cfolded>.card-h{margin-bottom:0!important}
 .xsum{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}.xsum.open{display:block;-webkit-line-clamp:unset}
 .xposts{display:flex;flex-direction:column;max-height:250px;overflow:auto;border-radius:12px;background:rgba(14,14,14,.04);padding:4px 8px}
 .linkbtn svg{width:14px;height:14px;vertical-align:-2px;margin-right:4px}
+.xgroup{margin-bottom:18px}.xgh{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:16px 16px 0 0;background:color-mix(in srgb,var(--pc) 16%,#fff);border-left:5px solid var(--pc)}.xgh b{font-size:15.5px;letter-spacing:-.01em;display:block}.xgh small{font-size:12px;font-weight:600;color:var(--muted,#6E6866)}.xgh .xgc{margin-left:auto;font-size:12.5px;font-weight:700;color:#4F4947;white-space:nowrap}.xgh em{font-style:normal;color:#D9140E}
+.xgh+.xlist{border-radius:0 0 16px 16px}.xlist{background:rgba(255,255,255,.94);box-shadow:0 6px 20px rgba(0,0,0,.08);border-radius:16px;overflow:hidden}
+.section-title+.xlist{border-radius:16px}
+.xthread{border-bottom:1px solid rgba(14,14,14,.07)}.xthread:last-child{border-bottom:0}
+.xrow{border-left:4px solid var(--pc)}.xrow.reply{border-left:0}
+.xrow-h{all:unset;box-sizing:border-box;width:100%;display:flex;gap:11px;align-items:center;padding:11px 14px;cursor:pointer}.xrow-h:hover{background:rgba(14,14,14,.03)}
+.xrow-h .plogo.xs{width:36px;height:36px;border-radius:11px;flex:none}
+.xrow-m{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.xrow-t{display:flex;flex-wrap:wrap;align-items:center;gap:5px 7px}.xrow-t b{font-size:14.5px;letter-spacing:-.01em}
+.xtag{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}.xtag.disp{background:color-mix(in srgb,var(--dc) 14%,#fff);color:color-mix(in srgb,var(--dc) 80%,#000);border:1px solid color-mix(in srgb,var(--dc) 30%,transparent)}.xtag.dos{background:#0E0E0E;color:#fff}.xtag svg{width:11px;height:11px}
+.xrow-s{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:12.5px;font-weight:600}.xtype{color:var(--tc);font-weight:800;display:inline-flex;align-items:center;gap:5px}.xtype::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--tc)}
+.xrow-sum{font-size:12.5px;color:#6E6866;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.xrow-f{display:flex;align-items:center;gap:6px;flex:none}.xf{font-size:11px;font-weight:800;padding:3px 8px;border-radius:999px;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}.xf svg{width:12px;height:12px}.xf.wait{background:#FDE7E6;color:#B3120C}.xf.late{background:#D9140E;color:#fff}.xf.todo{background:#FFF1D6;color:#8A5300}.xf.rep{background:rgba(14,14,14,.07)}.xf.lock{background:#0E0E0E;color:#fff;padding:4px}
+.xchev{display:inline-flex;transition:transform .2s;opacity:.5}.xchev svg{width:16px;height:16px}.xrow.open>.xrow-h .xchev{transform:rotate(90deg)}
+.xrow-d{padding:0 14px 12px 61px}.xrow-d .xitem{padding:0;border:0;display:block}.xrow-d .xbody{display:flex;flex-direction:column;gap:8px}.xrow-d .xitem>.xicon{display:none}.xrow-d .xbody>.row:first-child{display:none}
+.xrow.reply .xrow-h{padding:8px 14px 8px 12px}.xrow.reply .xrow-d{padding-left:34px}.xdot{width:10px;height:10px;border-radius:50%;background:var(--tc);flex:none;margin-left:2px}
+.xreplies{margin:0 0 8px 34px;padding-left:0;border-left:2px solid color-mix(in srgb,var(--pc,#D9140E) 50%,transparent);display:flex;flex-direction:column}
+@media(max-width:640px){.xrow-h{padding:10px 10px;gap:9px;align-items:flex-start}.xrow-f{flex-direction:column;align-items:flex-end}.xrow-d{padding:0 10px 12px 12px}.xgh{padding:9px 10px}.xgh .xgc{font-size:11px;white-space:normal;text-align:right}.xreplies{margin-left:14px}}
+.xrow-hw{display:flex;align-items:center}.xrow-hw .xrow-h{flex:1;min-width:0}
+.xclass{flex:none;margin-right:12px;display:inline-flex;align-items:center;gap:5px;border:1px solid rgba(22,163,74,.35);background:#fff;color:#15803D;border-radius:999px;padding:6px 11px;font-weight:800;font-size:12px;cursor:pointer}.xclass svg{width:13px;height:13px}.xclass:hover{background:#ECFDF3}.xclass.on{background:#16A34A;color:#fff;border-color:#16A34A}
+@media(max-width:640px){.xclass{margin-right:8px;padding:7px}.xclass span{display:none}}
 </style>
 
 <div class="ambient" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i><i class="a4"></i></div>
@@ -2545,7 +2566,8 @@ function pagePartner(pid){
  ${partnerView&&!a.echanges?'<div class="empty">Le fil des échanges n\'est pas partagé.</div>':`
  <div class="card white">
   <div class="spread" style="margin-bottom:8px"><span class="muted" style="font-size:13px">${xs.length} échange(s)${!partnerView&&canSeeInternal()?' · notes internes incluses':''}</span>${can('echanges',pid)&&!partnerView?`<button class="btn sm primary" data-act="new-exchange" data-partner="${pid}">${icon('plus')}Consigner un échange</button>`:''}</div>
-  ${xs.length?xThreads(xs).map(threadHtml).join(''):'<div class="empty">Aucun échange consigné.</div>'}
+  ${(()=>{const na=xs.filter(x=>x.archived).length;return na?`<div style="margin-bottom:8px"><button class="xmore" data-act="x-showarch">${icon('check')}${ui.xshowArch?'Masquer':'Voir'} les ${na} échange${na>1?'s':''} classé${na>1?'s':''}</button></div>`:''})()}
+  ${xs.length?xThreads(ui.xshowArch?xs:xs.filter(x=>!x.archived)).map(threadHtml).join(''):'<div class="empty">Aucun échange consigné.</div>'}
  </div>`}
 
  ${!partnerView?`<div class="section-title" id="sec-recaps">Récaps PDF envoyés</div>
@@ -2586,16 +2608,33 @@ function xThreads(xs,desc){const ids=new Set(xs.map(x=>x.id));const kids={};cons
  xs.forEach(x=>{if(x.replyTo&&ids.has(x.replyTo)){let r=x.replyTo;const seen=new Set();while(true){const px=xs.find(y=>y.id===r);if(!px||!px.replyTo||!ids.has(px.replyTo)||seen.has(r))break;seen.add(r);r=px.replyTo}(kids[r]=kids[r]||[]).push(x)}else roots.push(x)});
  const th=roots.map(r=>{const rs=(kids[r.id]||[]).sort((a,b)=>a.date.localeCompare(b.date)||(S.exchanges.indexOf(a)-S.exchanges.indexOf(b)));return {root:r,replies:rs,last:rs.length?rs[rs.length-1].date:r.date}});
  return th.sort((a,b)=>desc===false?a.root.date.localeCompare(b.root.date):b.last.localeCompare(a.last))}
-function threadHtml(t){const n=t.replies.length;const open=ui.xopen&&ui.xopen[t.root.id];const shown=open?t.replies:t.replies.slice(-1);
- return `<div class="xthread ${n?'has':''}">${exchangeItem(t.root)}${n?`<div class="xreplies">${n>1&&!open?`<button class="xmore" data-act="x-thread" data-id="${t.root.id}">${icon('chat')}Voir les ${n} retours et échanges liés</button>`:''}${shown.map(x=>exchangeItem(x,t.root)).join('')}${n>1&&open?`<button class="xmore" data-act="x-thread" data-id="${t.root.id}">Replier</button>`:''}</div>`:''}</div>`}
-function exchangeItem(x,reply){
+const XT_COL={'Demande reçue':'#D9140E','Envoi':'#2563EB','Retour / validation':'#16A34A','Relance':'#EA8A00','Point':'#7C3AED','Note interne':'#3F3A39'};
+function xRow(x,o={}){
+ const p=partner(x.partnerId)||{name:'—',color:'#888'};const d=p.dispositifId&&(S.dispositifs||[]).find(z=>z.id===p.dispositifId);const pr=x.projectId?project(x.projectId):null;
+ const open=ui.xexp&&ui.xexp[x.id];const late=x.nextAction&&!x.done&&x.nextDue&&x.nextDue<TODAY;const tc=XT_COL[x.type]||'#6E6866';
+ const who=xNames(x);const whoTxt=who.length>2?who.slice(0,2).join(', ')+' +'+(who.length-2):who.join(', ');
+ return `<article class="xrow ${open?'open':''} ${o.reply?'reply':''}" style="--pc:${p.color||'#888'};--tc:${tc}">
+  <div class="xrow-hw"><button class="xrow-h" data-act="x-exp" data-id="${x.id}" aria-expanded="${!!open}">
+   ${o.reply?`<span class="xdot"></span>`:`<span class="plogo xs" style="${logoStyle(p)}">${logoTxt(p)}</span>`}
+   <span class="xrow-m">
+    ${o.reply?'':`<span class="xrow-t"><b>${esc(p.name)}</b>${d?`<span class="xtag disp" style="--dc:${d.color||'#15131C'}">${esc(d.name)}</span>`:''}${pr?`<span class="xtag dos">${icon('doc')}${esc(pr.name)}</span>`:''}</span>`}
+    <span class="xrow-s"><span class="xtype">${esc(x.type)}</span><span>${fmtD(x.date)}</span><span class="muted">${esc(x.channel)}${whoTxt?' · '+esc(whoTxt):''}</span></span>
+    ${open?'':`<span class="xrow-sum">${esc(x.summary)}</span>`}
+   </span>
+   <span class="xrow-f">${x.confidential?`<span class="xf lock" title="Confidentiel">${icon('lock')}</span>`:''}${late?'<span class="xf late">En retard</span>':''}${x.awaitingReply&&!x.done?'<span class="xf wait">Retour attendu</span>':''}${x.nextAction&&!x.done&&!late&&!x.awaitingReply?'<span class="xf todo">À faire</span>':''}${o.nrep?`<span class="xf rep">${icon('chat')}${o.nrep}</span>`:''}<span class="xchev">${icon('r')}</span></span>
+  </button>${!o.reply&&can('echanges',x.partnerId)&&!isPartner()?(x.archived?`<button class="xclass on" data-act="x-arch" data-id="${x.id}" title="Remettre dans les échanges en cours">${icon('check')}<span>Classé</span></button>`:`<button class="xclass" data-act="x-arch" data-id="${x.id}" title="Discussion terminée et conclue : la classer">${icon('check')}<span>Classer</span></button>`):''}</div>
+  ${open?`<div class="xrow-d">${exchangeItem(x,o.reply||null,true)}</div>`:''}
+ </article>`}
+function threadHtml(t){const n=t.replies.length;const open=ui.xexp&&ui.xexp[t.root.id];
+ return `<div class="xthread ${n?'has':''}">${xRow(t.root,{nrep:n})}${n&&open?`<div class="xreplies">${t.replies.map(x=>xRow(x,{reply:t.root})).join('')}</div>`:''}</div>`}
+function exchangeItem(x,reply,inRow){
  const p=partner(x.partnerId);const rootPosts=reply?xPosts(reply).join(','):null;const posts=(reply&&xPosts(x).join(',')===rootPosts?[]:xPosts(x)).map(id=>content(id)).filter(c=>c&&(!isPartner()||c.share));const pr=x.projectId?project(x.projectId):null;
  const ed=can('echanges',x.partnerId)&&!isPartner();const exp=ui.xexp&&ui.xexp[x.id];
  return `<article class="xitem ${reply?'reply':''}">
   <span class="xicon ${x.type==='Demande reçue'?'r':x.confidential||x.type==='Note interne'?'k':''}">${CH_AB[x.channel]||''}</span>
   <div class="xbody">
    <div class="row" style="gap:6px"><b style="font-size:13.5px">${esc(x.type)}</b><span class="muted" style="font-size:12.5px">· ${fmtDY(x.date)} · ${esc(x.channel)} · ${esc(userName(x.author))} avec ${esc(x.interlocutor||'—')}</span>${x.confidential?`<span class="chip lock">${icon('lock')}Confidentiel</span>`:''}${x.awaitingReply&&!x.done?'<span class="chip s-attente">Retour attendu</span>':''}</div>
-   <div class="xsum ${exp?'open':''}" data-act="x-exp" data-id="${x.id}">${esc(x.summary)}</div>
+   ${inRow?`<div class="xsum open">${esc(x.summary)}</div>`:`<div class="xsum ${exp?'open':''}" data-act="x-exp" data-id="${x.id}">${esc(x.summary)}</div>`}
    <div class="row" style="gap:6px">${!reply&&!ui.route.startsWith('partenaire-')?`<button class="chip soft" data-go="partenaire-${p.id}" style="border:0">${esc(p.name)}</button>`:''}${pr?`<span class="chip line">${esc(pr.name)}</span>`:''}${posts.map(c=>`<button class="chip line" data-open="${c.id}" style="border:0;cursor:pointer">${icon('link')}${esc(c.title)}</button>`).join('')}${(x.attachments||[]).map(a=>`<span class="att">${icon('clip','width="12" height="12"')}${esc(a)}</span>`).join('')}</div>
    ${x.nextAction?`<div class="xnext ${x.done?'done':''}">${ed?`<button class="check ${x.done?'on':''}" data-act="x-done" data-id="${x.id}" aria-label="${x.done?'Rouvrir':'Marquer comme fait'}">${x.done?icon('check'):''}</button>`:''}<span><b>Prochaine action :</b> ${esc(x.nextAction)}</span><span class="muted">${esc(userName(x.nextOwner))} · ${x.nextDue?fmtD(x.nextDue):'sans date'}</span>${!x.done&&x.nextDue&&x.nextDue<TODAY?'<span class="chip alert">En retard</span>':''}</div>`:''}
    ${ed?`<div class="row" style="gap:14px"><button class="linkbtn" data-openx="${x.id}">Modifier</button><button class="linkbtn" data-act="x-reply" data-id="${x.replyTo&&S.exchanges.some(y=>y.id===x.replyTo)?x.replyTo:x.id}">${icon('chat')}Ajouter un retour</button></div>`:''}
@@ -2603,22 +2642,27 @@ function exchangeItem(x,reply){
 }
 function pageExchanges(){
  const f=ui.xf;
- if(!f.sort)f.sort=savedSort('xf','recent');
- let xs=visibleExchanges().filter(x=>(!f.partner||x.partnerId===f.partner)&&(!f.channels.length||f.channels.includes(x.channel))&&(!f.open||(!x.done&&(x.nextAction||x.awaitingReply))));
+ if(!f.sort){f.sort=savedSort('xf','partenaire');try{if(!localStorage.getItem('scp-xf-v2')){localStorage.setItem('scp-xf-v2','1');f.sort='partenaire';localStorage.setItem('scp-sort-xf','partenaire')}}catch(_){}}
+ const isArch=String(f.open)==='arch';let xs=visibleExchanges().filter(x=>(!f.partner||x.partnerId===f.partner)&&(!f.channels.length||f.channels.includes(x.channel))&&(isArch?!!x.archived:!x.archived)&&(isArch||!(f.open===true||f.open==='true')||(!x.done&&(x.nextAction||x.awaitingReply))));
  xs=f.sort==='ancien'?xs.sort((a,b)=>a.date.localeCompare(b.date)):xs.sort((a,b)=>b.date.localeCompare(a.date));
  const groups={};
  if(f.sort==='echeance'){xs=xs.slice().sort((a,b)=>((!a.done&&a.nextDue)||'9999').localeCompare((!b.done&&b.nextDue)||'9999')||b.date.localeCompare(a.date));xs.forEach(x=>{const k=!x.done&&x.nextDue?'Prochaines actions':'Sans échéance';(groups[k]=groups[k]||[]).push(x)})}
- else if(f.sort==='partenaire'){partnersByNext(S.partners).forEach(p=>{const it=xs.filter(x=>x.partnerId===p.id);if(it.length)groups[p.name]=it})}
+ else if(f.sort==='partenaire'){partnersByNext(S.partners).forEach(p=>{const it=xs.filter(x=>x.partnerId===p.id);if(it.length)groups['p:'+p.id]=xThreads(it)})}
+ else if(f.sort==='dispositif'){const ds_=(S.dispositifs||[]).slice().sort((a,b)=>a.name.localeCompare(b.name,'fr'));ds_.forEach(d=>{const ids=S.partners.filter(p=>p.dispositifId===d.id).map(p=>p.id);const it=xs.filter(x=>ids.includes(x.partnerId));if(it.length)groups['d:'+d.id]=xThreads(it)});const rest=xs.filter(x=>{const p=partner(x.partnerId);return !p||!p.dispositifId||!(S.dispositifs||[]).some(d=>d.id===p.dispositifId)});if(rest.length)groups['Sans dispositif']=xThreads(rest)}
  else{xThreads(xs,f.sort!=='ancien').forEach(t=>{const k=(f.sort==='ancien'?t.root.date:t.last).slice(0,7);(groups[k]=groups[k]||[]).push(t)})}
  const gl=k=>/^\d{4}-\d{2}$/.test(k)?fmtMonth(k):esc(k);
+ const gh=(k,list)=>{const all=list.flatMap(t=>t.root?[t.root,...t.replies]:[t]);const todo=all.filter(x=>!x.done&&(x.awaitingReply||x.nextAction)).length;
+  if(k.startsWith('p:')){const p=partner(k.slice(2));const d=p.dispositifId&&(S.dispositifs||[]).find(z=>z.id===p.dispositifId);return `<div class="xgh" style="--pc:${p.color||'#888'}"><span class="plogo xs" style="${logoStyle(p)}">${logoTxt(p)}</span><div><b>${esc(p.name)}</b>${d?`<small>${esc(d.name)}</small>`:''}</div><span class="xgc">${all.length} échange${all.length>1?'s':''}${todo?` · <em>${todo} à traiter</em>`:''}</span></div>`}
+  if(k.startsWith('d:')){const d=(S.dispositifs||[]).find(z=>z.id===k.slice(2));return `<div class="xgh" style="--pc:${d.color||'#15131C'}"><span class="dlogo" style="background:${d.color||'#15131C'};width:34px;height:34px;border-radius:10px"></span><div><b>${esc(d.name)}</b><small>Dispositif</small></div><span class="xgc">${all.length} échange${all.length>1?'s':''}${todo?` · <em>${todo} à traiter</em>`:''}</span></div>`}
+  return `<div class="section-title" style="text-transform:capitalize">${gl(k)}</div>`};
  return `
  <div class="fbar">
-  <div class="fbar-row">${fseg('xf','open',[[false,'Tout l\'historique'],[true,'À traiter']])}${sortSel('xf','sort',[['recent','Plus récents d\'abord'],['ancien','Plus anciens d\'abord'],['echeance','Prochaine action (échéance)'],['partenaire','Partenaire']])}<span style="flex:1"></span>${can('echanges')?`<button class="btn primary" data-act="new-exchange" data-partner="${f.partner}">${icon('plus')}Consigner un échange</button>`:''}</div>
+  <div class="fbar-row">${fseg('xf','open',[[false,'En cours'],[true,'À traiter'],['arch','Classés']])}${sortSel('xf','sort',[['partenaire','Par partenaire'],['dispositif','Par dispositif'],['recent','Plus récents d\'abord'],['ancien','Plus anciens d\'abord'],['echeance','Prochaine action (échéance)']])}<span style="flex:1"></span>${can('echanges')?`<button class="btn primary" data-act="new-exchange" data-partner="${f.partner}">${icon('plus')}Consigner un échange</button>`:''}</div>
   <div class="fbar-row">${pchips('xf','partner')}</div>
   <div class="fbar-row"><span class="flabel">Canaux</span>${fchips('xf','channels',CHANNELS.map(c=>[c,c]),true)}</div>
  </div>
  <div class="notice" style="margin-bottom:16px">${icon('info')}<div>Consigner un échange sert à garder une trace (téléphone, email, message, réunion). <b>Aucun message n'est envoyé au partenaire.</b></div></div>
- ${xs.length?Object.keys(groups).map(k=>`<div class="section-title" style="text-transform:capitalize">${gl(k)}</div><div class="card white" style="padding-block:4px">${(groups[k][0]&&groups[k][0].root?groups[k]:xThreads(groups[k],f.sort!=='ancien')).map(threadHtml).join('')}</div>`).join(''):'<div class="empty">Aucun échange pour ces filtres.</div>'}`;
+ ${xs.length?Object.keys(groups).map(k=>{const list=groups[k][0]&&groups[k][0].root?groups[k]:xThreads(groups[k],f.sort!=='ancien');return `<section class="xgroup">${gh(k,list)}<div class="xlist">${list.map(threadHtml).join('')}</div></section>`}).join(''):'<div class="empty">Aucun échange pour ces filtres.</div>'}`;
 }
 
 /* ---------- Calendrier ---------- */
@@ -3378,6 +3422,9 @@ document.addEventListener('click',async e=>{
   case 'sheet':ui.sheet=!ui.sheet;render();break;
   case 'close':closeModal(!!ds.discard);break;
   case 'x-reply':{if(!can('echanges'))return;const px=S.exchanges.find(y=>y.id===ds.id);if(!px)return;newExchange({partner:px.partnerId,replyTo:px.id,type:'Retour / validation',contents:xPosts(px),projectId:px.projectId,interlocutor:px.interlocutor,channel:px.channel});break}
+  case 'x-arch':{const r=S.exchanges.find(y=>y.id===ds.id);if(!r||!can('echanges',r.partnerId))return;const fam=[r];let grew=true;while(grew){grew=false;S.exchanges.forEach(y=>{if(y.replyTo&&fam.some(z=>z.id===y.replyTo)&&!fam.includes(y)){fam.push(y);grew=true}})}
+   const on=!r.archived;fam.forEach(y=>{y.archived=on;if(on){y.awaitingReply=false;if(y.nextAction)y.done=true}});if(ui.xexp)delete ui.xexp[r.id];commit(on?'Discussion classée · retrouvez-la dans « Classés »':'Discussion remise dans les échanges en cours');break}
+  case 'x-showarch':ui.xshowArch=!ui.xshowArch;render();break;
   case 'x-thread':ui.xopen=ui.xopen||{};ui.xopen[ds.id]=!ui.xopen[ds.id];render();break;
   case 'x-exp':ui.xexp=ui.xexp||{};ui.xexp[ds.id]=!ui.xexp[ds.id];render();break;
   case 'x-int':{syncDraft();const d=ui.modal.draft;const names=xNames(d);const i=names.findIndex(n=>n.toLowerCase()===ds.v.toLowerCase());if(i>=0)names.splice(i,1);else names.push(ds.v);d.interlocutor=names.join(', ');renderModalOnly();break}
@@ -3396,7 +3443,7 @@ document.addEventListener('click',async e=>{
   case 'media-del':syncDraft();ui.modal.draft.media.splice(+ds.i,1);renderModalOnly();break;
   case 'thumb-reset':syncDraft();ui.modal.draft.thumb='';delete ui.modal.draft.thumbPos;renderModalOnly();break;
   case 'thumb-center':ui.modal.draft.thumbPos={x:50,y:50,z:1};applyTpos();{const z=document.getElementById('thumb-z');if(z)z.value=1}break;
-  case 'filt':{const o=ui[ds.o];let v=ds.v;if(ds.o==='xf'&&ds.k==='open')v=v==='true';if(ds.m){const arr=o[ds.k];const i=arr.indexOf(v);i<0?arr.push(v):arr.splice(i,1)}else{o[ds.k]=v}if(ds.o==='rep'&&ds.k==='partner'){ui.rep.exclude={};ui.rep.project=''}if(ds.k==='partner'&&ui[ds.o]&&'project' in ui[ds.o])ui[ds.o].project='';if(ds.o==='dash'&&ds.k==='partner'){ui.anim=true;render();window.scrollTo({top:0,behavior:'smooth'});break}if(ds.o==='rep'||ds.k==='partner')ui.anim=ds.o!=='rep'?false:false;render();break}
+  case 'filt':{const o=ui[ds.o];let v=ds.v;if(ds.o==='xf'&&ds.k==='open')v=v==='arch'?'arch':v==='true';if(ds.m){const arr=o[ds.k];const i=arr.indexOf(v);i<0?arr.push(v):arr.splice(i,1)}else{o[ds.k]=v}if(ds.o==='rep'&&ds.k==='partner'){ui.rep.exclude={};ui.rep.project=''}if(ds.k==='partner'&&ui[ds.o]&&'project' in ui[ds.o])ui[ds.o].project='';if(ds.o==='dash'&&ds.k==='partner'){ui.anim=true;render();window.scrollTo({top:0,behavior:'smooth'});break}if(ds.o==='rep'||ds.k==='partner')ui.anim=ds.o!=='rep'?false:false;render();break}
   case 'ropt':ui.rep.opts[ds.k]=!ui.rep.opts[ds.k];render();break;
   case 'rpf':{const o=ui.rep.opts;let l=(o.pfs||[]).slice();if(!ds.v)l=[];else l=l.includes(ds.v)?l.filter(x=>x!==ds.v):l.concat(ds.v);o.pfs=l;render();break}
   case 'cal-more':ui.cal.more=!ui.cal.more;render();break;
@@ -3525,7 +3572,7 @@ document.addEventListener('click',async e=>{
   case 'prj-del':{const id=ds.id;const withC=ds.mode==='all';const n=S.contents.filter(c=>c.projectId===id).length;delProject(id,withC);ui.prjDel=null;if(ui.modal&&ui.modal.type==='project')ui.modal=null;commit(withC?`Projet et ${n} contenu(s) supprimés`:'Projet supprimé · ses contenus restent chez le partenaire');break}
   case 'advance':{const c=content(ds.id);if(!c)return;const from=c.prod;c.prod=c.prod==='a_preparer'?'en_cours':'termine';if(c.prod==='termine')c.blocked=false;c.history.push({at:nowStamp(),by:me().id,text:`Production : ${PROD[from]} → ${PROD[c.prod]}`});commit(`« ${c.title} » : ${PROD[c.prod].toLowerCase()}`);break}
   case 'new-exchange':if(!can('echanges'))return;if(ui.fab){ui.fab=false;render()}if(!S.partners.length){toast('Créez d\'abord un partenaire.',true);return}if(ui.modal&&ui.modal.type==='content')syncDraft();newExchange({partner:ds.partner,content:ds.content,type:ds.type});break;
-  case 'save-exchange':{syncDraft();const d=ui.modal.draft;if(!d.summary.trim()){toast('Ajoutez un résumé de l\'échange.',true);return}d.contentIds=xPosts(d).filter(id=>content(id)?.partnerId===d.partnerId);d.contentId=d.contentIds[0]||'';if(d.replyTo&&d.id!==d.replyTo){const par=S.exchanges.find(y=>y.id===d.replyTo);if(par&&!d.id&&par.awaitingReply&&!par.done)par.awaitingReply=false}if(d.projectId&&project(d.projectId)?.partnerId!==d.partnerId)d.projectId='';if(!d.id){d.id=uid('x');S.exchanges.push(d)}else{const i=S.exchanges.findIndex(x=>x.id===d.id);S.exchanges[i]=d}ui.modal=null;commit('Échange consigné · aucun message envoyé au partenaire');break}
+  case 'save-exchange':{syncDraft();const d=ui.modal.draft;if(!d.summary.trim()){toast('Ajoutez un résumé de l\'échange.',true);return}d.contentIds=xPosts(d).filter(id=>content(id)?.partnerId===d.partnerId);d.contentId=d.contentIds[0]||'';if(d.replyTo&&!d.id){let rt=S.exchanges.find(y=>y.id===d.replyTo);while(rt&&rt.replyTo){const up=S.exchanges.find(y=>y.id===rt.replyTo);if(!up)break;rt=up}if(rt&&rt.archived){S.exchanges.forEach(y=>{if(y.archived&&(y.id===rt.id||y.replyTo))y.archived=false})}}if(d.replyTo&&d.id!==d.replyTo){const par=S.exchanges.find(y=>y.id===d.replyTo);if(par&&!d.id&&par.awaitingReply&&!par.done)par.awaitingReply=false}if(d.projectId&&project(d.projectId)?.partnerId!==d.partnerId)d.projectId='';if(!d.id){d.id=uid('x');S.exchanges.push(d)}else{const i=S.exchanges.findIndex(x=>x.id===d.id);S.exchanges[i]=d}ui.modal=null;commit('Échange consigné · aucun message envoyé au partenaire');break}
   case 'att-del':syncDraft();ui.modal.draft.attachments.splice(+ds.i,1);renderModalOnly();break;
   case 'del-ask':ui.modal.confirmDel=true;renderModalOnly();break;
   case 'del-exchange':S.exchanges=S.exchanges.filter(x=>x.id!==ui.modal.draft.id);ui.modal=null;commit('Échange supprimé');break;
