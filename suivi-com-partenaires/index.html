@@ -1273,7 +1273,9 @@ const dow=s=>(D(s).getDay()+6)%7;
 const weekStart=s=>addDays(s,-dow(s));
 const fmtD=s=>{if(!s)return '—';const d=D(s);return `${JOURS[dow(s)]} ${d.getDate()} ${MOISC[d.getMonth()]}`};
 const fmtDY=s=>{if(!s)return '—';const d=D(s);return `${d.getDate()} ${MOISC[d.getMonth()]} ${d.getFullYear()}`};
-const fmtMonth=ym=>{const [y,m]=ym.split('-').map(Number);return `${MOIS[m-1]} ${y}`};
+const fmtMonth=ym=>{if(String(ym).includes('~')){const [a,b]=ym.split('~');const [y1,m1]=a.split('-').map(Number),[y2,m2]=b.split('-').map(Number);return `${MOIS[m1-1]}${y1!==y2?' '+y1:''} – ${MOIS[m2-1]} ${y2}`}const [y,m]=ym.split('-').map(Number);return `${MOIS[m-1]} ${y}`};
+const ymList=k=>{k=String(k||'');if(!k.includes('~'))return [k];const [a,b]=k.split('~');const out=[];let m=a;while(m<=b&&out.length<12){out.push(m);m=addMonths(m,1)}return out};
+const inYM=(d,k)=>!!d&&ymList(k).includes(d.slice(0,7));
 const addMonths=(ym,n)=>{const [y,m]=ym.split('-').map(Number);const d=new Date(y,m-1+n,1);return `${d.getFullYear()}-${pad(d.getMonth()+1)}`};
 const nowStamp=()=>{const d=new Date();return `${isoOf(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`};
 const fmtStamp=s=>{if(!s)return '';const [d,t]=s.split('T');return fmtDY(d)+(t?' · '+t:'')};
@@ -2688,7 +2690,7 @@ function pageCalendar(){
 /* ---------- Comptes rendus ---------- */
 const RSORT=[['date','Date de publication'],['date_desc','Date (plus récente d\'abord)'],['plateforme','Plateforme'],['statut','Statut'],['titre','Titre (A → Z)']];
 function pfOk(x,pfs){return !pfs||!pfs.length||pfs.includes(x.platform)}
-function rPls(c,pfs,ym){return (c.platforms||[]).filter(x=>pfOk(x,pfs)&&(!ym||!x.date||x.date.startsWith(ym)))}
+function rPls(c,pfs,ym){return (c.platforms||[]).filter(x=>pfOk(x,pfs)&&(!ym||!x.date||inYM(x.date,ym)))}
 function rDate(c,pfs,ym){return (rPls(c,pfs,ym).filter(x=>x.date).map(x=>x.date+(x.time||'')).sort()[0])||'9999'}
 function sortReport(cs,mode,pfs,ym){const t=(a,b)=>(a.title||'').localeCompare(b.title||'','fr');const d=(a,b)=>rDate(a,pfs,ym).localeCompare(rDate(b,pfs,ym))||t(a,b);const arr=cs.slice();
  if(mode==='date_desc')return arr.sort((a,b)=>d(b,a));if(mode==='titre')return arr.sort(t);
@@ -2697,40 +2699,42 @@ function sortReport(cs,mode,pfs,ym){const t=(a,b)=>(a.title||'').localeCompare(b
  return arr.sort(d)}
 function reportData(pid,ym,exclude,proj,pfs,sort){
  const p=partner(pid);
- const cs=sortReport(S.contents.filter(c=>c.partnerId===pid&&!c.aside&&projOk(c,proj)&&c.share&&!(exclude||[]).includes(c.id)&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)&&pfOk(x,pfs))),sort,pfs,ym);
- const evs=S.events.filter(e=>e.partnerId===pid&&e.date.startsWith(ym));
+ const cs=sortReport(S.contents.filter(c=>c.partnerId===pid&&!c.aside&&projOk(c,proj)&&c.share&&!(exclude||[]).includes(c.id)&&(c.platforms||[]).some(x=>inYM(x.date,ym)&&pfOk(x,pfs))),sort,pfs,ym);
+ const evs=S.events.filter(e=>e.partnerId===pid&&inYM(e.date,ym));
  return {p,cs,evs};
 }
-function reportCandidates(pid,ym){const pfs=ui.rep.opts.pfs||[];return sortReport(S.contents.filter(c=>c.partnerId===pid&&!c.aside&&projOk(c,ui.rep.project)&&(c.platforms||[]).some(x=>x.date&&x.date.startsWith(ym)&&pfOk(x,pfs))),ui.rep.opts.sort,pfs,ym)}
+function reportCandidates(pid,ym){const pfs=ui.rep.opts.pfs||[];return sortReport(S.contents.filter(c=>c.partnerId===pid&&!c.aside&&projOk(c,ui.rep.project)&&(c.platforms||[]).some(x=>inYM(x.date,ym)&&pfOk(x,pfs))),ui.rep.opts.sort,pfs,ym)}
 function buildReport(pid,ym,opts,exclude){
  const pfs=opts.pfs||[];const {p,cs,evs}=reportData(pid,ym,exclude,opts.project,pfs,opts.sort);
  const pages=[];
  const foot=(i,n)=>`<div class="rp-foot"><span>Compte rendu ${esc(p.name)} · ${fmtMonth(ym)}</span><span>Document préparé le ${fmtDY(TODAY)} · page ${i}/${n}</span></div>`;
  // Page 1
- const ym1=ym+'-01';const start=addDays(ym1,-dow(ym1));const nd=new Date(D(ym1).getFullYear(),D(ym1).getMonth()+1,0).getDate();const cells=Math.ceil((dow(ym1)+nd)/7)*7;const rows=cells/7;
- const pubsByDay={};cs.forEach(c=>(c.platforms||[]).forEach(x=>{if(x.date&&x.date.startsWith(ym)&&pfOk(x,pfs))(pubsByDay[x.date]=pubsByDay[x.date]||[]).push({c,x})}));
+ const MM=ymList(ym);const multi=MM.length>1;const ym1=MM[0]+'-01';const geo=m=>{const f=m+'-01';const nd=new Date(D(f).getFullYear(),D(f).getMonth()+1,0).getDate();const cells=Math.ceil((dow(f)+nd)/7)*7;return {start:addDays(f,-dow(f)),cells,rows:cells/7}};const {rows}=geo(MM[0]);
+ const pubsByDay={};cs.forEach(c=>(c.platforms||[]).forEach(x=>{if(inYM(x.date,ym)&&pfOk(x,pfs))(pubsByDay[x.date]=pubsByDay[x.date]||[]).push({c,x})}));
  Object.values(pubsByDay).forEach(l=>l.sort((a,b)=>(a.x.time||'').localeCompare(b.x.time||'')));
  const st={total:cs.length,pub:cs.filter(c=>gstat(c)==='publie').length,att:cs.filter(c=>gstat(c)==='attente').length,val:cs.filter(c=>gstat(c)==='valide').length};
  const calH=opts.chiffres?(opts.parPf?540:600):700;const cellH=Math.floor((calH-24)/rows);
+ const calFor=(m,cellH)=>{const g=geo(m);return `<div class="rp-cal">${JOURS.map(j=>`<div class="rp-dow">${j}</div>`).join('')}${Array.from({length:g.cells},(_,i)=>{const d=addDays(g.start,i);const out=!d.startsWith(m);const l=(pubsByDay[d]||[]);const e=evs.filter(x=>x.date===d);const maxN=Math.max(1,Math.floor((cellH-20)/23));const all=[...e.map(x=>`<div class="rp-ev e">${esc(x.title)}</div>`),...l.map(({c,x})=>`<div class="rp-ev"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}">${esc(x.time||'')} ${pfLogo(x.platform,'xs')}</div>`)];return `<div class="rp-cell ${out?'out':''}" style="height:${cellH}px"><div class="rp-dn">${D(d).getDate()}</div>${out?'':all.slice(0,maxN).join('')+(all.length>maxN?`<div class="rp-more">+${all.length-maxN}</div>`:'')}</div>`}).join('')}</div>
+  <div class="rp-legend"><span>■ Publication : miniature, horaire, plateforme</span><span style="color:#D9140E">■ Événement</span><span>${(pfs.length?PLATFORMS.filter(x=>pfs.includes(x[0])):PLATFORMS.filter(x=>x[0]!=='X')).map(x=>x[1]+' '+x[0]).join(' · ')}</span></div>`};
  const p1=()=>`
   <div style="height:7px;margin:-48px -52px 41px;background:${p.color||'#0E0E0E'}"></div><div class="rp-top"><div><div class="rp-kick">Compte rendu de communication${pSub(p)?' · '+esc(pSub(p)):''}</div><div class="rp-title">${esc(p.name)}</div>${opts.project&&project(opts.project)?`<div style="font-size:15px;font-weight:700;margin-top:6px">Projet · ${esc(project(opts.project).name)}</div>`:''}<div class="rp-month">${fmtMonth(ym)}</div>${pfs.length?`<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${pfs.map(x=>`<span class="rp-chip" style="font-weight:800">${esc(x)}</span>`).join('')}</div>`:''}</div><div class="rp-logo" style="${logoStyle(p)};font-size:${logoFs(p,58)}px">${logoTxt(p)}</div></div>
-  ${opts.chiffres?`<div class="rp-stats"><div class="rp-stat k"><b>${st.total}</b><span>Contenus du mois</span></div><div class="rp-stat"><b>${st.pub}</b><span>Publiés</span></div><div class="rp-stat"><b>${st.val}</b><span>Validés, à paraître</span></div><div class="rp-stat"><b>${st.att}</b><span>En attente de validation</span></div><div class="rp-stat"><b>${evs.length}</b><span>Événements</span></div></div>${opts.parPf?`<div class="rp-pfst">${PLATFORMS.map(x=>x[0]).map(n=>[n,Object.values(pubsByDay).flat().filter(o=>o.x.platform===n).length]).filter(z=>z[1]).map(([n,k])=>`<div>${pfLogo(n,'rp')}<b>${k}</b><span>${esc(n)}</span></div>`).join('')}</div>`:''}`:''}
-  ${opts.calendrier?`<div class="rp-sec">Calendrier du mois</div><div class="rp-cal">${JOURS.map(j=>`<div class="rp-dow">${j}</div>`).join('')}${Array.from({length:cells},(_,i)=>{const d=addDays(start,i);const out=!d.startsWith(ym);const l=(pubsByDay[d]||[]);const e=evs.filter(x=>x.date===d);const maxN=Math.max(1,Math.floor((cellH-20)/23));const all=[...e.map(x=>`<div class="rp-ev e">${esc(x.title)}</div>`),...l.map(({c,x})=>`<div class="rp-ev"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}">${esc(x.time||'')} ${pfLogo(x.platform,'xs')}</div>`)];return `<div class="rp-cell ${out?'out':''}" style="height:${cellH}px"><div class="rp-dn">${D(d).getDate()}</div>${out?'':all.slice(0,maxN).join('')+(all.length>maxN?`<div class="rp-more">+${all.length-maxN}</div>`:'')}</div>`}).join('')}</div>
-  <div class="rp-legend"><span>■ Publication : miniature, horaire, plateforme</span><span style="color:#D9140E">■ Événement</span><span>${(pfs.length?PLATFORMS.filter(x=>pfs.includes(x[0])):PLATFORMS.filter(x=>x[0]!=='X')).map(x=>x[1]+' '+x[0]).join(' · ')}</span></div>`:''}
-  ${!opts.calendrier?`<div class="rp-sec">Contenus du mois</div>${cs.map(c=>`<div style="display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid #EFECEA"><img src="${thumbSrc(c)}" style="width:28px;height:35px;border-radius:5px;object-fit:cover;${imgPos(c)}"><b style="font-size:12px;flex:1">${esc(c.title)}</b><span class="rp-chip s-${gstat(c)}">${GS[gstat(c)]}</span></div>`).join('')}`:''}`;
+  ${opts.chiffres?`<div class="rp-stats"><div class="rp-stat k"><b>${st.total}</b><span>${multi?"Contenus de la période":"Contenus du mois"}</span></div><div class="rp-stat"><b>${st.pub}</b><span>Publiés</span></div><div class="rp-stat"><b>${st.val}</b><span>Validés, à paraître</span></div><div class="rp-stat"><b>${st.att}</b><span>En attente de validation</span></div><div class="rp-stat"><b>${evs.length}</b><span>Événements</span></div></div>${opts.parPf?`<div class="rp-pfst">${PLATFORMS.map(x=>x[0]).map(n=>[n,Object.values(pubsByDay).flat().filter(o=>o.x.platform===n).length]).filter(z=>z[1]).map(([n,k])=>`<div>${pfLogo(n,'rp')}<b>${k}</b><span>${esc(n)}</span></div>`).join('')}</div>`:''}`:''}
+  ${opts.calendrier?`<div class="rp-sec">Calendrier ${multi?"· "+fmtMonth(MM[0]):"du mois"}</div>${calFor(MM[0],cellH)}`:''}
+  ${!opts.calendrier?`<div class="rp-sec">Contenus ${multi?"de la période":"du mois"}</div>${cs.map(c=>`<div style="display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid #EFECEA"><img src="${thumbSrc(c)}" style="width:28px;height:35px;border-radius:5px;object-fit:cover;${imgPos(c)}"><b style="font-size:12px;flex:1">${esc(c.title)}</b><span class="rp-chip s-${gstat(c)}">${GS[gstat(c)]}</span></div>`).join('')}`:''}`;
  // ---- Pages suivantes : calendrier semaine + détail (par contenu ou plateforme par plateforme)
  const BUDGET=905;const head2=(t)=>`<div style="height:7px;margin:-48px -52px 41px;background:${p.color||'#0E0E0E'}"></div><div class="rp-head2"><b>${esc(p.name)} — ${t}</b><span>${fmtMonth(ym)}</span></div>`;
  const lines=(t,cpl)=>String(t||'').split('\n').reduce((n,l)=>n+Math.max(1,Math.ceil(l.length/cpl)),0);
  const descOf=(c,x)=>(x.text||'').trim()||(c.description||'').trim();
  const usedPfs=PLATFORMS.map(x=>x[0]).filter(n=>Object.values(pubsByDay).some(l=>l.some(o=>o.x.platform===n)));
  const later=[];// {title, blocks:[{h,html}]}
+ if(multi&&opts.calendrier)MM.slice(1).forEach(m=>{const g=geo(m);const ch=Math.floor((800-24)/g.rows);later.push({title:'Calendrier · '+fmtMonth(m),blocks:[{h:BUDGET,html:`<div class="rp-sec" style="margin-top:6px">Calendrier · ${fmtMonth(m)}</div>${calFor(m,ch)}`}]})});
  // Calendrier semaine
  if(opts.semaine&&cs.length){
-  const weeks=[];let w=addDays(ym1,-dow(ym1));while(w<=ym+'-31'&&w.slice(0,7)<=ym){weeks.push(w);w=addDays(w,7)}
+  const weeks=[];let w=addDays(ym1,-dow(ym1));const lastM=MM[MM.length-1];while(w.slice(0,7)<=lastM){weeks.push(w);w=addDays(w,7)}
   const blocks=[];
   weeks.forEach(ws=>{const days=Array.from({length:7},(_,i)=>addDays(ws,i));const any=days.some(d=>(pubsByDay[d]||[]).length||evs.some(e=>e.date===d));
    const we=days[6];const lab=`Semaine du ${D(ws).getDate()} ${MOISC[D(ws).getMonth()]} au ${D(we).getDate()} ${MOISC[D(we).getMonth()]}`;
-   const dh=`<div class="rw-days"><div class="rw-lane-h"></div>${days.map(d=>`<div class="rw-dh ${d.startsWith(ym)?'':'out'} ${d===TODAY?'today':''}"><span>${JOURS[dow(d)]}</span><b>${D(d).getDate()}</b></div>`).join('')}</div>`;
+   const dh=`<div class="rw-days"><div class="rw-lane-h"></div>${days.map(d=>`<div class="rw-dh ${inYM(d,ym)?'':'out'} ${d===TODAY?'today':''}"><span>${JOURS[dow(d)]}</span><b>${D(d).getDate()}</b></div>`).join('')}</div>`;
    const evRow=days.some(d=>evs.some(e=>e.date===d))?`<div class="rw-row"><div class="rw-lane">Évén.</div>${days.map(d=>`<div class="rw-cell">${evs.filter(e=>e.date===d).map(e=>`<div class="rp-ev e">${esc(e.title)}</div>`).join('')}</div>`).join('')}</div>`:'';
    if(!any){blocks.push({h:62,html:`<div class="rw"><div class="rw-t">${lab}</div><div class="rw-empty">Aucune publication cette semaine.</div></div>`});return}
    const item=(c,x,showPf)=>`<div class="rw-it"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}"><div><div class="rw-tm">${showPf?pfLogo(x.platform,'xs'):''}${esc(x.time||'—')}</div><div class="rw-ti">${esc(c.title)}</div></div></div>`;
@@ -2822,7 +2826,7 @@ function pageReports(){
  <div class="rpanel">
   <div class="card white">
    <div class="eyebrow" style="margin-bottom:10px">1 · Partenaire et mois</div>
-   <div class="grid" style="gap:12px">${pchips('rep','partner',{all:false})}${projChips('rep')}<div class="mscroll">${fseg('rep','month',months.map(m=>[m,MOISC[+m.slice(5)-1]+' '+m.slice(0,4)]))}</div></div>
+   <div class="grid" style="gap:12px">${pchips('rep','partner',{all:false})}${projChips('rep')}<div class="seg" role="radiogroup" style="align-self:flex-start"><button class="${String(r.month).includes('~')?'':'on'}" data-act="rep-span" data-v="1">1 mois</button><button class="${String(r.month).includes('~')?'on':''}" data-act="rep-span" data-v="2">2 mois</button></div><div class="mscroll">${fseg('rep','month',months.map(m=>String(r.month).includes('~')?[m+'~'+addMonths(m,1),MOISC[+m.slice(5)-1]+' – '+MOISC[+addMonths(m,1).slice(5)-1]+' '+addMonths(m,1).slice(0,4)]:[m,MOISC[+m.slice(5)-1]+' '+m.slice(0,4)]))}</div></div>
   </div>
   <div class="card white">
    <div class="eyebrow" style="margin-bottom:10px">2 · Éléments à partager <span style="text-transform:none;letter-spacing:0;font-weight:600">· sélection multiple</span></div>
@@ -2870,7 +2874,7 @@ async function makePDF(pid,month,opts,exclude){
  const els=[...stage.querySelectorAll('.rp-page')];
  try{for(let i=0;i<els.length;i++){const cv=await window.html2canvas(els[i],{scale:2,backgroundColor:'#ffffff',logging:false,useCORS:true});if(i)pdf.addPage();pdf.addImage(cv.toDataURL('image/jpeg',0.92),'JPEG',0,0,210,297)}}
  finally{stage.innerHTML=''}
- const p=partner(pid);return {blob:pdf.output('blob'),name:`Compte-rendu_${(p?p.name:'partenaire').replace(/[^\wÀ-ÿ-]+/g,'-')}_${month}.pdf`};
+ const p=partner(pid);return {blob:pdf.output('blob'),name:`Compte-rendu_${(p?p.name:'partenaire').replace(/[^\wÀ-ÿ-]+/g,'-')}_${String(month).replace('~','_')}.pdf`};
 }
 async function saveBlob(blob,name){
  if(DL){await DL.save({filename:name,data:blob});return}
@@ -3351,6 +3355,7 @@ document.addEventListener('click',async e=>{
  switch(a){
   case 'sheet':ui.sheet=!ui.sheet;render();break;
   case 'close':closeModal(!!ds.discard);break;
+  case 'rep-span':{const st=String(ui.rep.month).split('~')[0];ui.rep.month=ds.v==='2'?st+'~'+addMonths(st,1):st;ui.rep.exclude={};render();break}
   case 'cad-reload':{const f=document.querySelector('#cadence-host iframe');if(f)f.src='cadence.html?client=ILA';break}
   case 'mine':ui.mine=!!ds.v;ui.anim=true;render();break;
   case 'kpi':ui.cf={partner:ui.dash.partner||'',buckets:[ds.k],owner:ui.mine?me().id:'',q:''};navigate('contenus');break;
