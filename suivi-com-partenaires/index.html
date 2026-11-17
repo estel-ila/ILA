@@ -1200,6 +1200,15 @@ section.cfolded>.card-h{margin-bottom:0!important}
 #cadence-slot{border-radius:22px;background:#050505}#cadence-host{position:absolute;z-index:5;border-radius:22px;overflow:hidden;background:#050505;box-shadow:0 10px 30px rgba(0,0,0,.18)}#cadence-host iframe{width:100%;height:100%;border:0;display:block}
 .cad-top{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
 @media (max-width:860px){#cadence-slot,#cadence-host{border-radius:16px}}
+.rp-to{margin-top:10px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;font-size:12px;max-width:520px}.rp-to span{width:100%;font-size:8.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#6E6866}.rp-to b{font-size:13px}.rp-to em{font-style:normal;color:#6E6866;font-size:11px}.rp-to i{font-style:normal;color:#C9C3C1}
+.rpick-d{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--muted,#6E6866);font-weight:600;margin-top:1px}.rpick-d .pfl.xs{width:14px;height:14px}
+.xthread{border-bottom:1px solid var(--line,rgba(0,0,0,.08))}.xthread:last-child{border-bottom:0}.xthread .xitem{border-bottom:0}
+.xreplies{margin:0 0 10px 22px;padding-left:14px;border-left:2px solid rgba(217,20,14,.35);display:flex;flex-direction:column}
+.xitem.reply{padding-block:8px}.xitem.reply .xicon{width:28px;height:28px;font-size:10px}
+.xmore{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;border:0;background:rgba(14,14,14,.06);border-radius:999px;padding:6px 12px;font-weight:700;font-size:12.5px;cursor:pointer;margin:6px 0}.xmore svg{width:14px;height:14px}
+.xsum{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}.xsum.open{display:block;-webkit-line-clamp:unset}
+.xposts{display:flex;flex-direction:column;max-height:250px;overflow:auto;border-radius:12px;background:rgba(14,14,14,.04);padding:4px 8px}
+.linkbtn svg{width:14px;height:14px;vertical-align:-2px;margin-right:4px}
 </style>
 
 <div class="ambient" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i><i class="a4"></i></div>
@@ -2536,7 +2545,7 @@ function pagePartner(pid){
  ${partnerView&&!a.echanges?'<div class="empty">Le fil des échanges n\'est pas partagé.</div>':`
  <div class="card white">
   <div class="spread" style="margin-bottom:8px"><span class="muted" style="font-size:13px">${xs.length} échange(s)${!partnerView&&canSeeInternal()?' · notes internes incluses':''}</span>${can('echanges',pid)&&!partnerView?`<button class="btn sm primary" data-act="new-exchange" data-partner="${pid}">${icon('plus')}Consigner un échange</button>`:''}</div>
-  ${xs.length?xs.map(exchangeItem).join(''):'<div class="empty">Aucun échange consigné.</div>'}
+  ${xs.length?xThreads(xs).map(threadHtml).join(''):'<div class="empty">Aucun échange consigné.</div>'}
  </div>`}
 
  ${!partnerView?`<div class="section-title" id="sec-recaps">Récaps PDF envoyés</div>
@@ -2571,17 +2580,25 @@ function accessCard(p){
 }
 
 /* ---------- Échanges ---------- */
-function exchangeItem(x){
- const p=partner(x.partnerId);const c=x.contentId?content(x.contentId):null;const pr=x.projectId?project(x.projectId):null;
- const ed=can('echanges',x.partnerId)&&!isPartner();
- return `<article class="xitem">
+const xPosts=x=>{const ids=(x.contentIds&&x.contentIds.length)?x.contentIds:(x.contentId?[x.contentId]:[]);return [...new Set(ids)]};
+const xNames=x=>String(x.interlocutor||'').split(',').map(t=>t.trim()).filter(Boolean);
+function xThreads(xs,desc){const ids=new Set(xs.map(x=>x.id));const kids={};const roots=[];
+ xs.forEach(x=>{if(x.replyTo&&ids.has(x.replyTo)){let r=x.replyTo;const seen=new Set();while(true){const px=xs.find(y=>y.id===r);if(!px||!px.replyTo||!ids.has(px.replyTo)||seen.has(r))break;seen.add(r);r=px.replyTo}(kids[r]=kids[r]||[]).push(x)}else roots.push(x)});
+ const th=roots.map(r=>{const rs=(kids[r.id]||[]).sort((a,b)=>a.date.localeCompare(b.date)||(S.exchanges.indexOf(a)-S.exchanges.indexOf(b)));return {root:r,replies:rs,last:rs.length?rs[rs.length-1].date:r.date}});
+ return th.sort((a,b)=>desc===false?a.root.date.localeCompare(b.root.date):b.last.localeCompare(a.last))}
+function threadHtml(t){const n=t.replies.length;const open=ui.xopen&&ui.xopen[t.root.id];const shown=open?t.replies:t.replies.slice(-1);
+ return `<div class="xthread ${n?'has':''}">${exchangeItem(t.root)}${n?`<div class="xreplies">${n>1&&!open?`<button class="xmore" data-act="x-thread" data-id="${t.root.id}">${icon('chat')}Voir les ${n} retours et échanges liés</button>`:''}${shown.map(x=>exchangeItem(x,t.root)).join('')}${n>1&&open?`<button class="xmore" data-act="x-thread" data-id="${t.root.id}">Replier</button>`:''}</div>`:''}</div>`}
+function exchangeItem(x,reply){
+ const p=partner(x.partnerId);const rootPosts=reply?xPosts(reply).join(','):null;const posts=(reply&&xPosts(x).join(',')===rootPosts?[]:xPosts(x)).map(id=>content(id)).filter(c=>c&&(!isPartner()||c.share));const pr=x.projectId?project(x.projectId):null;
+ const ed=can('echanges',x.partnerId)&&!isPartner();const exp=ui.xexp&&ui.xexp[x.id];
+ return `<article class="xitem ${reply?'reply':''}">
   <span class="xicon ${x.type==='Demande reçue'?'r':x.confidential||x.type==='Note interne'?'k':''}">${CH_AB[x.channel]||''}</span>
   <div class="xbody">
    <div class="row" style="gap:6px"><b style="font-size:13.5px">${esc(x.type)}</b><span class="muted" style="font-size:12.5px">· ${fmtDY(x.date)} · ${esc(x.channel)} · ${esc(userName(x.author))} avec ${esc(x.interlocutor||'—')}</span>${x.confidential?`<span class="chip lock">${icon('lock')}Confidentiel</span>`:''}${x.awaitingReply&&!x.done?'<span class="chip s-attente">Retour attendu</span>':''}</div>
-   <div class="xsum">${esc(x.summary)}</div>
-   <div class="row" style="gap:6px">${!ui.route.startsWith('partenaire-')?`<button class="chip soft" data-go="partenaire-${p.id}" style="border:0">${esc(p.name)}</button>`:''}${pr?`<span class="chip line">${esc(pr.name)}</span>`:''}${c&&(!isPartner()||c.share)?`<button class="chip line" data-open="${c.id}" style="border:0;cursor:pointer">${icon('link')}${esc(c.title)}</button>`:''}${(x.attachments||[]).map(a=>`<span class="att">${icon('clip','width="12" height="12"')}${esc(a)}</span>`).join('')}</div>
+   <div class="xsum ${exp?'open':''}" data-act="x-exp" data-id="${x.id}">${esc(x.summary)}</div>
+   <div class="row" style="gap:6px">${!reply&&!ui.route.startsWith('partenaire-')?`<button class="chip soft" data-go="partenaire-${p.id}" style="border:0">${esc(p.name)}</button>`:''}${pr?`<span class="chip line">${esc(pr.name)}</span>`:''}${posts.map(c=>`<button class="chip line" data-open="${c.id}" style="border:0;cursor:pointer">${icon('link')}${esc(c.title)}</button>`).join('')}${(x.attachments||[]).map(a=>`<span class="att">${icon('clip','width="12" height="12"')}${esc(a)}</span>`).join('')}</div>
    ${x.nextAction?`<div class="xnext ${x.done?'done':''}">${ed?`<button class="check ${x.done?'on':''}" data-act="x-done" data-id="${x.id}" aria-label="${x.done?'Rouvrir':'Marquer comme fait'}">${x.done?icon('check'):''}</button>`:''}<span><b>Prochaine action :</b> ${esc(x.nextAction)}</span><span class="muted">${esc(userName(x.nextOwner))} · ${x.nextDue?fmtD(x.nextDue):'sans date'}</span>${!x.done&&x.nextDue&&x.nextDue<TODAY?'<span class="chip alert">En retard</span>':''}</div>`:''}
-   ${ed?`<div><button class="linkbtn" data-openx="${x.id}">Modifier</button></div>`:''}
+   ${ed?`<div class="row" style="gap:14px"><button class="linkbtn" data-openx="${x.id}">Modifier</button><button class="linkbtn" data-act="x-reply" data-id="${x.replyTo&&S.exchanges.some(y=>y.id===x.replyTo)?x.replyTo:x.id}">${icon('chat')}Ajouter un retour</button></div>`:''}
   </div></article>`;
 }
 function pageExchanges(){
@@ -2592,7 +2609,7 @@ function pageExchanges(){
  const groups={};
  if(f.sort==='echeance'){xs=xs.slice().sort((a,b)=>((!a.done&&a.nextDue)||'9999').localeCompare((!b.done&&b.nextDue)||'9999')||b.date.localeCompare(a.date));xs.forEach(x=>{const k=!x.done&&x.nextDue?'Prochaines actions':'Sans échéance';(groups[k]=groups[k]||[]).push(x)})}
  else if(f.sort==='partenaire'){partnersByNext(S.partners).forEach(p=>{const it=xs.filter(x=>x.partnerId===p.id);if(it.length)groups[p.name]=it})}
- else xs.forEach(x=>{const k=x.date.slice(0,7);(groups[k]=groups[k]||[]).push(x)});
+ else{xThreads(xs,f.sort!=='ancien').forEach(t=>{const k=(f.sort==='ancien'?t.root.date:t.last).slice(0,7);(groups[k]=groups[k]||[]).push(t)})}
  const gl=k=>/^\d{4}-\d{2}$/.test(k)?fmtMonth(k):esc(k);
  return `
  <div class="fbar">
@@ -2601,7 +2618,7 @@ function pageExchanges(){
   <div class="fbar-row"><span class="flabel">Canaux</span>${fchips('xf','channels',CHANNELS.map(c=>[c,c]),true)}</div>
  </div>
  <div class="notice" style="margin-bottom:16px">${icon('info')}<div>Consigner un échange sert à garder une trace (téléphone, email, message, réunion). <b>Aucun message n'est envoyé au partenaire.</b></div></div>
- ${xs.length?Object.keys(groups).map(k=>`<div class="section-title" style="text-transform:capitalize">${gl(k)}</div><div class="card white" style="padding-block:4px">${groups[k].map(exchangeItem).join('')}</div>`).join(''):'<div class="empty">Aucun échange pour ces filtres.</div>'}`;
+ ${xs.length?Object.keys(groups).map(k=>`<div class="section-title" style="text-transform:capitalize">${gl(k)}</div><div class="card white" style="padding-block:4px">${(groups[k][0]&&groups[k][0].root?groups[k]:xThreads(groups[k],f.sort!=='ancien')).map(threadHtml).join('')}</div>`).join(''):'<div class="empty">Aucun échange pour ces filtres.</div>'}`;
 }
 
 /* ---------- Calendrier ---------- */
@@ -2703,6 +2720,8 @@ function reportData(pid,ym,exclude,proj,pfs,sort){
  const evs=S.events.filter(e=>e.partnerId===pid&&inYM(e.date,ym));
  return {p,cs,evs};
 }
+function repContacts(pid){const p=partner(pid);if(!p)return [];const out=(p.contacts||[]).filter(k=>k&&k.name).map(k=>({k,org:''}));const d=p.dispositifId&&(S.dispositifs||[]).find(x=>x.id===p.dispositifId);if(d)(d.contacts||[]).filter(k=>k&&k.name).forEach(k=>out.push({k,org:d.name}));return out}
+function repTo(pid,ids){const all=repContacts(pid);return (ids||[]).map(id=>all.find(z=>z.k.id===id)).filter(Boolean)}
 function reportCandidates(pid,ym){const pfs=ui.rep.opts.pfs||[];return sortReport(S.contents.filter(c=>c.partnerId===pid&&!c.aside&&projOk(c,ui.rep.project)&&(c.platforms||[]).some(x=>inYM(x.date,ym)&&pfOk(x,pfs))),ui.rep.opts.sort,pfs,ym)}
 function buildReport(pid,ym,opts,exclude){
  const pfs=opts.pfs||[];const {p,cs,evs}=reportData(pid,ym,exclude,opts.project,pfs,opts.sort);
@@ -2717,7 +2736,7 @@ function buildReport(pid,ym,opts,exclude){
  const calFor=(m,cellH)=>{const g=geo(m);return `<div class="rp-cal">${JOURS.map(j=>`<div class="rp-dow">${j}</div>`).join('')}${Array.from({length:g.cells},(_,i)=>{const d=addDays(g.start,i);const out=!d.startsWith(m);const l=(pubsByDay[d]||[]);const e=evs.filter(x=>x.date===d);const maxN=Math.max(1,Math.floor((cellH-20)/23));const all=[...e.map(x=>`<div class="rp-ev e">${esc(x.title)}</div>`),...l.map(({c,x})=>`<div class="rp-ev"><img src="${thumbSrc(c)}" alt="" style="${imgPos(c)}">${esc(x.time||'')} ${pfLogo(x.platform,'xs')}</div>`)];return `<div class="rp-cell ${out?'out':''}" style="height:${cellH}px"><div class="rp-dn">${D(d).getDate()}</div>${out?'':all.slice(0,maxN).join('')+(all.length>maxN?`<div class="rp-more">+${all.length-maxN}</div>`:'')}</div>`}).join('')}</div>
   <div class="rp-legend"><span>■ Publication : miniature, horaire, plateforme</span><span style="color:#D9140E">■ Événement</span><span>${(pfs.length?PLATFORMS.filter(x=>pfs.includes(x[0])):PLATFORMS.filter(x=>x[0]!=='X')).map(x=>x[1]+' '+x[0]).join(' · ')}</span></div>`};
  const p1=()=>`
-  <div style="height:7px;margin:-48px -52px 41px;background:${p.color||'#0E0E0E'}"></div><div class="rp-top"><div><div class="rp-kick">Compte rendu de communication${pSub(p)?' · '+esc(pSub(p)):''}</div><div class="rp-title">${esc(p.name)}</div>${opts.project&&project(opts.project)?`<div style="font-size:15px;font-weight:700;margin-top:6px">Projet · ${esc(project(opts.project).name)}</div>`:''}<div class="rp-month">${fmtMonth(ym)}</div>${pfs.length?`<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${pfs.map(x=>`<span class="rp-chip" style="font-weight:800">${esc(x)}</span>`).join('')}</div>`:''}</div><div class="rp-logo" style="${logoStyle(p)};font-size:${logoFs(p,58)}px">${logoTxt(p)}</div></div>
+  <div style="height:7px;margin:-48px -52px 41px;background:${p.color||'#0E0E0E'}"></div><div class="rp-top"><div><div class="rp-kick">Compte rendu de communication${pSub(p)?' · '+esc(pSub(p)):''}</div><div class="rp-title">${esc(p.name)}</div>${opts.project&&project(opts.project)?`<div style="font-size:15px;font-weight:700;margin-top:6px">Projet · ${esc(project(opts.project).name)}</div>`:''}<div class="rp-month">${fmtMonth(ym)}</div>${(()=>{const to=repTo(pid,opts.to);return to.length?`<div class="rp-to"><span>À l'attention de</span>${to.map(z=>`<b>${esc(z.k.name)}</b>${z.k.role||z.org?`<em>${esc([z.k.role,z.org].filter(Boolean).join(' · '))}</em>`:''}`).join('<i>·</i>')}</div>`:''})()}${pfs.length?`<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${pfs.map(x=>`<span class="rp-chip" style="font-weight:800">${esc(x)}</span>`).join('')}</div>`:''}</div><div class="rp-logo" style="${logoStyle(p)};font-size:${logoFs(p,58)}px">${logoTxt(p)}</div></div>
   ${opts.chiffres?`<div class="rp-stats"><div class="rp-stat k"><b>${st.total}</b><span>${multi?"Contenus de la période":"Contenus du mois"}</span></div><div class="rp-stat"><b>${st.pub}</b><span>Publiés</span></div><div class="rp-stat"><b>${st.val}</b><span>Validés, à paraître</span></div><div class="rp-stat"><b>${st.att}</b><span>En attente de validation</span></div><div class="rp-stat"><b>${evs.length}</b><span>Événements</span></div></div>${opts.parPf?`<div class="rp-pfst">${PLATFORMS.map(x=>x[0]).map(n=>[n,Object.values(pubsByDay).flat().filter(o=>o.x.platform===n).length]).filter(z=>z[1]).map(([n,k])=>`<div>${pfLogo(n,'rp')}<b>${k}</b><span>${esc(n)}</span></div>`).join('')}</div>`:''}`:''}
   ${opts.calendrier?`<div class="rp-sec">Calendrier ${multi?"· "+fmtMonth(MM[0]):"du mois"}</div>${calFor(MM[0],cellH)}`:''}
   ${!opts.calendrier?`<div class="rp-sec">Contenus ${multi?"de la période":"du mois"}</div>${cs.map(c=>`<div style="display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid #EFECEA"><img src="${thumbSrc(c)}" style="width:28px;height:35px;border-radius:5px;object-fit:cover;${imgPos(c)}"><b style="font-size:12px;flex:1">${esc(c.title)}</b><span class="rp-chip s-${gstat(c)}">${GS[gstat(c)]}</span></div>`).join('')}`:''}`;
@@ -2829,6 +2848,9 @@ function pageReports(){
    <div class="grid" style="gap:12px">${pchips('rep','partner',{all:false})}${projChips('rep')}<div class="seg" role="radiogroup" style="align-self:flex-start"><button class="${String(r.month).includes('~')?'':'on'}" data-act="rep-span" data-v="1">1 mois</button><button class="${String(r.month).includes('~')?'on':''}" data-act="rep-span" data-v="2">2 mois</button></div><div class="mscroll">${fseg('rep','month',months.map(m=>String(r.month).includes('~')?[m+'~'+addMonths(m,1),MOISC[+m.slice(5)-1]+' – '+MOISC[+addMonths(m,1).slice(5)-1]+' '+addMonths(m,1).slice(0,4)]:[m,MOISC[+m.slice(5)-1]+' '+m.slice(0,4)]))}</div></div>
   </div>
   <div class="card white">
+   <div class="eyebrow" style="margin-bottom:10px">À l'attention de <span style="text-transform:none;letter-spacing:0;font-weight:600">· plusieurs interlocuteurs possibles</span></div>
+   ${(()=>{const all=repContacts(r.partner);const to=r.opts.to||[];return all.length?`<div class="mchips">${all.map(z=>{const on=to.includes(z.k.id);return `<button type="button" class="mchip ${on?'on':''}" data-act="rto" data-v="${z.k.id}" aria-pressed="${on}"><span>${esc(z.k.name)}${z.k.role||z.org?`<small style="display:block;font-weight:600;opacity:.65;font-size:11px">${esc([z.k.role,z.org].filter(Boolean).join(' · '))}</small>`:''}</span>${on?icon('check'):''}</button>`}).join('')}</div>`:`<div class="muted" style="font-size:13px">Aucun contact enregistré pour ce partenaire. Ajoutez-en depuis sa fiche.</div>`})()}
+   <div style="height:18px"></div>
    <div class="eyebrow" style="margin-bottom:10px">2 · Éléments à partager <span style="text-transform:none;letter-spacing:0;font-weight:600">· sélection multiple</span></div>
    <div class="mchips">${optRow('chiffres','Chiffres clés')}${optRow('calendrier','Calendrier mensuel')}${optRow('semaine','Calendrier semaine')}${optRow('descriptions','Descriptions')}${optRow('comptes','Comptes et identifications')}${optRow('collabs','Collaborations')}${optRow('liens','Liens publiés')}</div>
    <div class="notice" style="margin-top:10px">${icon('lock')}<div>Notes internes, commentaires d'équipe et échanges confidentiels sont toujours exclus.</div></div>
@@ -2836,13 +2858,13 @@ function pageReports(){
   <div class="card white">
    <label class="rpf-opt"><input type="checkbox" data-act="ropt" data-k="parPf" ${r.opts.parPf?'checked':''}><span><b>Plateforme par plateforme</b><em>Le calendrier semaine et le détail sont organisés par plateforme, avec le texte propre à chacune.</em></span></label>
    <div class="eyebrow" style="margin-bottom:10px">3 · Focus plateformes <span style="text-transform:none;letter-spacing:0;font-weight:600">· le calendrier et le détail n'affichent que ces plateformes</span></div>
-   ${(()=>{const pfs=r.opts.pfs||[];const used=new Set();S.contents.filter(c=>c.partnerId===r.partner&&!c.aside&&projOk(c,r.project)).forEach(c=>(c.platforms||[]).forEach(x=>{if(x.date&&x.date.startsWith(r.month))used.add(x.platform)}));
+   ${(()=>{const pfs=r.opts.pfs||[];const used=new Set();S.contents.filter(c=>c.partnerId===r.partner&&!c.aside&&projOk(c,r.project)).forEach(c=>(c.platforms||[]).forEach(x=>{if(inYM(x.date,r.month))used.add(x.platform)}));
     return `<div class="mchips"><button type="button" class="mchip ${!pfs.length?'on':''}" data-act="rpf" data-v="">Toutes${!pfs.length?icon('check'):''}</button>${PLATFORMS.map(([n,a])=>{const on=pfs.includes(n);const u=used.has(n);return `<button type="button" class="mchip ${on?'on':''}" data-act="rpf" data-v="${n}" ${!u&&!on?'style="opacity:.5"':''}>${pfLogo(n,'sm')}${n}${on?icon('check'):''}</button>`}).join('')}</div>
     <div class="row" style="margin-top:12px">${sortSel('rep','rsort',RSORT)}</div>`})()}
   </div>
   <div class="card white">
-   <div class="eyebrow" style="margin-bottom:6px">4 · Contenus inclus (${cand.filter(c=>!r.exclude[c.id]&&c.share).length}/${cand.length})</div>
-   ${cand.length?cand.map(c=>`<label class="rpick"><input type="checkbox" data-rinc="${c.id}" ${!r.exclude[c.id]&&c.share?'checked':''} ${c.share?'':'disabled'}>${thumbImg(c,'mini s')}<span title="${esc(c.title)}">${esc(c.title)}${c.share?'':' <em class="muted">(non partageable)</em>'}</span><span class="chip s-${gstat(c)}" style="font-size:10px;padding:1px 7px">${GS[gstat(c)].replace('En attente de validation','À valider')}</span></label>`).join(''):'<div class="muted" style="font-size:13px">Aucun contenu publié ou prévu ce mois.</div>'}
+   <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;flex-wrap:wrap"><div class="eyebrow">4 · Posts inclus (${cand.filter(c=>!r.exclude[c.id]&&c.share).length}/${cand.length})</div>${cand.length?`<div class="row" style="gap:6px"><button class="btn sm" data-act="rinc-all">Tout cocher</button><button class="btn sm ghost" data-act="rinc-none">Tout décocher</button></div>`:''}</div>
+   ${cand.length?cand.map(c=>{const pl=rPls(c,r.opts.pfs||[],r.month).filter(x=>x.date).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));return `<label class="rpick"><input type="checkbox" data-rinc="${c.id}" ${!r.exclude[c.id]&&c.share?'checked':''} ${c.share?'':'disabled'}>${thumbImg(c,'mini s')}<span title="${esc(c.title)}">${esc(c.title)}${c.share?'':' <em class="muted">(non partageable)</em>'}<small class="rpick-d">${pl[0]?fmtD(pl[0].date):''} ${[...new Set(pl.map(x=>x.platform))].map(n=>pfLogo(n,'xs')).join('')}</small></span><span class="chip s-${gstat(c)}" style="font-size:10px;padding:1px 7px">${GS[gstat(c)].replace('En attente de validation','À valider')}</span></label>`}).join(''):'<div class="muted" style="font-size:13px">Aucun contenu publié ou prévu sur la période.</div>'}
   </div>
   <div class="card dark">
    <div class="grid" style="gap:10px">
@@ -3108,10 +3130,10 @@ function modalExchange(){
    <div class="fld full"><span>Canal</span>${pick('channel',CHANNELS.map(c=>[c,c]),x.channel,{rerender:true,cls:'wrap'})}</div>
    <div class="fld full"><span>Type d'échange</span>${pick('type',XTYPES.map(c=>[c,c]),x.type,{cls:'wrap'})}</div>
    <div class="fld"><span>Auteur</span>${pick('author',teamUsers().map(u=>[u.id,u.name,avatar(u.id)]),x.author)}</div>
-   <label class="fld"><span>Interlocuteur</span><input type="text" data-f="interlocutor" list="dl-contacts" value="${esc(x.interlocutor)}" placeholder="Nom du contact"><datalist id="dl-contacts">${(p?.contacts||[]).map(k=>`<option value="${esc(k.name)}">`).join('')}</datalist></label>
+   <div class="fld full"><span>Interlocuteurs <em class="muted" style="font-style:normal;font-weight:600">· plusieurs possibles</em></span>${(()=>{const names=xNames(x);const cs2=p?repContacts(p.id):[];return `${cs2.length?`<div class="mchips" style="margin-bottom:8px">${cs2.map(z=>{const on=names.some(n=>n.toLowerCase()===z.k.name.toLowerCase());return `<button type="button" class="mchip ${on?'on':''}" data-act="x-int" data-v="${esc(z.k.name)}">${esc(z.k.name)}${z.k.role?`<small style="opacity:.6;font-weight:600"> · ${esc(z.k.role)}</small>`:''}${on?icon('check'):''}</button>`}).join('')}</div>`:''}<input type="text" data-f="interlocutor" value="${esc(x.interlocutor)}" placeholder="Noms séparés par des virgules">`})()}</div>
    <label class="fld full"><span>Résumé *</span><textarea data-f="summary" placeholder="Ce qui a été dit, demandé, envoyé ou décidé">${esc(x.summary)}</textarea></label>
    <label class="fld"><span>Projet</span><select data-f="projectId"><option value="">—</option>${prjs.map(y=>`<option value="${y.id}" ${x.projectId===y.id?'selected':''}>${esc(y.name)}</option>`).join('')}</select></label>
-   <label class="fld"><span>Post concerné</span><select data-f="contentId"><option value="">—</option>${cs.map(y=>`<option value="${y.id}" ${x.contentId===y.id?'selected':''}>${esc(y.title)}</option>`).join('')}</select></label>
+   <div class="fld full"><span>Posts concernés <em class="muted" style="font-style:normal;font-weight:600">· ${xPosts(x).length} sélectionné${xPosts(x).length>1?'s':''}</em></span>${(()=>{const sel=xPosts(x);const list=cs.filter(c=>!c.aside||sel.includes(c.id)).sort((a,b)=>(sel.includes(b.id)-sel.includes(a.id))||(rDate(b,[],'')||'').localeCompare(rDate(a,[],'')||''));return list.length?`<div class="xposts">${list.map(c=>`<label class="rpick"><input type="checkbox" data-xpost="${c.id}" ${sel.includes(c.id)?'checked':''}>${thumbImg(c,'mini s')}<span>${esc(c.title)}</span></label>`).join('')}</div>`:'<div class="muted" style="font-size:13px">Aucun post pour ce partenaire.</div>'})()}</div>
    <div class="fld full"><span>Pièces jointes</span>
     <div class="row">${(x.attachments||[]).map((a,i)=>`<span class="att">${icon('clip','width="12" height="12"')}${esc(a)}<button class="btn sm icon ghost" style="width:22px;height:22px" data-act="att-del" data-i="${i}" aria-label="Retirer">${icon('x')}</button></span>`).join('')}<label class="btn sm ghost" for="att-in">${icon('plus')}Joindre</label><input type="file" id="att-in" multiple hidden></div>
     <small>Seul le nom du fichier est enregistré. Le stockage des fichiers nécessite la base de données.</small></div>
@@ -3264,7 +3286,7 @@ function openContent(id,full){const c=content(id);if(!c)return;if(isPartner()&&(
 function openExchange(id){const x=S.exchanges.find(y=>y.id===id);if(!x)return;if(isPartner()||!can('echanges',x.partnerId)){if(x.contentId)return openContent(x.contentId);ui.route='partenaire-'+x.partnerId;location.hash=ui.route;return}ui.modalAnim=true;ui.modal={type:'exchange',draft:clone(x)};renderModalOnly()}
 function newExchange(o={}){
  const pid=o.partner||ui.xf.partner||S.partners[0].id;const p=partner(pid);
- ui.modalAnim=!ui.modal;ui.modal={type:'exchange',draft:{id:'',partnerId:pid,projectId:o.content?(content(o.content)||{}).projectId||'':'',contentId:o.content||'',date:TODAY,author:me().id,channel:'Email',type:o.type||'Envoi',interlocutor:(p.contacts[0]||{}).name||'',summary:o.type==='Relance'&&o.content?`Relance pour la validation de « ${content(o.content).title} ».`:'',attachments:[],nextAction:'',nextOwner:me().id,nextDue:'',awaitingReply:o.type==='Relance',confidential:false,done:false}};
+ ui.modalAnim=!ui.modal;ui.modal={type:'exchange',draft:{id:'',partnerId:pid,replyTo:o.replyTo||'',projectId:o.projectId||(o.content?(content(o.content)||{}).projectId||'':''),contentId:o.content||((o.contents||[])[0])||'',contentIds:o.contents?o.contents.slice():(o.content?[o.content]:[]),date:TODAY,author:me().id,channel:o.channel||'Email',type:o.type||'Envoi',interlocutor:o.interlocutor!=null?o.interlocutor:((p.contacts[0]||{}).name||''),summary:o.type==='Relance'&&o.content?`Relance pour la validation de « ${content(o.content).title} ».`:'',attachments:[],nextAction:'',nextOwner:me().id,nextDue:'',awaitingReply:o.type==='Relance',confidential:false,done:false}};
  renderModalOnly();
 }
 
@@ -3355,6 +3377,13 @@ document.addEventListener('click',async e=>{
  switch(a){
   case 'sheet':ui.sheet=!ui.sheet;render();break;
   case 'close':closeModal(!!ds.discard);break;
+  case 'x-reply':{if(!can('echanges'))return;const px=S.exchanges.find(y=>y.id===ds.id);if(!px)return;newExchange({partner:px.partnerId,replyTo:px.id,type:'Retour / validation',contents:xPosts(px),projectId:px.projectId,interlocutor:px.interlocutor,channel:px.channel});break}
+  case 'x-thread':ui.xopen=ui.xopen||{};ui.xopen[ds.id]=!ui.xopen[ds.id];render();break;
+  case 'x-exp':ui.xexp=ui.xexp||{};ui.xexp[ds.id]=!ui.xexp[ds.id];render();break;
+  case 'x-int':{syncDraft();const d=ui.modal.draft;const names=xNames(d);const i=names.findIndex(n=>n.toLowerCase()===ds.v.toLowerCase());if(i>=0)names.splice(i,1);else names.push(ds.v);d.interlocutor=names.join(', ');renderModalOnly();break}
+  case 'rto':{const a2=ui.rep.opts.to=(ui.rep.opts.to||[]).slice();const i=a2.indexOf(ds.v);if(i>=0)a2.splice(i,1);else a2.push(ds.v);render();break}
+  case 'rinc-all':ui.rep.exclude={};render();break;
+  case 'rinc-none':{reportCandidates(ui.rep.partner,ui.rep.month).forEach(c=>ui.rep.exclude[c.id]=true);render();break}
   case 'rep-span':{const st=String(ui.rep.month).split('~')[0];ui.rep.month=ds.v==='2'?st+'~'+addMonths(st,1):st;ui.rep.exclude={};render();break}
   case 'cad-reload':{const f=document.querySelector('#cadence-host iframe');if(f)f.src='cadence.html?client=ILA';break}
   case 'mine':ui.mine=!!ds.v;ui.anim=true;render();break;
@@ -3372,8 +3401,8 @@ document.addEventListener('click',async e=>{
   case 'rpf':{const o=ui.rep.opts;let l=(o.pfs||[]).slice();if(!ds.v)l=[];else l=l.includes(ds.v)?l.filter(x=>x!==ds.v):l.concat(ds.v);o.pfs=l;render();break}
   case 'cal-more':ui.cal.more=!ui.cal.more;render();break;
   case 'pl-toggle':{syncDraft();const d=ui.modal.draft;const pf=ds.p;const ix=d.platforms.findIndex(x=>x.platform===pf);if(ix>=0){d.platforms.splice(ix,1)}else{const acc=(partner(d.partnerId).accounts||{})[pf];const ref=d.platforms[0];d.platforms.push({id:uid('pl'),platform:pf,date:ref?ref.date:'',time:ref?ref.time:'',text:'',accounts:acc?[acc]:[],tags:[],collabs:[],status:'prevu',link:''})}renderModalOnly();break}
-  case 'mark-sent':{const r=S.reports.find(x=>x.id===ds.id);if(!r)return;const p=partner(r.partnerId);ui.modalAnim=true;ui.modal={type:'sent',draft:{reportId:r.id,date:TODAY,to:p.access.contact||(p.contacts[0]||{}).name||'',channel:'Email',log:true,awaiting:false}};renderModalOnly();break}
-  case 'mark-sent-current':{const r=ui.rep;let rec=latestReport(r.partner,r.month);if(!rec){rec={id:uid('r'),partnerId:r.partner,month:r.month,opts:clone(r.opts),exclude:Object.keys(r.exclude).filter(k=>r.exclude[k]),createdAt:nowStamp(),by:me().id,shared:false,sentAt:'',sentChannel:'',sentTo:'',sentBy:''};S.reports.push(rec);save()}const p=partner(rec.partnerId);ui.modalAnim=true;ui.modal={type:'sent',draft:{reportId:rec.id,date:TODAY,to:p.access.contact||(p.contacts[0]||{}).name||'',channel:'Email',log:true,awaiting:false}};renderModalOnly();break}
+  case 'mark-sent':{const r=S.reports.find(x=>x.id===ds.id);if(!r)return;const p=partner(r.partnerId);const tt=repTo(r.partnerId,(r.opts||{}).to).map(z=>z.k.name).join(', ');ui.modalAnim=true;ui.modal={type:'sent',draft:{reportId:r.id,date:TODAY,to:tt||p.access.contact||(p.contacts[0]||{}).name||'',channel:'Email',log:true,awaiting:false}};renderModalOnly();break}
+  case 'mark-sent-current':{const r=ui.rep;let rec=latestReport(r.partner,r.month);if(!rec){rec={id:uid('r'),partnerId:r.partner,month:r.month,opts:clone(r.opts),exclude:Object.keys(r.exclude).filter(k=>r.exclude[k]),createdAt:nowStamp(),by:me().id,shared:false,sentAt:'',sentChannel:'',sentTo:'',sentBy:''};S.reports.push(rec);save()}else if(r.opts.to&&r.opts.to.length){rec.opts=Object.assign(rec.opts||{},{to:r.opts.to.slice()})}const p=partner(rec.partnerId);const tt=repTo(rec.partnerId,(rec.opts||{}).to).map(z=>z.k.name).join(', ');ui.modalAnim=true;ui.modal={type:'sent',draft:{reportId:rec.id,date:TODAY,to:tt||p.access.contact||(p.contacts[0]||{}).name||'',channel:'Email',log:true,awaiting:false}};renderModalOnly();break}
   case 'save-sent':{syncDraft();const d=ui.modal.draft;const r=S.reports.find(x=>x.id===d.reportId);const p=partner(r.partnerId);r.sentAt=d.date||TODAY;r.sentChannel=d.channel;r.sentTo=d.to;r.sentBy=me().id;
    if(d.log){const n=reportData(r.partnerId,r.month,r.exclude).cs.length;S.exchanges.push({id:uid('x'),partnerId:r.partnerId,projectId:'',contentId:'',date:r.sentAt,author:me().id,channel:d.channel,type:'Envoi',interlocutor:d.to,summary:`Envoi du récapitulatif PDF de ${fmtMonth(r.month)} (${n} contenu${n>1?'s':''}).`,attachments:[`Compte-rendu_${p.name.replace(/[^\wÀ-ÿ-]+/g,'-')}_${r.month}.pdf`],nextAction:d.awaiting?'Recueillir le retour sur le récap':'',nextOwner:d.awaiting?me().id:'',nextDue:d.awaiting?addDays(r.sentAt,5):'',awaitingReply:!!d.awaiting,confidential:false,done:false})}
    if(ui.rep.lastExported===r.id)ui.rep.lastExported=null;ui.modal=null;commit(`Récap ${fmtMonth(r.month)} noté comme envoyé à ${p.name}`);break}
@@ -3496,7 +3525,7 @@ document.addEventListener('click',async e=>{
   case 'prj-del':{const id=ds.id;const withC=ds.mode==='all';const n=S.contents.filter(c=>c.projectId===id).length;delProject(id,withC);ui.prjDel=null;if(ui.modal&&ui.modal.type==='project')ui.modal=null;commit(withC?`Projet et ${n} contenu(s) supprimés`:'Projet supprimé · ses contenus restent chez le partenaire');break}
   case 'advance':{const c=content(ds.id);if(!c)return;const from=c.prod;c.prod=c.prod==='a_preparer'?'en_cours':'termine';if(c.prod==='termine')c.blocked=false;c.history.push({at:nowStamp(),by:me().id,text:`Production : ${PROD[from]} → ${PROD[c.prod]}`});commit(`« ${c.title} » : ${PROD[c.prod].toLowerCase()}`);break}
   case 'new-exchange':if(!can('echanges'))return;if(ui.fab){ui.fab=false;render()}if(!S.partners.length){toast('Créez d\'abord un partenaire.',true);return}if(ui.modal&&ui.modal.type==='content')syncDraft();newExchange({partner:ds.partner,content:ds.content,type:ds.type});break;
-  case 'save-exchange':{syncDraft();const d=ui.modal.draft;if(!d.summary.trim()){toast('Ajoutez un résumé de l\'échange.',true);return}if(d.contentId&&content(d.contentId)?.partnerId!==d.partnerId)d.contentId='';if(d.projectId&&project(d.projectId)?.partnerId!==d.partnerId)d.projectId='';if(!d.id){d.id=uid('x');S.exchanges.push(d)}else{const i=S.exchanges.findIndex(x=>x.id===d.id);S.exchanges[i]=d}ui.modal=null;commit('Échange consigné · aucun message envoyé au partenaire');break}
+  case 'save-exchange':{syncDraft();const d=ui.modal.draft;if(!d.summary.trim()){toast('Ajoutez un résumé de l\'échange.',true);return}d.contentIds=xPosts(d).filter(id=>content(id)?.partnerId===d.partnerId);d.contentId=d.contentIds[0]||'';if(d.replyTo&&d.id!==d.replyTo){const par=S.exchanges.find(y=>y.id===d.replyTo);if(par&&!d.id&&par.awaitingReply&&!par.done)par.awaitingReply=false}if(d.projectId&&project(d.projectId)?.partnerId!==d.partnerId)d.projectId='';if(!d.id){d.id=uid('x');S.exchanges.push(d)}else{const i=S.exchanges.findIndex(x=>x.id===d.id);S.exchanges[i]=d}ui.modal=null;commit('Échange consigné · aucun message envoyé au partenaire');break}
   case 'att-del':syncDraft();ui.modal.draft.attachments.splice(+ds.i,1);renderModalOnly();break;
   case 'del-ask':ui.modal.confirmDel=true;renderModalOnly();break;
   case 'del-exchange':S.exchanges=S.exchanges.filter(x=>x.id!==ui.modal.draft.id);ui.modal=null;commit('Échange supprimé');break;
@@ -3550,6 +3579,7 @@ document.addEventListener('change',async e=>{
  if(t.id==='rep-month'){ui.rep.month=t.value;render();return}
  if(t.dataset.ropt){ui.rep.opts[t.dataset.ropt]=t.checked;render();return}
  if(t.dataset.rinc){ui.rep.exclude[t.dataset.rinc]=!t.checked;render();return}
+  if(t.dataset.xpost&&ui.modal&&ui.modal.type==='exchange'){syncDraft();const d=ui.modal.draft;const a2=xPosts(d);const i=a2.indexOf(t.dataset.xpost);if(t.checked&&i<0)a2.push(t.dataset.xpost);if(!t.checked&&i>=0)a2.splice(i,1);d.contentIds=a2;d.contentId=a2[0]||'';renderModalOnly();return}
  if(t.dataset.perm){if(!isAdmin())return;const [uid_,k]=t.dataset.perm.split('.');const u=S.users.find(x=>x.id===uid_);u.perms[k]=t.checked;commit(`Droit « ${PERMS.find(p=>p[0]===k)[1]} » ${t.checked?'accordé':'retiré'} à ${u.name}`);return}
  if(t.dataset.access){if(!can('acces_partenaires'))return;const [pid,k]=t.dataset.access.split('.');const p=partner(pid);p.access[k]=t.checked;if(k==='enabled'&&!t.checked&&S.currentUser==='partner:'+pid)S.currentUser='estelle';commit(k==='enabled'?(t.checked?`Accès ouvert pour ${p.name} · aucun envoi effectué`:`Accès retiré pour ${p.name}`):'Droits du partenaire mis à jour');return}
  if(t.dataset.accesstxt){if(!can('acces_partenaires'))return;const [pid,k]=t.dataset.accesstxt.split('.');partner(pid).access[k]=t.value;commit('Accès partenaire mis à jour');return}
