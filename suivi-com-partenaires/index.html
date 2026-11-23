@@ -1296,7 +1296,13 @@ const JOURSL=['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche']
 const pad=n=>String(n).padStart(2,'0');
 const isoOf=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const D=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d||1)};
-const TODAY=isoOf(new Date());
+let TODAY=isoOf(new Date());
+// La date du jour suit l'horloge : l'appli peut rester ouverte plusieurs jours (téléphone, onglet)
+function refreshToday(){const t=isoOf(new Date());if(t===TODAY)return false;const old=TODAY;TODAY=t;
+ try{if(ui.cal){if(ui.cal.day===old)ui.cal.day=t;if(ui.cal.week===weekStart(old))ui.cal.week=weekStart(t);if(ui.cal.month===old.slice(0,7))ui.cal.month=t.slice(0,7)}if(ui.stv){if(ui.stv.week===weekStart(old))ui.stv.week=weekStart(t);if(ui.stv.month===old.slice(0,7))ui.stv.month=t.slice(0,7)}}catch(e){}
+ try{if(!ui.modal)render()}catch(e){}return true}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshToday()});
+addEventListener('focus',refreshToday);setInterval(refreshToday,60000);
 const addDays=(s,n)=>{const d=D(s);d.setDate(d.getDate()+n);return isoOf(d)};
 const diff=(a,b)=>Math.round((D(a)-D(b))/864e5);
 const dow=s=>(D(s).getDay()+6)%7;
@@ -3534,7 +3540,7 @@ document.addEventListener('click',async e=>{
   case 'go-ila-week':ui.modal=null;ui.cal.partner=ilaId();ui.cal.view='semaine';ui.cal.week=weekStart(TODAY);navigate('calendrier');break;
   case 'stv':ui.stv.view=ds.v;render();break;
   case 'st-prev':case 'st-next':{const k=a==='st-next'?1:-1;const v=ui.stv;if(v.view==='semaine')v.week=addDays(v.week,7*k);else v.month=addMonths(v.month,k);render();break}
-  case 'st-today':ui.stv.week=weekStart(TODAY);ui.stv.month=TODAY.slice(0,7);render();break;
+  case 'st-today':refreshToday();ui.stv.week=weekStart(TODAY);ui.stv.month=TODAY.slice(0,7);render();break;
   case 'story-new':ui.modalAnim=true;ui.modal={type:'story',draft:{id:'',title:'',date:TODAY,time:'18:00',type:'sondage',platforms:['Instagram'],status:'a_faire',idea:''}};renderModalOnly();break;
   case 'story-pf':{syncDraft();const d=ui.modal.draft;d.platforms=d.platforms||[];const i=d.platforms.indexOf(ds.v);i>=0?d.platforms.splice(i,1):d.platforms.push(ds.v);renderModalOnly();break}
   case 'story-save':{syncDraft();const d=ui.modal.draft;if(ui.modal.type==='srule'){break}if(!d.title.trim()||!d.date){toast('Titre et date obligatoires.',true);return}if(d.id&&!d.id.startsWith('v_')){const i=S.stories.findIndex(x=>x.id===d.id);S.stories[i]=d}else{const x=Object.assign({},d,{id:uid('st')});delete x.virtual;S.stories.push(x)}ui.modal=null;commit('Story enregistrée');break}
@@ -3589,7 +3595,7 @@ document.addEventListener('click',async e=>{
   case 'report-partner':ui.rep.partner=ds.partner;ui.rep.exclude={};navigate('comptes-rendus');break;
   case 'cal-view':ui.cal.view=ds.v;if(ds.v==='semaine'){const ref=ui.cal.month===TODAY.slice(0,7)?TODAY:ui.cal.month+'-01';ui.cal.week=weekStart(ref)}render();break;
   case 'cal-prev':case 'cal-next':{const n=a==='cal-prev'?-1:1;if(ui.cal.view==='semaine'){ui.cal.week=addDays(ui.cal.week,7*n);ui.cal.month=ui.cal.week.slice(0,7)}else{ui.cal.month=addMonths(ui.cal.month,n);ui.cal.day=null}render();break}
-  case 'cal-today':ui.cal.month=TODAY.slice(0,7);ui.cal.week=weekStart(TODAY);ui.cal.day=TODAY;render();break;
+  case 'cal-today':refreshToday();ui.cal.month=TODAY.slice(0,7);ui.cal.week=weekStart(TODAY);ui.cal.day=TODAY;render();break;
   case 'cal-kind':ui.cal.kinds[ds.k]=!ui.cal.kinds[ds.k];render();break;
   case 'day-close':ui.cal.day=null;render();break;
   case 'new-event':if(ui.fab){ui.fab=false;render()}if(!S.partners.length){toast('Créez d\'abord un partenaire.',true);return}ui.modalAnim=true;ui.modal={type:'event',draft:{id:'',partnerId:ds.partner||ui.cal.partner||ilaId()||S.partners[0].id,title:'',date:ui.cal.day||TODAY,type:'Événement',note:''}};renderModalOnly();break;
